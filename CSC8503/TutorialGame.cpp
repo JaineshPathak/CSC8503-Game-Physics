@@ -465,11 +465,12 @@ bool TutorialGame::SelectObject() {
 			Window::GetWindow()->LockMouseToWindow(true);
 		}
 	}
+
+	if (selectionObject != nullptr)
+		Debug::DrawAxisLines(selectionObject->GetTransform().GetMatrix(), 2.0f);
+
 	if (inSelectionMode) {
 		Debug::Print("Press Q to change to camera mode!", Vector2(5, 85));
-
-		if (selectionObject != nullptr)
-			Debug::DrawAxisLines(selectionObject->GetTransform().GetMatrix(), 2.0f, 10.0f);
 
 		if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
 			if (selectionObject) {	//set colour to deselected;
@@ -485,6 +486,7 @@ bool TutorialGame::SelectObject() {
 
 				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 				Debug::DrawLine(ray.GetPosition(), closestCollision.collidedAt, Debug::WHITE, 5.0f);
+				Debug::DrawLine(closestCollision.collidedAt, closestCollision.collidedAt + closestCollision.collidedNormal, Debug::YELLOW, 5.0f);
 
 				return true;
 			}
