@@ -22,6 +22,7 @@ TutorialGame::TutorialGame()	{
 #endif
 
 	physics		= new PhysicsSystem(*world);
+	//physics->SetGravity(Vector3(0, 9.81f, 0));
 
 	forceMagnitude	= 10.0f;
 	useGravity		= false;
