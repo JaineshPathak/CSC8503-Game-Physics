@@ -159,6 +159,7 @@ bool CollisionDetection::RaySphereIntersection(const Ray&r, const Transform& wor
 
 	collision.rayDistance = sphereProj - (offset);
 	collision.collidedAt = r.GetPosition() + (r.GetDirection() * collision.rayDistance);
+	collision.collidedNormal = (collision.collidedAt - spherePos).Normalised();
 
 	return true;
 }

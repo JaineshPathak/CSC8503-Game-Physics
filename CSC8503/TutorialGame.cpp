@@ -101,7 +101,7 @@ void TutorialGame::UpdateGame(float dt) {
 		Vector3 rayPos;
 		Vector3 rayDir;
 
-		rayDir = selectionObject->GetTransform().GetOrientation() * Vector3(0, 0, -1);
+		rayDir = selectionObject->GetTransform().GetOrientation() * Vector3(0, 0, -1);	//Forward Direction
 
 		rayPos = selectionObject->GetTransform().GetPosition();
 
@@ -261,7 +261,7 @@ A single function to add a large immoveable cube to the bottom of our world
 
 */
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
-	GameObject* floor = new GameObject();
+	GameObject* floor = new GameObject(2);		//Ignored layer
 
 	Vector3 floorSize = Vector3(200, 2, 200);
 	AABBVolume* volume = new AABBVolume(floorSize);
@@ -318,6 +318,7 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 
 	cube->GetTransform()
 		.SetPosition(position)
+		.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0))
 		.SetScale(dimensions * 2);
 
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
@@ -467,7 +468,10 @@ bool TutorialGame::SelectObject() {
 	}
 
 	if (selectionObject != nullptr)
-		Debug::DrawAxisLines(selectionObject->GetTransform().GetMatrix(), 2.0f);
+	{
+		//Debug::DrawLine(selectionObject->GetTransform().GetPosition(), selectionObject->GetTransform().GetPosition() + selectionObject->GetTransform().GetForward(), Debug::BLUE);
+		//Debug::DrawAxisLines(selectionObject->GetTransform().GetMatrix(), 2.0f);
+	}
 
 	if (inSelectionMode) {
 		Debug::Print("Press Q to change to camera mode!", Vector2(5, 85));

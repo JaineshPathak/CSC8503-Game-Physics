@@ -31,6 +31,31 @@ namespace NCL {
 			Matrix4 GetMatrix() const {
 				return matrix;
 			}
+
+			Vector3 Forward()
+			{
+				Matrix4 local = matrix;
+				local.SetPositionVector(Vector3(0, 0, 0));
+				forward = local * Vector4(0.0f, 0.0f, -1.0f, 1.0f);
+				return forward;
+			}
+
+			Vector3 Up()
+			{
+				Matrix4 local = matrix;
+				local.SetPositionVector(Vector3(0, 0, 0));
+				up = local * Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+				return up;
+			}
+
+			Vector3 Right()
+			{
+				Matrix4 local = matrix;
+				local.SetPositionVector(Vector3(0, 0, 0));
+				right = local * Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+				return right;
+			}
+
 			void UpdateMatrix();
 		protected:
 			Matrix4		matrix;
@@ -38,6 +63,10 @@ namespace NCL {
 			Vector3		position;
 
 			Vector3		scale;
+
+			Vector3		forward;
+			Vector3		up;
+			Vector3		right;
 		};
 	}
 }
