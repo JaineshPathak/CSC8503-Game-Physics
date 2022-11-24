@@ -304,7 +304,14 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
 
 	sphere->GetPhysicsObject()->SetInverseMass(inverseMass);
-	sphere->GetPhysicsObject()->InitSphereInertia();
+
+	if(rand() % 2)
+		sphere->GetPhysicsObject()->InitSphereInertia();
+	else
+	{
+		sphere->GetPhysicsObject()->InitHollowSphereInertia();
+		sphere->GetRenderObject()->SetColour(Debug::CYAN);
+	}
 
 	world->AddGameObject(sphere);
 
@@ -437,6 +444,8 @@ void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing
 			}
 		}
 	}
+
+	AddCubeToWorld(Vector3(0, 0, 0), Vector3(3, 1, 60), 0.1f);
 }
 
 void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims) {
