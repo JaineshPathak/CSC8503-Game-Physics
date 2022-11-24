@@ -80,9 +80,21 @@ bool CollisionDetection::RayBoxIntersection(const Ray&r, const Vector3& boxPos, 
 	}
 
 	//Normal
-	Vector3 intersectionSurfaceNormal = Vector3(0.0f, 0.0f, 0.0f);
 	Vector3 intersectionPointDir = intersectionPoint - boxPos;
-	float min = FLT_MAX;
+
+	float maxComp = abs(intersectionPointDir.x);
+	Vector3 intersectionSurfaceNormal = Vector3(Sign(intersectionPointDir.x), 0.0f, 0.0f);
+	if (abs(intersectionPointDir.y) > maxComp)
+	{
+		maxComp = abs(intersectionPointDir.y);
+		intersectionSurfaceNormal = Vector3(0.0f, Sign(intersectionPointDir.y), 0.0f);
+	}
+	if (abs(intersectionPointDir.z) > maxComp)
+	{
+		maxComp = abs(intersectionPointDir.z);
+		intersectionSurfaceNormal = Vector3(0.0f, 0.0f, Sign(intersectionPointDir.z));
+	}
+	/*float min = FLT_MAX;
 	float distance = abs(boxSize.x - abs(intersectionPointDir.x));
 	if (distance < min)
 	{
@@ -101,7 +113,7 @@ bool CollisionDetection::RayBoxIntersection(const Ray&r, const Vector3& boxPos, 
 		min = distance;
 		intersectionSurfaceNormal = Vector3(0, 0, 1);
 		intersectionSurfaceNormal *= Sign(intersectionPointDir.z);
-	}
+	}*/
 
 	collision.collidedAt = intersectionPoint;
 	collision.collidedNormal = intersectionSurfaceNormal;
