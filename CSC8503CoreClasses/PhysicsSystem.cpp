@@ -153,9 +153,12 @@ From this simple mechanism, we we build up gameplay interactions inside the
 OnCollisionBegin / OnCollisionEnd functions (removing health when hit by a 
 rocket launcher, gaining a point when the player hits the gold coin, and so on).
 */
-void PhysicsSystem::UpdateCollisionList() {
-	for (std::set<CollisionDetection::CollisionInfo>::iterator i = allCollisions.begin(); i != allCollisions.end(); ) {
-		if ((*i).framesLeft == numCollisionFrames) {
+void PhysicsSystem::UpdateCollisionList() 
+{
+	for (std::set<CollisionDetection::CollisionInfo>::iterator i = allCollisions.begin(); i != allCollisions.end(); ) 
+	{
+		if ((*i).framesLeft == numCollisionFrames) 
+		{
 			i->a->OnCollisionBegin(i->b);
 			i->b->OnCollisionBegin(i->a);
 		}
@@ -163,12 +166,14 @@ void PhysicsSystem::UpdateCollisionList() {
 		CollisionDetection::CollisionInfo& in = const_cast<CollisionDetection::CollisionInfo&>(*i);
 		in.framesLeft--;
 
-		if ((*i).framesLeft < 0) {
+		if ((*i).framesLeft < 0) 
+		{
 			i->a->OnCollisionEnd(i->b);
 			i->b->OnCollisionEnd(i->a);
 			i = allCollisions.erase(i);
 		}
-		else {
+		else 
+		{
 			++i;
 		}
 	}
@@ -191,7 +196,32 @@ to the collision set for later processing. The set will guarantee that
 a particular pair will only be added once, so objects colliding for
 multiple frames won't flood the set with duplicates.
 */
-void PhysicsSystem::BasicCollisionDetection() {
+void PhysicsSystem::BasicCollisionDetection() 
+{
+	std::vector<GameObject*>::const_iterator first;
+	std::vector<GameObject*>::const_iterator last;
+
+	gameWorld.GetObjectIterators(first, last);
+
+	for (auto i = first; i != last; ++i)
+	{
+		if ((*i)->GetPhysicsObject() == nullptr)
+			continue;
+
+		for (auto j = i + 1; j != last; ++j)
+		{
+			if ((*j)->GetPhysicsObject() == nullptr)
+				continue;
+
+			CollisionDetection::CollisionInfo info;
+			if (CollisionDetection::ObjectIntersection(*i, *j, info))
+			{
+				std::cout << "Collision Between: " << (*i)->GetName() << " and " << (*j)->GetName() << std::endl;
+				info.framesLeft = numCollisionFrames;
+				allCollisions.insert(info);
+			}
+		}
+	}
 }
 
 /*
@@ -252,7 +282,7 @@ void PhysicsSystem::IntegrateAccel(float dt)
 		Vector3 force = object->GetForce();
 		Vector3 accel = force * inverseMass;
 
-		if (applyGravity && inverseMass > 0)
+		if (applyGravity && object->GetGravityStatus() && inverseMass > 0)
 			accel += gravity;
 
 		linearVel += accel * dt;

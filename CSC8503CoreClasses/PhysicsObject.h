@@ -66,7 +66,11 @@ namespace NCL {
 				return inverseInteriaTensor;
 			}
 
+			bool GetGravityStatus() const { return enableGravity; }
+			void SetGravityStatus(const bool& s) { enableGravity = s; }
+
 		protected:
+			bool enableGravity = true;
 			const CollisionVolume* volume;
 			Transform*		transform;
 
