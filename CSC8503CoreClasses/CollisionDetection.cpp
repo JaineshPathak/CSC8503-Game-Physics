@@ -329,9 +329,9 @@ bool CollisionDetection::SphereIntersection(const SphereVolume& volumeA, const T
 {
 	float radiusSum = volumeA.GetRadius() + volumeB.GetRadius();
 	Vector3 distanceV = worldTransformA.GetPosition() - worldTransformB.GetPosition();
-	float distance = distanceV.Length();
+	float distance = distanceV.LengthSquared();
 
-	if (distance < radiusSum) 
+	if (distance < (radiusSum * radiusSum))
 	{
 		float penetration = radiusSum - distance;
 		Vector3 normal = distanceV.Normalised();
@@ -347,24 +347,26 @@ bool CollisionDetection::SphereIntersection(const SphereVolume& volumeA, const T
 }
 
 //AABB - Sphere Collision
-bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const Transform& worldTransformA,
-	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) 
+bool CollisionDetection::AABBSphereIntersection(const AABBVolume& aabbVolume, const Transform& aabbTransform,
+												const SphereVolume& sphereVolume, const Transform& sphereTransform, 
+												CollisionInfo& collisionInfo) 
 {
-	Vector3 boxSize = volumeA.GetHalfDimensions();
-	Vector3 delta = worldTransformB.GetPosition() - worldTransformA.GetPosition();
+	Vector3 boxSize = aabbVolume.GetHalfDimensions();
+	Vector3 delta = sphereTransform.GetPosition() - aabbTransform.GetPosition();
 
 	Vector3 closestPointOnBox = Maths::Clamp(delta, -boxSize, boxSize);
 
 	Vector3 localPoint = delta - closestPointOnBox;
-	float distance = localPoint.Length();
+	float distance = localPoint.LengthSquared();
+	//Debug::DrawLine(localPoint, localPoint + Vector3(0, 1, 0), Debug::BLACK, 10.0f);
 
-	if (distance < volumeB.GetRadius())
+	if (distance < sphereVolume.GetRadius() * sphereVolume.GetRadius())
 	{
 		Vector3 collisionNormal = localPoint.Normalised();
-		float penetration = (volumeB.GetRadius() - distance);
+		float penetration = (sphereVolume.GetRadius() - distance);
 
 		Vector3 localA = Vector3();
-		Vector3 localB = -collisionNormal * volumeB.GetRadius();
+		Vector3 localB = -collisionNormal * sphereVolume.GetRadius();
 
 		collisionInfo.AddContactPoint(localA, localB, collisionNormal, penetration);
 

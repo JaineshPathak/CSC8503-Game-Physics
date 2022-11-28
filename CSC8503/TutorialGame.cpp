@@ -251,6 +251,10 @@ void TutorialGame::InitWorld() {
 	physics->Clear();
 
 	InitMixedGridWorld(15, 15, 3.5f, 3.5f);
+	//AddSphereToWorld(Vector3(2, 0, 0), 1.0f, 3.5f);
+
+	//AddSphereToWorld(Vector3(0, 0, 0), 1.0f, 3.5f);
+	//AddCubeToWorld(Vector3(5, 0, 0), Vector3(1, 1, 1), 3.5f);
 
 	InitGameExamples();
 	InitDefaultFloor();
@@ -262,7 +266,7 @@ A single function to add a large immoveable cube to the bottom of our world
 
 */
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
-	GameObject* floor = new GameObject(2);		//Ignored layer
+	GameObject* floor = new GameObject(2, "Floor");		//Ignored layer
 
 	Vector3 floorSize = Vector3(200, 2, 200);
 	AABBVolume* volume = new AABBVolume(floorSize);
@@ -272,7 +276,7 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 		.SetPosition(position);
 
 	PhysicsObject* floorPhys = new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume());
-	floorPhys->SetRestitution(0.0f);
+	floorPhys->SetRestitution(1.0f);
 
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
 	floor->SetPhysicsObject(floorPhys);
@@ -293,7 +297,7 @@ physics worlds. You'll probably need another function for the creation of OBB cu
 
 */
 GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
-	GameObject* sphere = new GameObject();
+	GameObject* sphere = new GameObject(1, "Sphere01");
 
 	Vector3 sphereSize = Vector3(radius, radius, radius);
 	SphereVolume* volume = new SphereVolume(radius);
@@ -321,8 +325,9 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	return sphere;
 }
 
+//http://thunderfist-podium.blogspot.com/2012/02/capsule-capsule-collision-in-games.html
 GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass) {
-	GameObject* cube = new GameObject();
+	GameObject* cube = new GameObject(1, "Cube01");
 
 	AABBVolume* volume = new AABBVolume(dimensions);
 	cube->SetBoundingVolume((CollisionVolume*)volume);
@@ -448,7 +453,7 @@ void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing
 		}
 	}
 
-	AddCubeToWorld(Vector3(0, 0, 0), Vector3(3, 1, 60), 0.1f);
+	//AddCubeToWorld(Vector3(0, 0, 0), Vector3(3, 1, 60), 0.1f);
 }
 
 void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims) {

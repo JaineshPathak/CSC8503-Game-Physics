@@ -224,8 +224,10 @@ void PhysicsSystem::BasicCollisionDetection()
 			{
 				//std::cout << "Collision Between: " << (*i)->GetName() << " and " << (*j)->GetName() << std::endl;
 				//std::cout << "Penetration Distance: " << info.point.penetration << std::endl;
-				//ImpulseResolveCollision(*info.a, *info.b, info.point);
-				ResolveSpringCollision(*info.a, *info.b, info.point);
+				
+				ImpulseResolveCollision(*info.a, *info.b, info.point);
+				//ResolveSpringCollision(*info.a, *info.b, info.point);
+				
 				info.framesLeft = numCollisionFrames;
 				allCollisions.insert(info);
 			}
@@ -252,7 +254,7 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 		return;
 
 	transformA.SetPosition(transformA.GetPosition() - (p.normal * p.penetration * (physA->GetInverseMass() / totalMass)));
-	transformB.SetPosition(transformB.GetPosition() - (p.normal * p.penetration * (physB->GetInverseMass() / totalMass)));
+	transformB.SetPosition(transformB.GetPosition() + (p.normal * p.penetration * (physB->GetInverseMass() / totalMass)));
 
 	Vector3 relativeA = p.localA;
 	Vector3 relativeB = p.localB;
@@ -292,13 +294,14 @@ void PhysicsSystem::ResolveSpringCollision(GameObject& a, GameObject& b, Collisi
 	PhysicsObject* physA = a.GetPhysicsObject();
 	PhysicsObject* physB = b.GetPhysicsObject();
 
-	Vector3 contactNormal = p.normal;
 	Vector3 relativeVelocity = physB->GetLinearVelocity() - physA->GetLinearVelocity();
 
-	Vector3 springForce = (contactNormal * (springConstant * p.penetration)) - (contactNormal * springConstantDamping * (Vector3::Dot(contactNormal, relativeVelocity)));
+	float dirCollisionNormal = Vector3::Dot(p.normal, relativeVelocity);
+	Vector3 springForce = (p.normal * (-springConstant * p.penetration)) - (p.normal * springConstantDamping * dirCollisionNormal);
+	//Vector3 springForce = p.normal * (-springConstant * p.penetration) * dirCollisionNormal;
 
-	physA->AddForceAtPosition(springForce, p.localB);
-	physB->AddForceAtPosition(-springForce, p.localA);
+	physA->AddForceAtPositionLocal(-springForce, p.localA);
+	physB->AddForceAtPositionLocal(springForce, p.localB);
 
 	/*Vector3 relativeVelocity = physB->GetLinearVelocity() - physA->GetLinearVelocity();
 	float dirCollisionNormal = Vector3::Dot(p.normal, relativeVelocity);

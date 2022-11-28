@@ -41,6 +41,8 @@ namespace NCL {
 			
 			void AddForce(const Vector3& force);
 
+			void AddForceAtPositionLocal(const Vector3& addedForce, const Vector3& position);
+
 			void AddForceAtPosition(const Vector3& force, const Vector3& position);
 
 			void AddTorque(const Vector3& torque);
@@ -81,7 +83,7 @@ namespace NCL {
 			float elasticity;
 			float friction;
 
-			float restitution = 0.5f;
+			float restitution = 0.6f;
 
 			//linear stuff
 			Vector3 linearVelocity;

@@ -46,8 +46,8 @@ namespace NCL {
 			float	dTOffset;
 			float	globalDamping;
 
-			float springConstant = -50.0f;
-			float springConstantDamping = 55.0f;
+			float springConstant = 150.0f;
+			float springConstantDamping = 150.0f;
 
 			std::set<CollisionDetection::CollisionInfo> allCollisions;
 			std::set<CollisionDetection::CollisionInfo> broadphaseCollisions;
