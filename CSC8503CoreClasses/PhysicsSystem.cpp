@@ -91,13 +91,16 @@ void PhysicsSystem::Update(float dt) {
 		UpdateObjectAABBs();
 	}
 	int iteratorCount = 0;
-	while(dTOffset > realDT) {
+	while(dTOffset > realDT) 
+	{
 		IntegrateAccel(realDT); //Update accelerations from external forces
-		if (useBroadPhase) {
+		if (useBroadPhase) 
+		{
 			BroadPhase();
 			NarrowPhase();
 		}
-		else {
+		else 
+		{
 			BasicCollisionDetection();
 		}
 
@@ -105,7 +108,8 @@ void PhysicsSystem::Update(float dt) {
 		//we just run things multiple times, slowly moving things forward
 		//and then rechecking that the constraints have been met		
 		float constraintDt = realDT /  (float)constraintIterationCount;
-		for (int i = 0; i < constraintIterationCount; ++i) {
+		for (int i = 0; i < constraintIterationCount; ++i) 
+		{
 			UpdateConstraints(constraintDt);	
 		}
 		IntegrateVelocity(realDT); //update positions from new velocity changes
@@ -122,12 +126,14 @@ void PhysicsSystem::Update(float dt) {
 	float updateTime = t.GetTimeDeltaSeconds();
 
 	//Uh oh, physics is taking too long...
-	if (updateTime > realDT) {
+	if (updateTime > realDT) 
+	{
 		realHZ /= 2;
 		realDT *= 2;
 		std::cout << "Dropping iteration count due to long physics time...(now " << realHZ << ")\n";
 	}
-	else if(dt*2 < realDT) { //we have plenty of room to increase iteration count!
+	else if(dt*2 < realDT) 
+	{ //we have plenty of room to increase iteration count!
 		int temp = realHZ;
 		realHZ *= 2;
 		realDT /= 2;
@@ -216,7 +222,10 @@ void PhysicsSystem::BasicCollisionDetection()
 			CollisionDetection::CollisionInfo info;
 			if (CollisionDetection::ObjectIntersection(*i, *j, info))
 			{
-				std::cout << "Collision Between: " << (*i)->GetName() << " and " << (*j)->GetName() << std::endl;
+				//std::cout << "Collision Between: " << (*i)->GetName() << " and " << (*j)->GetName() << std::endl;
+				//std::cout << "Penetration Distance: " << info.point.penetration << std::endl;
+				//ImpulseResolveCollision(*info.a, *info.b, info.point);
+				ResolveSpringCollision(*info.a, *info.b, info.point);
 				info.framesLeft = numCollisionFrames;
 				allCollisions.insert(info);
 			}
@@ -230,8 +239,72 @@ In tutorial 5, we start determining the correct response to a collision,
 so that objects separate back out. 
 
 */
-void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const {
+void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const 
+{
+	PhysicsObject* physA = a.GetPhysicsObject();
+	PhysicsObject* physB = b.GetPhysicsObject();
 
+	Transform& transformA = a.GetTransform();
+	Transform& transformB = b.GetTransform();
+
+	float totalMass = physA->GetInverseMass() + physB->GetInverseMass();
+	if (totalMass == 0.0f)
+		return;
+
+	transformA.SetPosition(transformA.GetPosition() - (p.normal * p.penetration * (physA->GetInverseMass() / totalMass)));
+	transformB.SetPosition(transformB.GetPosition() - (p.normal * p.penetration * (physB->GetInverseMass() / totalMass)));
+
+	Vector3 relativeA = p.localA;
+	Vector3 relativeB = p.localB;
+
+	Vector3 angVelocityA = Vector3::Cross(physA->GetAngularVelocity(), relativeA);
+	Vector3 angVelocityB = Vector3::Cross(physB->GetAngularVelocity(), relativeB);
+
+	Vector3 fullVelocityA = physA->GetLinearVelocity() + angVelocityA;
+	Vector3 fullVelocityB = physB->GetLinearVelocity() + angVelocityB;
+
+	Vector3 contactVelocity = fullVelocityB - fullVelocityA;
+
+	//-----------------------------
+	//Impulse method
+
+	float impulseForce = Vector3::Dot(contactVelocity, p.normal);
+
+	Vector3 inertiaA = Vector3::Cross(physA->GetInertiaTensor() * Vector3::Cross(relativeA, p.normal), relativeA);
+	Vector3 inertiaB = Vector3::Cross(physB->GetInertiaTensor() * Vector3::Cross(relativeB, p.normal), relativeB);
+
+	float angularEffect = Vector3::Dot(inertiaA + inertiaB, p.normal);
+	float coeffRestitution = physA->GetRestitution() * physB->GetRestitution();;
+
+	float j = (-(1.0f + coeffRestitution) * impulseForce) / (totalMass + angularEffect);
+	Vector3 fullImpulse = p.normal * j;
+
+	physA->ApplyLinearImpulse(-fullImpulse);
+	physB->ApplyLinearImpulse(fullImpulse);
+
+	physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullImpulse));
+	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullImpulse));
+}
+
+//Ref: https://gafferongames.com/post/spring_physics/
+void PhysicsSystem::ResolveSpringCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const
+{
+	PhysicsObject* physA = a.GetPhysicsObject();
+	PhysicsObject* physB = b.GetPhysicsObject();
+
+	Vector3 contactNormal = p.normal;
+	Vector3 relativeVelocity = physB->GetLinearVelocity() - physA->GetLinearVelocity();
+
+	Vector3 springForce = (contactNormal * (springConstant * p.penetration)) - (contactNormal * springConstantDamping * (Vector3::Dot(contactNormal, relativeVelocity)));
+
+	physA->AddForceAtPosition(springForce, p.localB);
+	physB->AddForceAtPosition(-springForce, p.localA);
+
+	/*Vector3 relativeVelocity = physB->GetLinearVelocity() - physA->GetLinearVelocity();
+	float dirCollisionNormal = Vector3::Dot(p.normal, relativeVelocity);
+	Vector3 springForce = p.normal * (-100.0f * p.penetration) * dirCollisionNormal;
+	physA->AddForceAtPosition(springForce, p.localA);
+	physB->AddForceAtPosition(-springForce, p.localB);*/
 }
 
 /*

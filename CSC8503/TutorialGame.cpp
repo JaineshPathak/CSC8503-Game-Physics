@@ -271,8 +271,11 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 		.SetScale(floorSize * 2)
 		.SetPosition(position);
 
+	PhysicsObject* floorPhys = new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume());
+	floorPhys->SetRestitution(0.0f);
+
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
-	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
+	floor->SetPhysicsObject(floorPhys);
 
 	floor->GetPhysicsObject()->SetInverseMass(0);
 	floor->GetPhysicsObject()->InitCubeInertia();

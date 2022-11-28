@@ -56,6 +56,9 @@ namespace NCL {
 				angularVelocity = v;
 			}
 
+			float GetRestitution() const { return restitution; }
+			void SetRestitution(float r) { restitution = r; }
+
 			void InitCubeInertia();
 			void InitSphereInertia();
 			void InitHollowSphereInertia();
@@ -77,6 +80,8 @@ namespace NCL {
 			float inverseMass;
 			float elasticity;
 			float friction;
+
+			float restitution = 0.5f;
 
 			//linear stuff
 			Vector3 linearVelocity;
