@@ -146,7 +146,10 @@ bool CollisionDetection::RayOBBIntersection(const Ray&r, const Transform& worldT
 	bool collided = RayBoxIntersection(tempRay, Vector3(), volume.GetHalfDimensions(), collision);
 
 	if (collided)
+	{
 		collision.collidedAt = transform * collision.collidedAt + position;
+		collision.collidedNormal = transform * collision.collidedNormal;
+	}
 
 	return collided;
 }
@@ -376,8 +379,42 @@ bool CollisionDetection::AABBSphereIntersection(const AABBVolume& aabbVolume, co
 	return false;
 }
 
-bool  CollisionDetection::OBBSphereIntersection(const OBBVolume& volumeA, const Transform& worldTransformA,
-	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
+bool  CollisionDetection::OBBSphereIntersection(const OBBVolume& OBBVolumeA, const Transform& obbWorldTransform,
+												const SphereVolume& SpherevolumeB, const Transform& sphereWorldTransformB, 
+												CollisionInfo& collisionInfo) 
+{
+	Quaternion orientation = obbWorldTransform.GetOrientation();
+	Vector3 position = obbWorldTransform.GetPosition();
+
+	Matrix4 obbTransform = Matrix4(orientation);
+	Matrix4 obbInvTransform = Matrix4(orientation.Conjugate());
+
+	Vector3 spherePos = sphereWorldTransformB.GetPosition();
+	Vector3 localSpherePos = obbInvTransform * spherePos;
+
+	//AABB - Sphere as usual
+	Vector3 boxSize = OBBVolumeA.GetHalfDimensions();
+	Vector3 delta = localSpherePos - obbWorldTransform.GetPosition();
+
+	Vector3 closestPointOnBox = Maths::Clamp(delta, -boxSize, boxSize);
+
+	Vector3 localPoint = delta - closestPointOnBox;
+	float distance = localPoint.Length();
+	if (distance < (SpherevolumeB.GetRadius() ))
+	{
+		Vector3 collisionNormal = obbTransform * localPoint.Normalised();
+		float penetration = (SpherevolumeB.GetRadius() - distance);
+
+		Vector3 localA = obbTransform * Vector3();
+		Vector3 localB = obbTransform * -collisionNormal * SpherevolumeB.GetRadius();
+
+		//Debug::DrawLine(spherePos, spherePos + localB + collisionNormal, Debug::CYAN, 5.0f);
+
+		collisionInfo.AddContactPoint(localA, localB, collisionNormal, penetration);
+
+		return true;
+	}
+
 	return false;
 }
 
