@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4.h"
+#include "Quaternion.h"
 #include "SimpleFont.h"
 
 namespace NCL {
@@ -27,6 +28,8 @@ namespace NCL {
 
 		static void Print(const std::string& text, const Vector2& pos, const Vector4& colour = Vector4(1, 1, 1, 1));
 		static void DrawLine(const Vector3& startpoint, const Vector3& endpoint, const Vector4& colour = Vector4(1, 1, 1, 1), float time = 0.0f);
+		static void DrawBox(const Vector3& boxCenter, const Vector3& boxSize, const Vector4& colour = Vector4(1, 1, 1, 1), float time = 0.0f);
+		static void DrawBox(const Matrix4& boxMatrix, const Quaternion& boxQuat, const Vector3& boxSize, const Vector4& colour = Vector4(1, 1, 1, 1), float time = 0.0f);
 
 		static void DrawAxisLines(const Matrix4& modelMatrix, float scaleBoost = 1.0f, float time = 0.0f);
 

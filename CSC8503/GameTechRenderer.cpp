@@ -321,7 +321,7 @@ void GameTechRenderer::NewRenderLines() {
 
 	debugLineData.clear();
 
-	int frameLineCount = lines.size() * 2;
+	int frameLineCount = (int)lines.size() * 2;
 
 	SetDebugLineBufferSizes(frameLineCount);
 
