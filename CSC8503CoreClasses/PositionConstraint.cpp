@@ -44,7 +44,7 @@ void PositionConstraint::UpdateConstraint(float dt)
 		if (constraintMass > 0.0f)
 		{
 			float velocityDot = Vector3::Dot(relativeVelocity, offsetDir);		//j . v
-			float biasFactor = 0.05f;
+			float biasFactor = 0.02f;
 			float bias = -(biasFactor / dt) * offset;
 
 			float lambda = -(velocityDot + bias) / constraintMass;

@@ -437,12 +437,12 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 
 void TutorialGame::BridgeConstraintTest()
 {
-	Vector3 cubeSize = Vector3(4, 1, 10);
+	Vector3 cubeSize = Vector3(10, 1, 4);
 
 	float invCubeMass = 5;
 	int numLinks = 10;
-	float maxDistance = 30.0f;
-	float cubeDistance = 20.0f;
+	float maxDistance = 25.0f;
+	float cubeDistance = 15.0f;
 
 	Vector3 startPos = Vector3(200, 200, 200);
 
