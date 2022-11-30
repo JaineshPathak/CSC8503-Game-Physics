@@ -88,6 +88,18 @@ void TutorialGame::UpdateGame(float dt) {
 		world->GetMainCamera()->SetYaw(angles.y);
 	}
 
+	if (cubeLooker != nullptr && selectionObject != nullptr)
+	{
+		Vector3 cubePos = cubeLooker->GetTransform().GetPosition();
+		Vector3 camPos = world->GetMainCamera()->GetPosition();
+
+		Matrix4 temp = Matrix4::BuildViewMatrix(cubePos, selectionObject->GetTransform().GetPosition(), Vector3(0, 1, 0));
+		Matrix4 modelMat = temp.Inverse();
+
+		Quaternion q(modelMat);
+		cubeLooker->GetTransform().SetOrientation(Quaternion::Slerp(cubeLooker->GetTransform().GetOrientation(), q, dt));
+	}
+
 	UpdateKeys();
 
 	if (useGravity) {
@@ -118,7 +130,7 @@ void TutorialGame::UpdateGame(float dt) {
 		}
 	}
 
-	Debug::DrawLine(Vector3(), Vector3(0, 100, 0), Vector4(1, 0, 0, 1));
+	//Debug::DrawLine(Vector3(), Vector3(0, 100, 0), Vector4(1, 0, 0, 1));
 
 	SelectObject();
 	MoveSelectedObject();
@@ -253,7 +265,7 @@ void TutorialGame::InitWorld() {
 	//InitMixedGridWorld(15, 15, 3.5f, 3.5f);
 	//AddSphereToWorld(Vector3(2, 0, 0), 1.0f, 3.5f);
 
-	AddSphereToWorld(Vector3(0, 0, 0), 1.0f, 3.5f);
+	AddSphereToWorld(Vector3(0, 0, 0), 3.0f, 7.5f);
 	AddCubeToWorld(Vector3(15, 0, 0), Vector3(1, 1, 1), 3.5f);
 
 	InitGameExamples();
@@ -273,8 +285,8 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	OBBVolume* volume = new OBBVolume(floorSize);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
 	floor->GetTransform()
+		.SetScale(floorSize)
 		.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0))
-		.SetScale(floorSize * 2)
 		.SetPosition(position);
 
 	PhysicsObject* floorPhys = new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume());
@@ -289,7 +301,7 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	world->AddGameObject(floor);
 
 	//Debug::DrawBox(volume->GetCenter(), volume->GetHalfDimensions(), Debug::WHITE, 1000.0f);
-	Debug::DrawBox(floor->GetTransform().GetMatrix(), floor->GetTransform().GetOrientation(), volume->GetHalfDimensions(), Debug::GREEN, 1000.0f);
+	Debug::DrawBox(floor->GetTransform().GetPosition(), floor->GetTransform().GetOrientation(), volume->GetHalfDimensions(), Debug::GREEN, 1000.0f);
 
 	return floor;
 }
@@ -334,7 +346,7 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass) {
 	GameObject* cube = new GameObject(1, "Cube01");
 
-	AABBVolume* volume = new AABBVolume(dimensions);
+	OBBVolume* volume = new OBBVolume(dimensions);
 	cube->SetBoundingVolume((CollisionVolume*)volume);
 
 	cube->GetTransform()
@@ -425,17 +437,19 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 
 void TutorialGame::BridgeConstraintTest()
 {
-	Vector3 cubeSize = Vector3(4, 2, 8);
+	Vector3 cubeSize = Vector3(4, 1, 10);
 
 	float invCubeMass = 5;
 	int numLinks = 10;
 	float maxDistance = 30.0f;
 	float cubeDistance = 20.0f;
 
-	Vector3 startPos = Vector3(500, 500, 500);
+	Vector3 startPos = Vector3(200, 200, 200);
 
 	GameObject* start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, 0);
+	start->GetRenderObject()->SetColour(Debug::RED);
 	GameObject* end = AddCubeToWorld(startPos + Vector3((numLinks + 2) * cubeDistance, 0, 0), cubeSize, 0);
+	end->GetRenderObject()->SetColour(Debug::GREEN);
 
 	GameObject* previous = start;
 
@@ -447,12 +461,16 @@ void TutorialGame::BridgeConstraintTest()
 		previous = block;
 	}
 
-	//PositionConstraint* constraint = new PositionConstraint(previous, end, maxDistance);
-	//world->AddConstraint(constraint);
+	PositionConstraint* constraint = new PositionConstraint(previous, end, maxDistance);
+	world->AddConstraint(constraint);
 }
 
 void TutorialGame::InitDefaultFloor() {
 	AddFloorToWorld(Vector3(0, -20, 0));
+
+	cubeLooker = AddEnemyToWorld(Vector3(25, 0, 0));
+	cubeLooker->SetLayer(2);
+	cubeLooker->GetRenderObject()->SetColour(Debug::RED);
 }
 
 void TutorialGame::InitGameExamples() {

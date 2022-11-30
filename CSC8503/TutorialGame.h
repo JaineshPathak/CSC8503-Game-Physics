@@ -66,6 +66,7 @@ namespace NCL {
 			float		forceMagnitude;
 
 			GameObject* selectionObject = nullptr;
+			GameObject* cubeLooker = nullptr;
 
 			MeshGeometry*	capsuleMesh = nullptr;
 			MeshGeometry*	cubeMesh	= nullptr;

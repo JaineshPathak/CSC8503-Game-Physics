@@ -350,26 +350,26 @@ bool CollisionDetection::SphereIntersection(const SphereVolume& volumeA, const T
 }
 
 //AABB - Sphere Collision
-bool CollisionDetection::AABBSphereIntersection(const AABBVolume& aabbVolume, const Transform& aabbTransform,
-												const SphereVolume& sphereVolume, const Transform& sphereTransform, 
-												CollisionInfo& collisionInfo) 
+bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const Transform& worldTransformA,
+												const SphereVolume& volumeB, const Transform& worldTransformB, 
+												CollisionInfo& collisionInfo)
 {
-	Vector3 boxSize = aabbVolume.GetHalfDimensions();
-	Vector3 delta = sphereTransform.GetPosition() - aabbTransform.GetPosition();
+	Vector3 boxSize = volumeA.GetHalfDimensions();
+	Vector3 delta = worldTransformB.GetPosition() - worldTransformA.GetPosition();
 
 	Vector3 closestPointOnBox = Maths::Clamp(delta, -boxSize, boxSize);
 
 	Vector3 localPoint = delta - closestPointOnBox;
-	float distance = localPoint.LengthSquared();
+	float distance = localPoint.Length();
 	//Debug::DrawLine(localPoint, localPoint + Vector3(0, 1, 0), Debug::BLACK, 10.0f);
 
-	if (distance < sphereVolume.GetRadius() * sphereVolume.GetRadius())
+	if (distance < volumeB.GetRadius())
 	{
 		Vector3 collisionNormal = localPoint.Normalised();
-		float penetration = (sphereVolume.GetRadius() - distance);
+		float penetration = (volumeB.GetRadius() - distance);
 
 		Vector3 localA = Vector3();
-		Vector3 localB = -collisionNormal * sphereVolume.GetRadius();
+		Vector3 localB = -collisionNormal * volumeB.GetRadius();
 
 		collisionInfo.AddContactPoint(localA, localB, collisionNormal, penetration);
 
@@ -379,36 +379,52 @@ bool CollisionDetection::AABBSphereIntersection(const AABBVolume& aabbVolume, co
 	return false;
 }
 
-bool  CollisionDetection::OBBSphereIntersection(const OBBVolume& OBBVolumeA, const Transform& obbWorldTransform,
-												const SphereVolume& SpherevolumeB, const Transform& sphereWorldTransformB, 
-												CollisionInfo& collisionInfo) 
+bool  CollisionDetection::OBBSphereIntersection(const OBBVolume& volumeA, const Transform& worldTransformA,
+												const SphereVolume& volumeB, const Transform& worldTransformB, 
+												CollisionInfo& collisionInfo)
 {
-	Quaternion orientation = obbWorldTransform.GetOrientation();
-	Vector3 position = obbWorldTransform.GetPosition();
+	Matrix4 boxMat = worldTransformA.GetMatrix();
+	//Debug::DrawAxisLines(boxMat, 3.0f, 1000.0);
+	boxMat.SetPositionVector(Vector3(0, 0, 0));
 
-	Matrix4 obbTransform = Matrix4(orientation);
-	Matrix4 obbInvTransform = Matrix4(orientation.Conjugate());
+	Vector3 boxRight = boxMat * Vector3(1, 0, 0);
+	Vector3 boxUp = boxMat * Vector3(0, 1, 0);
+	Vector3 boxForward = boxMat * Vector3(0, 0, -1);
 
-	Vector3 spherePos = sphereWorldTransformB.GetPosition();
-	Vector3 localSpherePos = obbInvTransform * spherePos;
+	Vector3 u[3] = { boxRight.Normalised(), boxUp.Normalised(), boxForward.Normalised() };
 
-	//AABB - Sphere as usual
-	Vector3 boxSize = OBBVolumeA.GetHalfDimensions();
-	Vector3 delta = localSpherePos - obbWorldTransform.GetPosition();
+	Vector3 boxCenter = worldTransformA.GetPosition();
+	Vector3 boxSize = volumeA.GetHalfDimensions();
 
-	Vector3 closestPointOnBox = Maths::Clamp(delta, -boxSize, boxSize);
+	Vector3 sphereCenter = worldTransformB.GetPosition();
+	
+	//Closest Point
+	Vector3 d = sphereCenter - boxCenter;
+	Vector3 closestPoint = boxCenter;
 
-	Vector3 localPoint = delta - closestPointOnBox;
-	float distance = localPoint.Length();
-	if (distance < SpherevolumeB.GetRadius())
+	for (int i = 0; i < 3; i++)
 	{
-		Vector3 collisionNormal = obbTransform * localPoint.Normalised();
-		float penetration = (SpherevolumeB.GetRadius() - distance);
+		float dist = Vector3::Dot(d, u[i]);
+		if (dist > boxSize[i]) dist = boxSize[i];
+		if (dist < -boxSize[i]) dist = -boxSize[i];
+		
+		closestPoint = closestPoint + (u[i] * dist);
+	}
 
-		Vector3 localA = obbTransform * Vector3();
-		Vector3 localB = obbTransform * -collisionNormal * SpherevolumeB.GetRadius();
+	Vector3 delta = worldTransformB.GetPosition() - worldTransformA.GetPosition();
+	Vector3 localPoint = delta - closestPoint;
 
-		//Debug::DrawLine(spherePos, spherePos + localB + collisionNormal, Debug::CYAN, 5.0f);
+	//Debug::DrawLine(closestPoint, closestPoint + Vector3(0, 1, 0), Debug::MAGENTA, 1000.0f);
+
+	Vector3 v = closestPoint - sphereCenter;
+	float radiusSq = volumeB.GetRadius() * volumeB.GetRadius();
+	if (v.LengthSquared() <= radiusSq)
+	{
+		Vector3 collisionNormal = (sphereCenter - closestPoint).Normalised();
+		float penetration = (volumeB.GetRadius() - v.Length());
+
+		Vector3 localA = Vector3();
+		Vector3 localB = -collisionNormal * volumeB.GetRadius();
 
 		collisionInfo.AddContactPoint(localA, localB, collisionNormal, penetration);
 

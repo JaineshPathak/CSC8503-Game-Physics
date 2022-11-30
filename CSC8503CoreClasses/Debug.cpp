@@ -67,9 +67,9 @@ void NCL::Debug::DrawBox(const Vector3& boxCenter, const Vector3& boxSize, const
 	DrawLine(v3FrontBottomLeft, v3BackBottomLeft, colour, time);
 }
 
-void NCL::Debug::DrawBox(const Matrix4& boxMatrix, const Quaternion& boxQuat, const Vector3& boxSize, const Vector4& colour, float time)
+void NCL::Debug::DrawBox(const Vector3& boxCenter, const Quaternion& boxQuat, const Vector3& boxSize, const Vector4& colour, float time)
 {
-	Vector3 worldPos = boxMatrix.GetPositionVector();
+	Vector3 worldPos = boxCenter;
 
 	Vector3 v3FrontTopLeft = boxQuat * Vector3(worldPos.x - boxSize.x, worldPos.y + boxSize.y, worldPos.z - boxSize.z);
 	Vector3 v3FrontTopRight = boxQuat * Vector3(worldPos.x + boxSize.x, worldPos.y + boxSize.y, worldPos.z - boxSize.z);
