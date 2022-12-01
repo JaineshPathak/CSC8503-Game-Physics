@@ -262,7 +262,7 @@ void TutorialGame::InitWorld() {
 	world->ClearAndErase();
 	physics->Clear();
 
-	//InitMixedGridWorld(15, 15, 3.5f, 3.5f);
+	InitMixedGridWorld(15, 15, 3.5f, 3.5f);
 	//AddSphereToWorld(Vector3(2, 0, 0), 1.0f, 3.5f);
 
 	AddSphereToWorld(Vector3(0, 0, 0), 3.0f, 7.5f);
@@ -285,7 +285,7 @@ GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
 	OBBVolume* volume = new OBBVolume(floorSize);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
 	floor->GetTransform()
-		.SetScale(floorSize)
+		.SetScale(floorSize * 2.0f)
 		.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0))
 		.SetPosition(position);
 

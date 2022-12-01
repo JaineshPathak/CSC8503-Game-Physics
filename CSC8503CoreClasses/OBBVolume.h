@@ -15,7 +15,7 @@ namespace NCL {
 		~OBBVolume() {}
 
 		Maths::Vector3 GetHalfDimensions() const {
-			return halfSizes * 0.5f;
+			return halfSizes;
 		}
 
 		Maths::Vector3 GetCenter() const { return center; }

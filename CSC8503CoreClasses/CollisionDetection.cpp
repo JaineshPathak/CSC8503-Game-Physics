@@ -330,19 +330,18 @@ bool CollisionDetection::AABBIntersection(const AABBVolume& volumeA, const Trans
 bool CollisionDetection::SphereIntersection(const SphereVolume& volumeA, const Transform& worldTransformA,
 	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo)
 {
-	float radiusSum = volumeA.GetRadius() + volumeB.GetRadius();
-	Vector3 distanceV = worldTransformA.GetPosition() - worldTransformB.GetPosition();
-	float distance = distanceV.LengthSquared();
+	float radii = volumeA.GetRadius() + volumeB.GetRadius();
+	Vector3 delta = worldTransformB.GetPosition() - worldTransformA.GetPosition();
+	float deltaLength = delta.Length();
 
-	if (distance < (radiusSum * radiusSum))
+	if (deltaLength < radii)
 	{
-		float penetration = radiusSum - distance;
-		Vector3 normal = distanceV.Normalised();
+		float penetration = (radii - deltaLength);
+		Vector3 normal = delta.Normalised();
 		Vector3 localA = normal * volumeA.GetRadius();
 		Vector3 localB = -normal * volumeB.GetRadius();
 
 		collisionInfo.AddContactPoint(localA, localB, normal, penetration);
-
 		return true;
 	}
 
