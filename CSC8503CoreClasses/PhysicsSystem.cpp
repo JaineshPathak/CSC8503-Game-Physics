@@ -12,7 +12,8 @@
 using namespace NCL;
 using namespace CSC8503;
 
-PhysicsSystem::PhysicsSystem(GameWorld& g) : gameWorld(g)	{
+PhysicsSystem::PhysicsSystem(GameWorld& g) : gameWorld(g)	
+{
 	applyGravity	= false;
 	useBroadPhase	= true;	
 	dTOffset		= 0.0f;
@@ -330,7 +331,7 @@ compare the collisions that we absolutely need to.
 void PhysicsSystem::BroadPhase() 
 {
 	broadphaseCollisions.clear();
-	QuadTree<GameObject*> tree(Vector2(1024, 1024), 7, 6);
+	qTree = QuadTree<GameObject*>(Vector2(256, 256), 7, 6);
 
 	std::vector<GameObject*>::const_iterator first;
 	std::vector<GameObject*>::const_iterator last;
@@ -343,10 +344,10 @@ void PhysicsSystem::BroadPhase()
 			continue;
 
 		Vector3 pos = (*i)->GetTransform().GetPosition();
-		tree.Insert(*i, pos, halfSizes);
+		qTree.Insert(*i, pos, halfSizes);
 	}
 
-	tree.OperateOnContents([&](std::list<QuadTreeEntry<GameObject*>>& data)
+	qTree.OperateOnContents([&](std::list<QuadTreeEntry<GameObject*>>& data)
 	{
 		CollisionDetection::CollisionInfo info;
 		for (auto i = data.begin(); i != data.end(); ++i)
@@ -359,6 +360,8 @@ void PhysicsSystem::BroadPhase()
 			}
 		}
 	});
+
+	//qTree.DebugDraw();
 }
 
 /*
@@ -376,6 +379,8 @@ void PhysicsSystem::NarrowPhase()
 			info.framesLeft = numCollisionFrames;
 			ImpulseResolveCollision(*info.a, *info.b, info.point);
 			allCollisions.insert(info);
+
+			//qTree.DebugDraw();
 		}
 	}
 }

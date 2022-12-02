@@ -54,6 +54,8 @@ namespace NCL {
 			std::vector<CollisionDetection::CollisionInfo> broadphaseCollisionsVec;
 			bool useBroadPhase		= true;
 			int numCollisionFrames	= 5;
+
+			QuadTree<GameObject*> qTree;
 		};
 	}
 }

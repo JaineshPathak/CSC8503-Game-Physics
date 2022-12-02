@@ -445,9 +445,149 @@ bool CollisionDetection::SphereCapsuleIntersection(
 	return false;
 }
 
+//https://github.com/gszauer/GamePhysicsCookbook/blob/master/Code/Geometry3D.cpp
 bool CollisionDetection::OBBIntersection(const OBBVolume& volumeA, const Transform& worldTransformA,
-	const OBBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
-	return false;
+										const OBBVolume& volumeB, const Transform& worldTransformB, 
+										CollisionInfo& collisionInfo) 
+{
+	float ra, rb;
+	Matrix3 R, AbsR;
+
+	//------------------------------------------------------------------------------
+	//Get Local Axis of OBB A
+	Matrix4 boxAMat = worldTransformA.GetMatrix();
+	boxAMat.SetPositionVector(Vector3(0, 0, 0));
+
+	Vector3 boxARight = boxAMat * Vector3(1, 0, 0);
+	Vector3 boxAUp = boxAMat * Vector3(0, 1, 0);
+	Vector3 boxAForward = boxAMat * Vector3(0, 0, -1);
+
+	Vector3 uA[3] = { boxARight.Normalised(), boxAUp.Normalised(), boxAForward.Normalised() };
+
+	Vector3 boxAExtents = volumeA.GetHalfDimensions();
+	//------------------------------------------------------------------------------
+
+	//------------------------------------------------------------------------------
+	//Get Local Axis of OBB B
+	Matrix4 boxBMat = worldTransformB.GetMatrix();
+	boxBMat.SetPositionVector(Vector3(0, 0, 0));
+
+	Vector3 boxBRight = boxBMat * Vector3(1, 0, 0);
+	Vector3 boxBUp = boxBMat * Vector3(0, 1, 0);
+	Vector3 boxBForward = boxBMat * Vector3(0, 0, -1);
+
+	Vector3 uB[3] = { boxBRight.Normalised(), boxBUp.Normalised(), boxBForward.Normalised() };
+
+	Vector3 boxBExtents = volumeB.GetHalfDimensions();
+	//------------------------------------------------------------------------------
+
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			R.array[i][j] = Vector3::Dot(uA[i], uB[j]);
+
+	Vector3 t = worldTransformB.GetPosition() - worldTransformA.GetPosition();
+	t = Vector3(Vector3::Dot(t, uA[0]), Vector3::Dot(t, uA[1]), Vector3::Dot(t, uA[2]));
+
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			AbsR.array[i][j] = abs(R.array[i][j]) + 0.01f;
+
+	//Test Axes L = A0, L = A1, L = A2
+	for (int i = 0; i < 3; i++)
+	{
+		ra = boxAExtents[i];
+		rb = boxBExtents[0] * AbsR.array[i][0] +
+			 boxBExtents[1] * AbsR.array[i][1] +
+			 boxBExtents[2] * AbsR.array[i][2];
+
+		if (abs(t[i]) > ra + rb)
+			return false;
+	}
+
+	//Test Axes L = B0, L = B1, L = B2
+	for (int i = 0; i < 3; i++)
+	{
+		ra = boxAExtents[0] * AbsR.array[0][i] + 
+			 boxAExtents[1] * AbsR.array[1][i] + 
+			 boxAExtents[2] * AbsR.array[2][i];
+		rb = boxBExtents[i];
+
+		if (abs(t[0] * R.array[0][i] + t[1] * R.array[1][i] + t[2] * R.array[2][i]) > ra + rb)
+			return false;
+	}
+
+
+
+	//Test Axis L = A0 x B0
+	ra = boxAExtents[1] * AbsR.array[2][0] + boxAExtents[2] * AbsR.array[1][0];
+	rb = boxBExtents[1] * AbsR.array[0][2] + boxBExtents[2] * AbsR.array[0][1];
+	if (abs(t[2] * R.array[1][0] - t[1] * R.array[2][0]) > ra + rb)
+		return false;
+
+	//Test Axis L = A0 x B1
+	ra = boxAExtents[1] * AbsR.array[2][1] + boxAExtents[2] * AbsR.array[1][1];
+	rb = boxBExtents[0] * AbsR.array[0][2] + boxBExtents[2] * AbsR.array[0][0];
+	if (abs(t[2] * R.array[1][1] - t[1] * R.array[2][1]) > ra + rb)
+		return false;
+
+	//Test Axis L = A0 x B2
+	ra = boxAExtents[1] * AbsR.array[2][2] + boxAExtents[2] * AbsR.array[1][2];
+	rb = boxBExtents[0] * AbsR.array[0][1] + boxBExtents[1] * AbsR.array[0][0];
+	if (abs(t[2] * R.array[1][2] - t[1] * R.array[2][2]) > ra + rb)
+		return false;
+
+
+
+	//Test Axis L = A1 x B0
+	ra = boxAExtents[0] * AbsR.array[2][0] + boxAExtents[2] * AbsR.array[0][0];
+	rb = boxBExtents[1] * AbsR.array[1][2] + boxBExtents[2] * AbsR.array[1][1];
+	if (abs(t[0] * R.array[2][0] - t[2] * R.array[0][0]) > ra + rb)
+		return false;
+
+	//Test Axis L = A1 x B1
+	ra = boxAExtents[0] * AbsR.array[2][1] + boxAExtents[2] * AbsR.array[0][1];
+	rb = boxBExtents[0] * AbsR.array[1][2] + boxBExtents[2] * AbsR.array[1][0];
+	if (abs(t[0] * R.array[2][1] - t[2] * R.array[0][1]) > ra + rb)
+		return false;
+
+	//Test Axis L = A1 x B2
+	ra = boxAExtents[0] * AbsR.array[2][2] + boxAExtents[2] * AbsR.array[0][2];
+	rb = boxBExtents[0] * AbsR.array[1][1] + boxBExtents[1] * AbsR.array[1][0];
+	if (abs(t[0] * R.array[2][2] - t[2] * R.array[0][2]) > ra + rb)
+		return false;
+
+
+
+
+	//Test Axis L = A2 x B0
+	ra = boxAExtents[0] * AbsR.array[1][0] + boxAExtents[1] * AbsR.array[0][0];
+	rb = boxBExtents[1] * AbsR.array[2][2] + boxBExtents[2] * AbsR.array[2][1];
+	if (abs(t[1] * R.array[0][0] - t[0] * R.array[1][0]) > ra + rb)
+		return false;
+
+	//Test Axis L = A2 x B1
+	ra = boxAExtents[0] * AbsR.array[1][1] + boxAExtents[1] * AbsR.array[0][1];
+	rb = boxBExtents[0] * AbsR.array[2][2] + boxBExtents[2] * AbsR.array[2][0];
+	if (abs(t[1] * R.array[0][1] - t[0] * R.array[1][1]) > ra + rb)
+		return false;
+
+	//Test Axis L = A2 x B2
+	ra = boxAExtents[0] * AbsR.array[1][2] + boxAExtents[1] * AbsR.array[0][2];
+	rb = boxBExtents[0] * AbsR.array[2][1] + boxBExtents[1] * AbsR.array[2][0];
+	if (abs(t[1] * R.array[0][2] - t[0] * R.array[1][2]) > ra + rb)
+		return false;
+
+	//Debug::DrawLine(t, t + Vector3(0, 1, 0), Debug::MAGENTA, 1000.0f);
+	RayCollision rayCollision;
+	Ray ray = Ray(worldTransformA.GetPosition(), worldTransformB.GetPosition() - worldTransformA.GetPosition());
+	if (RayOBBIntersection(ray, worldTransformB, volumeB, rayCollision))
+	{
+		//Debug::DrawLine(rayCollision.collidedAt, rayCollision.collidedAt + rayCollision.collidedNormal, Debug::MAGENTA, 1000.0f);
+		collisionInfo.AddContactPoint(Vector3(), rayCollision.collidedAt, -rayCollision.collidedNormal, rayCollision.rayDistance);
+	}
+
+	//std::cout << "There is an OBB-OBB collision\n";
+	return true;
 }
 
 Matrix4 GenerateInverseView(const Camera &c) {
