@@ -275,7 +275,19 @@ Vector3 Matrix3::operator*(const Vector3 &v) const {
 
 float* Matrix3::AsArray()
 {
-	static float* arr = new float[9];
+	float* arr = new float[9];
+
+	arr[0] = array[0][0];
+	arr[1] = array[0][1];
+	arr[2] = array[0][2];
+
+	arr[3] = array[1][0];
+	arr[4] = array[1][1];
+	arr[5] = array[1][2];
+
+	arr[6] = array[2][0];
+	arr[7] = array[2][1];
+	arr[8] = array[2][2];
 
 	return arr;
 }

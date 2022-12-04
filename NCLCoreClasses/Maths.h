@@ -9,8 +9,10 @@ https://research.ncl.ac.uk/game/
 #pragma once
 #include <algorithm>
 
-namespace NCL {
-	namespace Maths {
+namespace NCL 
+{
+	namespace Maths 
+	{
 		class Vector2;
 		class Vector3;
 
@@ -117,6 +119,24 @@ namespace NCL {
 				return 1.0f;
 
 			return 0.0f;
+		}
+
+		inline bool AlmostEqualRelativeAndAbs(float A, float B, float maxDiff, float maxRelDiff = FLT_EPSILON) 
+		{
+			// Check if the numbers are really close -- needed when comparing numbers near zero.
+			float diff = fabs(A - B);
+			if (diff <= maxDiff) {
+				return true;
+			}
+
+			A = fabs(A);
+			B = fabs(B);
+			float largest = (B > A) ? B : A;
+
+			if (diff <= largest * maxRelDiff) {
+				return true;
+			}
+			return false;
 		}
 	}
 }

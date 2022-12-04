@@ -18,6 +18,22 @@ namespace NCL {
 	class CollisionDetection
 	{
 	public:
+		struct Line 
+		{
+			Vector3 start;
+			Vector3 end;
+
+			inline Line() {}
+			inline Line(const Vector3& s, const Vector3& e) :
+				start(s), end(e) { }
+		} line;
+
+		struct Interval
+		{
+			float min;
+			float max;
+		} interval;
+
 		struct ContactPoint {
 			Vector3 localA;
 			Vector3 localB;
@@ -101,9 +117,28 @@ namespace NCL {
 		static bool AABBSphereIntersection(	const AABBVolume& volumeA	 , const Transform& worldTransformA,
 										const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo);
 
-		static bool OBBIntersection(	const OBBVolume& volumeA, const Transform& worldTransformA,
-										const OBBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo);
+		//-------------------------------------------------------------------------------------
+		static bool OBBIntersection(const OBBVolume& volumeA, const Transform& worldTransformA,
+									const OBBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo);
+		static bool OBBIntersection2(const OBBVolume& volumeA, const Transform& worldTransformA,
+									const OBBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo);
 
+		static Interval GetInterval(const OBBVolume& obbVolume, const Transform& obbTransform, const Vector3& axis);
+		static float PenetrationDepth(const OBBVolume& volumeA, const Transform& worldTransformA,
+									const OBBVolume& volumeB, const Transform& worldTransformB,
+									const Vector3& axis, bool* outShouldFlip);
+		static ContactPoint FindOBBCollisionData(const OBBVolume& volumeA, const Transform& worldTransformA,
+											const OBBVolume& volumeB, const Transform& worldTransformB);
+		static std::vector<Vector3> GetVertices(const OBBVolume& obbVolume, const Transform& obbTransform);
+		static std::vector<Line> GetEdges(const OBBVolume& obbVolume, const Transform& obbTransform);
+		static std::vector<Vector3> ClipEdgesToOBB(const std::vector<Line>& edges, const OBBVolume& obbVolume, const Transform& obbTransform);
+		static bool PointInOBB(const Vector3& point, const OBBVolume& obbVolume, const Transform& obbTransform);
+		static std::vector<Plane> GetPlanes(const OBBVolume& obbVolume, const Transform& obbTransform);
+		static bool ClipToPlane(const Plane& plane, const Line& line, Vector3* outPoint);
+		static bool OverlapOnAxis(const OBBVolume& volumeA, const Transform& worldTransformA,
+						   const OBBVolume& volumeB, const Transform& worldTransformB, 
+						   const Vector3& axis);
+		//-------------------------------------------------------------------------------------
 
 		static bool OBBSphereIntersection(const OBBVolume& volumeA, const Transform& worldTransformA,
 			const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo);
