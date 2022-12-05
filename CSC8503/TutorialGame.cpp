@@ -68,7 +68,8 @@ TutorialGame::~TutorialGame()	{
 	delete world;
 }
 
-void TutorialGame::UpdateGame(float dt) {
+void TutorialGame::UpdateGame(float dt) 
+{
 	if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}
@@ -91,10 +92,10 @@ void TutorialGame::UpdateGame(float dt) {
 	if (cubeLooker != nullptr && selectionObject != nullptr)
 	{
 		Vector3 cubePos = cubeLooker->GetTransform().GetPosition();
-		Vector3 camPos = world->GetMainCamera()->GetPosition();
+		//Vector3 camPos = world->GetMainCamera()->GetPosition();
 
 		Matrix4 temp = Matrix4::BuildViewMatrix(cubePos, selectionObject->GetTransform().GetPosition(), Vector3(0, 1, 0));
-		Matrix4 modelMat = temp.Inverse();
+		Matrix4 modelMat = temp.Inverse();		//Gives World Position
 
 		Quaternion q(modelMat);
 		cubeLooker->GetTransform().SetOrientation(Quaternion::Slerp(cubeLooker->GetTransform().GetOrientation(), q, dt));
@@ -131,6 +132,9 @@ void TutorialGame::UpdateGame(float dt) {
 	}
 
 	//Debug::DrawLine(Vector3(), Vector3(0, 100, 0), Vector4(1, 0, 0, 1));
+
+	if (testStateObject)
+		testStateObject->Update(dt);
 
 	SelectObject();
 	MoveSelectedObject();
@@ -264,6 +268,7 @@ void TutorialGame::InitWorld() {
 
 	//InitMixedGridWorld(15, 15, 3.5f, 3.5f);
 	//AddSphereToWorld(Vector3(2, 0, 0), 1.0f, 3.5f);
+	testStateObject = AddStateObjectToWorld(Vector3(0, 25, 0));
 
 	AddSphereToWorld(Vector3(0, 0, 15), 1.0f, 7.5f);
 	AddCubeToWorld(Vector3(15, 0, 0), Vector3(1, 1, 1), 3.5f);
@@ -272,6 +277,7 @@ void TutorialGame::InitWorld() {
 	InitGameExamples();
 	InitDefaultFloor();
 	BridgeConstraintTest();
+
 }
 
 /*
@@ -436,13 +442,34 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	return apple;
 }
 
+StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position)
+{
+	StateGameObject* stateObj = new StateGameObject();
+
+	SphereVolume* volume = new SphereVolume(4.0f);
+	stateObj->SetBoundingVolume((CollisionVolume*)volume);
+	stateObj->GetTransform()
+		.SetScale(Vector3(4, 4, 4))
+		.SetPosition(position);
+
+	stateObj->SetRenderObject(new RenderObject(&stateObj->GetTransform(), sphereMesh, basicTex, basicShader));
+	stateObj->SetPhysicsObject(new PhysicsObject(&stateObj->GetTransform(), stateObj->GetBoundingVolume()));
+
+	stateObj->GetPhysicsObject()->SetInverseMass(1.0f);
+	stateObj->GetPhysicsObject()->InitSphereInertia();
+
+	world->AddGameObject(stateObj);
+
+	return stateObj;
+}
+
 void TutorialGame::BridgeConstraintTest()
 {
 	Vector3 cubeSize = Vector3(10, 1, 4);
 
-	float invCubeMass = 5;
+	float invCubeMass = 2;
 	int numLinks = 10;
-	float maxDistance = 25.0f;
+	float maxDistance = 15.0f;
 	float cubeDistance = 15.0f;
 
 	Vector3 startPos = Vector3(200, 200, 200);
