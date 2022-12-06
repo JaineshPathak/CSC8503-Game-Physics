@@ -134,12 +134,19 @@ int main()
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
+<<<<<<< HEAD
 	//CWGoatGame* g = new CWGoatGame();
 	TutorialGame* g = new TutorialGame();
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 
 	//TestStateMachine();
 	TestPathfinding();
+=======
+	CWGoatGame* g = new CWGoatGame();
+	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
+
+	//TestStateMachine();
+>>>>>>> 20984fd7950f1e1e448c59dab72028500cb7a531
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) 
 	{
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
@@ -161,8 +168,11 @@ int main()
 		w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
 
 		g->UpdateGame(dt);
+<<<<<<< HEAD
 
 		DisplayPathfinding();
+=======
+>>>>>>> 20984fd7950f1e1e448c59dab72028500cb7a531
 	}
 	Window::DestroyGameWindow();
 }
