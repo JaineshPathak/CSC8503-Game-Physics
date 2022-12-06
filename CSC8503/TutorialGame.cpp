@@ -772,6 +772,21 @@ void NCL::CSC8503::CWGoatGame::InitBuildings()
 	AddBuilding(Vector3(-300.0f, 2.5f, 300.0f), Vector3(16.0f, 10.0f, 16.0f), Vector3(0, 0.0f, 0), 0, highRise18, conceptTex);
 	AddBuilding(Vector3(-300.0f, 2.5f, 180.0f), Vector3(16.0f, 15.0f, 16.0f), Vector3(0, 0.0f, 0), 0, highRise9, conceptTex);
 	AddBuilding(Vector3(-300.0f, 2.5f, -200.0f), Vector3(18.0f, 18.0f, 18.0f), Vector3(0, 0.0f, 0), 0, highRise13, conceptTex);
+
+	//Petrol Pump
+	AddCube(Vector3(0.0, 15.0f, -300.0f), Vector3(64.0f, 24.0f, 32.0f), Vector3(0, 0, 0), 0, Debug::WHITE, "PumpBuildingBase", whiteTex);
+	AddCube(Vector3(0.0, 40.0f, -300.0f), Vector3(75.0f, 2.5f, 40.0f), Vector3(0, 0, 0), 0, Debug::RED, "PumpBuildingRoof", whiteTex);
+
+	AddCube(Vector3(0.0, 4.5f, -200.0f), Vector3(40.0f, 1.0f, 15.0f), Vector3(0, 0, 0), 0, Debug::WHITE, "PumpLBase", whiteTex);
+	AddCube(Vector3(0.0, 4.5f, -100.0f), Vector3(40.0f, 1.0f, 15.0f), Vector3(0, 0, 0), 0, Debug::WHITE, "PumpRBase", whiteTex);
+
+	AddCube(Vector3(30.0, 26.0f, -200.0f), Vector3(3.0f, 24.0f, 3.0f), Vector3(0, 0, 0), 0, Debug::WHITE, "PumpL_PillarL", whiteTex);
+	AddCube(Vector3(-30.0, 26.0f, -200.0f), Vector3(3.0f, 24.0f, 3.0f), Vector3(0, 0, 0), 0, Debug::WHITE, "PumpL_PillarR", whiteTex);
+
+	AddCube(Vector3(30.0, 26.0f, -100.0f), Vector3(3.0f, 24.0f, 3.0f), Vector3(0, 0, 0), 0, Debug::WHITE, "PumpR_PillarL", whiteTex);
+	AddCube(Vector3(-30.0, 26.0f, -100.0f), Vector3(3.0f, 24.0f, 3.0f), Vector3(0, 0, 0), 0, Debug::WHITE, "PumpR_PillarR", whiteTex);
+
+	AddCube(Vector3(0.0, 50.0f, -150.0f), Vector3(40.0f, 2.5f, 75.0f), Vector3(0, 0, 0), 0, Debug::RED, "PumpRoof", whiteTex);
 }
 
 void NCL::CSC8503::CWGoatGame::AddCube(const Vector3& cubePos, const Vector3& cubeSize, const Vector3& cubeRot, const float& cubeMass, const Vector4& cubeColour, const std::string& cubeName, TextureBase* cubeTex)
