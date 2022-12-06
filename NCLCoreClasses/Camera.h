@@ -61,6 +61,12 @@ namespace NCL {
 			this->defaultSpeed = defaultSpeed;
 		}
 
+		Camera& SetCamType(CameraType type)
+		{
+			camType = type;
+			return *this;
+		}
+
 		~Camera(void) = default;
 
 		void UpdateCamera(float dt);
@@ -84,6 +90,26 @@ namespace NCL {
 		
 		Camera& SetFarPlane(float val) {
 			farPlane = val;
+			return *this;
+		}
+
+		Camera& SetLeft(float val) {
+			left = val;
+			return *this;
+		}
+
+		Camera& SetRight(float val) {
+			right = val;
+			return *this;
+		}
+
+		Camera& SetTop(float val) {
+			top = val;
+			return *this;
+		}
+
+		Camera& SetBottom(float val) {
+			bottom = val;
 			return *this;
 		}
 

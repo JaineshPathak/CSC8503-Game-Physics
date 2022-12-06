@@ -21,11 +21,12 @@ NavigationGrid::NavigationGrid()	{
 	allNodes	= nullptr;
 }
 
-NavigationGrid::NavigationGrid(const std::string&filename) : NavigationGrid() {
+NavigationGrid::NavigationGrid(const std::string&filename) : NavigationGrid() 
+{
 
-	std::ofstream f(Assets::DATADIR + filename);
+	/*std::ofstream f(Assets::DATADIR + filename);
 	f << "hello!" << std::endl;
-	f.close();
+	f.close();*/
 
 
 
@@ -78,6 +79,64 @@ NavigationGrid::NavigationGrid(const std::string&filename) : NavigationGrid() {
 	}
 }
 
+NavigationGrid::NavigationGrid(const std::string& filename, int offsetX, int offsetZ) : NavigationGrid()
+{
+
+	/*std::ofstream f(Assets::DATADIR + filename);
+	f << "hello!" << std::endl;
+	f.close();*/
+
+
+
+	std::ifstream infile(Assets::DATADIR + filename);
+
+	infile >> nodeSize;
+	infile >> gridWidth;
+	infile >> gridHeight;
+
+	allNodes = new GridNode[gridWidth * gridHeight];
+
+	for (int y = 0; y < gridHeight; ++y) {
+		for (int x = 0; x < gridWidth; ++x) {
+			GridNode& n = allNodes[(gridWidth * y) + x];
+			char type = 0;
+			infile >> type;
+			n.type = type;
+			n.position = Vector3((float)(x * nodeSize) + (offsetX + (nodeSize * 0.5f)), 0, (float)(y * nodeSize) + (offsetZ + (nodeSize * 0.5f)));
+		}
+	}
+
+	//now to build the connectivity between the nodes
+	for (int y = 0; y < gridHeight; ++y) {
+		for (int x = 0; x < gridWidth; ++x) {
+			GridNode& n = allNodes[(gridWidth * y) + x];
+
+			if (y > 0) { //get the above node
+				n.connected[0] = &allNodes[(gridWidth * (y - 1)) + x];
+			}
+			if (y < gridHeight - 1) { //get the below node
+				n.connected[1] = &allNodes[(gridWidth * (y + 1)) + x];
+			}
+			if (x > 0) { //get left node
+				n.connected[2] = &allNodes[(gridWidth * (y)) + (x - 1)];
+			}
+			if (x < gridWidth - 1) { //get right node
+				n.connected[3] = &allNodes[(gridWidth * (y)) + (x + 1)];
+			}
+			for (int i = 0; i < 4; ++i) {
+				if (n.connected[i]) {
+					if (n.connected[i]->type == '.') {
+						n.costs[i] = 1;
+					}
+					if (n.connected[i]->type == 'x') {
+						n.connected[i] = nullptr; //actually a wall, disconnect!
+					}
+				}
+			}
+		}
+	}
+}
+
 NavigationGrid::~NavigationGrid()	{
 	delete[] allNodes;
 }
@@ -114,10 +173,12 @@ bool NavigationGrid::FindPath(const Vector3& from, const Vector3& to, Navigation
 
 	GridNode* currentBestNode = nullptr;
 
-	while (!openList.empty()) {
+	while (!openList.empty()) 
+	{
 		currentBestNode = RemoveBestNode(openList);
 
-		if (currentBestNode == endNode) {			//we've found the path!
+		if (currentBestNode == endNode) 
+		{			//we've found the path!
 			GridNode* node = endNode;
 			while (node != nullptr) {
 				outPath.PushWaypoint(node->position);
@@ -125,8 +186,10 @@ bool NavigationGrid::FindPath(const Vector3& from, const Vector3& to, Navigation
 			}
 			return true;
 		}
-		else {
-			for (int i = 0; i < 4; ++i) {
+		else 
+		{
+			for (int i = 0; i < 4; ++i) 
+			{
 				GridNode* neighbour = currentBestNode->connected[i];
 				if (!neighbour) { //might not be connected...
 					continue;
@@ -157,7 +220,8 @@ bool NavigationGrid::FindPath(const Vector3& from, const Vector3& to, Navigation
 	return false; //open list emptied out with no path!
 }
 
-bool NavigationGrid::NodeInList(GridNode* n, std::vector<GridNode*>& list) const {
+bool NavigationGrid::NodeInList(GridNode* n, std::vector<GridNode*>& list) const 
+{
 	std::vector<GridNode*>::iterator i = std::find(list.begin(), list.end(), n);
 	return i == list.end() ? false : true;
 }

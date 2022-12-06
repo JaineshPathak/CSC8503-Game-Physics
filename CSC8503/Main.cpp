@@ -31,10 +31,42 @@ using namespace CSC8503;
 #include <thread>
 #include <sstream>
 
-void TestPathfinding() {
+std::vector<Vector3> testNodes;
+void TestPathfinding() 
+{
+	NavigationGrid grid("TestGrid1.txt", -200, -200);
+	NavigationPath outPath;
+
+	for (int i = 0; i < grid.GetWidth() * grid.GetHeight(); i++)
+	{
+		GridNode& node = grid.GetNodesList()[i];
+		Vector4 nodeColor = node.type == '.' ? Debug::WHITE : Debug::BLACK;
+		Debug::DrawBox(node.position - Vector3(0, 2.0f, 0), Vector3(grid.GetNodeSize() * 0.5f, 0, grid.GetNodeSize() * 0.5f), nodeColor, 1000.0f);
+		Debug::DrawLine(node.position, node.position + Vector3(0, 3.0f, 0), Debug::WHITE, 1000.0f);
+	}
+
+	Vector3 startPos(80, 0, 10);
+	Vector3 endPos(80, 0, 80);
+
+	Debug::DrawBox(startPos, Vector3(1, 1, 1), Debug::RED, 1000.0f);
+	Debug::DrawBox(endPos, Vector3(1, 1, 1), Debug::BLUE, 1000.0f);
+
+	bool found = grid.FindPath(startPos, endPos, outPath);
+
+	Vector3 pos;
+	while (outPath.PopWaypoint(pos))
+		testNodes.push_back(pos);
 }
 
-void DisplayPathfinding() {
+void DisplayPathfinding() 
+{
+	for (int i = 1; i < testNodes.size(); ++i)
+	{
+		Vector3 a = testNodes[i - 1];
+		Vector3 b = testNodes[i];
+
+		Debug::DrawLine(a, b, Vector4(0, 1, 0, 1));
+	}
 }
 
 void TestStateMachine()
@@ -91,8 +123,9 @@ This time, we've added some extra functionality to the window class - we can
 hide or show the 
 
 */
-int main() {
-	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720);
+int main() 
+{
+	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720, false);
 
 	if (!w->HasInitialised()) {
 		return -1;
@@ -101,10 +134,12 @@ int main() {
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
+	//CWGoatGame* g = new CWGoatGame();
 	TutorialGame* g = new TutorialGame();
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 
-	TestStateMachine();
+	//TestStateMachine();
+	TestPathfinding();
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) 
 	{
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
@@ -117,7 +152,7 @@ int main() {
 		}
 		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::NEXT)) {
 			w->ShowConsole(false);
-		}
+		} 
 
 		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::T)) {
 			w->SetWindowPosition(0, 0);
@@ -127,7 +162,7 @@ int main() {
 
 		g->UpdateGame(dt);
 
-		//TestStateMachine();
+		DisplayPathfinding();
 	}
 	Window::DestroyGameWindow();
 }
