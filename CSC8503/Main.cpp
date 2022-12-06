@@ -101,10 +101,10 @@ int main() {
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
-	TutorialGame* g = new TutorialGame();
+	CWGoatGame* g = new CWGoatGame();
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 
-	TestStateMachine();
+	//TestStateMachine();
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) 
 	{
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
@@ -126,8 +126,6 @@ int main() {
 		w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
 
 		g->UpdateGame(dt);
-
-		//TestStateMachine();
 	}
 	Window::DestroyGameWindow();
 }
