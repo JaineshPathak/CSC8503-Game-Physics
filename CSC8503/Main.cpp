@@ -13,6 +13,7 @@
 #include "NavigationMesh.h"
 
 #include "TutorialGame.h"
+#include "CWGoatGame.h"
 #include "NetworkedGame.h"
 
 #include "PushdownMachine.h"

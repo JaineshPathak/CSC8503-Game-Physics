@@ -32,6 +32,11 @@ namespace NCL {
 				return mainCamera;
 			}
 
+			void SetMainCamera(Camera* newCamera)
+			{
+				mainCamera = newCamera;
+			}
+
 			void ShuffleConstraints(bool state) {
 				shuffleConstraints = state;
 			}

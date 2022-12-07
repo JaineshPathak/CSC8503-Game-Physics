@@ -9,7 +9,10 @@ set(Header_Files
     "NetworkPlayer.h"
     "StateGameObject.h"
     "TutorialGame.h"
-    "TESTCLASS.h"
+    "CWGoatGame.h"
+    "CWLevelManager.h"
+    "CWGoatPlayer.h"
+    "CWFollowCamera.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
@@ -20,7 +23,10 @@ set(Source_Files
     "NetworkPlayer.cpp"
     "StateGameObject.cpp"
     "TutorialGame.cpp"
-    "TESTCLASS.cpp"
+    "CWGoatGame.cpp"
+    "CWLevelManager.cpp"
+    "CWGoatPlayer.cpp"
+    "CWFollowCamera.cpp"
 )
 
 if(USE_VULKAN)
