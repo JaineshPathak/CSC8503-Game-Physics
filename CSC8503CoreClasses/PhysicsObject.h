@@ -58,6 +58,12 @@ namespace NCL {
 				angularVelocity = v;
 			}
 
+			float GetLinearDamping() const { return damping; }
+			void SetLinearDamping(float d) { damping = d; }
+
+			float GetGravityMultiplier() const { return gravityMultiplier; }
+			void SetGravityMultiplier(float g) { gravityMultiplier = g; }
+
 			float GetRestitution() const { return restitution; }
 			void SetRestitution(float r) { restitution = r; }
 
@@ -84,6 +90,8 @@ namespace NCL {
 			float friction;
 
 			float restitution = 0.6f;
+			float damping = 0.8f;
+			float gravityMultiplier = 1.0f;
 
 			//linear stuff
 			Vector3 linearVelocity;

@@ -331,7 +331,7 @@ compare the collisions that we absolutely need to.
 void PhysicsSystem::BroadPhase() 
 {
 	broadphaseCollisions.clear();
-	qTree = QuadTree<GameObject*>(Vector2(256, 256), 7, 6);
+	qTree = QuadTree<GameObject*>(Vector2(768, 768), 7, 6);
 
 	std::vector<GameObject*>::const_iterator first;
 	std::vector<GameObject*>::const_iterator last;
@@ -413,7 +413,7 @@ void PhysicsSystem::IntegrateAccel(float dt)
 		Vector3 accel = force * inverseMass;
 
 		if (applyGravity && object->GetGravityStatus() && inverseMass > 0)
-			accel += gravity;
+			accel += gravity * object->GetGravityMultiplier();
 
 		linearVel += accel * dt;
 		object->SetLinearVelocity(linearVel);
@@ -459,7 +459,7 @@ void PhysicsSystem::IntegrateVelocity(float dt)
 		transform.SetPosition(position);
 
 		//Linear Damp
-		linearVel = linearVel * frameLinearDamping;
+		linearVel = linearVel * (1.0f - (object->GetLinearDamping() * dt));
 		object->SetLinearVelocity(linearVel);
 
 		//Orientation/Angular
