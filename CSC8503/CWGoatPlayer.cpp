@@ -46,7 +46,7 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 
 	linearMovement.y = 0.0f;
 
-	if (linearMovement.Length() > 0.1f)
+	if (linearMovement.Length() >= 0.1f)
 	{
 		float targetAngle = atan2(-linearMovement.x, -linearMovement.z);
 		targetAngle = RadiansToDegrees(targetAngle) + world.GetMainCamera()->GetYaw();
