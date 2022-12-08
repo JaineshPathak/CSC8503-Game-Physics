@@ -26,8 +26,28 @@ NCL::CSC8503::CWGoatGame::CWGoatGame()
 	cameraFollow = new CWFollowCamera(player->GetTransform());
 	world->SetMainCamera(cameraFollow);
 
+	std::vector<Vector3> testNodes;
 	navGrid = new NavigationGrid("CWNavGrid.txt", -512, -512);
 	navGrid->DebugDraw();
+	Vector3 startPos(0, 2.5, 0);
+	Vector3 endPos(0, 2.5, 256);
+	NavigationPath outPath;
+
+	Debug::DrawBox(startPos, Vector3(1, 1, 1), Debug::RED, 1000.0f);
+	Debug::DrawBox(endPos, Vector3(1, 1, 1), Debug::BLUE, 1000.0f);
+
+	bool found = navGrid->FindPath(startPos, endPos, outPath);
+
+	Vector3 pos;
+	while (outPath.PopWaypoint(pos))
+		testNodes.push_back(pos);
+	for (int i = 1; i < testNodes.size(); ++i)
+	{
+		Vector3 a = testNodes[i - 1];
+		Vector3 b = testNodes[i];
+
+		Debug::DrawLine(a, b, Debug::GREEN);
+	}
 
 	useGravity = true;
 

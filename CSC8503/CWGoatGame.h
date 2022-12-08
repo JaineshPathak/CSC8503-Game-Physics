@@ -10,6 +10,7 @@
 #include "CWFollowCamera.h"
 
 #include "NavigationGrid.h"
+#include "NavigationPath.h"
 
 namespace NCL 
 {
