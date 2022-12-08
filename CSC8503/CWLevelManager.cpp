@@ -90,39 +90,41 @@ void NCL::CSC8503::CWLevelManager::InitBuildings()
 	AddBuilding(Vector3(300.0f, 2.5f, 0.0f), Vector3(25.0f, 25.0f, 25.0f), Vector3(0, 0.0f, 0), 0, highRise12, conceptTex);
 	AddInvisibleWall(Vector3(300.0f, 116.0f, 0.0f), Vector3(38.0f, 112.0f, 85.0f));
 
-	AddBuilding(Vector3(200.0f, 2.5f, 50.0f), Vector3(15.0f, 15.0f, 15.0f), Vector3(0, 0.0f, 0), 0, highRise9, conceptTex);
-	AddInvisibleWall(Vector3(200.0f, 72.0f, 50.0f), Vector3(32.0f, 70.0f, 32.0f));
+	AddBuilding(Vector3(215.0f, 2.5f, 50.0f), Vector3(15.0f, 15.0f, 15.0f), Vector3(0, 0.0f, 0), 0, highRise9, conceptTex);
+	AddInvisibleWall(Vector3(215.0f, 72.0f, 50.0f), Vector3(32.0f, 70.0f, 32.0f));
 
-	AddBuilding(Vector3(200.0f, 2.5f, -50.0f), Vector3(30.0f, 30.0f, 30.0f), Vector3(0, 0.0f, 0), 0, highRise3, conceptTex);
-	AddInvisibleWall(Vector3(200.0f, 114.0f, -50.0f), Vector3(32.0f, 110.0f, 32.0f));
+	AddBuilding(Vector3(215.0f, 2.5f, -50.0f), Vector3(30.0f, 30.0f, 30.0f), Vector3(0, 0.0f, 0), 0, highRise3, conceptTex);
+	AddInvisibleWall(Vector3(215.0f, 114.0f, -50.0f), Vector3(32.0f, 110.0f, 32.0f));
 
 	AddBuilding(Vector3(-300.0f, 2.5f, 0.0f), Vector3(25.0f, 25.0f, 25.0f), Vector3(0, 0.0f, 0), 0, highRise12, conceptTex);
 	AddInvisibleWall(Vector3(-300.0f, 116.0f, 0.0f), Vector3(38.0f, 112.0f, 85.0f));
 
-	AddBuilding(Vector3(-200.0f, 2.5f, -120.0f), Vector3(30.0f, 20.0f, 30.0f), Vector3(0, 0.0f, 0), 0, highRise3, conceptTex);
-	AddInvisibleWall(Vector3(-200.0f, 76.0f, -120.0f), Vector3(32.0f, 72.0f, 32.0f));
-	AddBuilding(Vector3(-200.0f, 2.5f, -200.0f), Vector3(30.0f, 30.0f, 30.0f), Vector3(0, 0.0f, 0), 0, highRise3, conceptTex);
-	AddInvisibleWall(Vector3(-200.0f, 114.0f, -200.0f), Vector3(32.0f, 110.0f, 32.0f));
+	AddBuilding(Vector3(-220.0f, 2.5f, -130.0f), Vector3(30.0f, 20.0f, 30.0f), Vector3(0, 0.0f, 0), 0, highRise3, conceptTex);
+	AddInvisibleWall(Vector3(-220.0f, 76.0f, -130.0f), Vector3(32.0f, 72.0f, 32.0f));
+	AddBuilding(Vector3(-220.0f, 2.5f, -200.0f), Vector3(30.0f, 30.0f, 30.0f), Vector3(0, 0.0f, 0), 0, highRise3, conceptTex);
+	AddInvisibleWall(Vector3(-220.0f, 114.0f, -200.0f), Vector3(32.0f, 110.0f, 32.0f));
 	
-	AddBuilding(Vector3(-200.0f, 2.5f, -280.0f), Vector3(15.0f, 15.0f, 15.0f), Vector3(0, 0.0f, 0), 0, highRise9, conceptTex);
-	AddInvisibleWall(Vector3(-200.0f, 72.0f, -280.0f), Vector3(32.0f, 70.0f, 32.0f));
+	AddBuilding(Vector3(-220.0f, 2.5f, -280.0f), Vector3(15.0f, 15.0f, 15.0f), Vector3(0, 0.0f, 0), 0, highRise9, conceptTex);
+	AddInvisibleWall(Vector3(-220.0f, 72.0f, -280.0f), Vector3(32.0f, 70.0f, 32.0f));
 	
-	AddBuilding(Vector3(-200.0f, 2.5f, 0.0f), Vector3(15.0f, 20.0f, 15.0f), Vector3(0, 0.0f, 0), 0, highRise9, conceptTex);
-	AddInvisibleWall(Vector3(-200.0f, 72.0f, 0.0f), Vector3(32.0f, 70.0f, 32.0f));
+	AddBuilding(Vector3(-220.0f, 2.5f, 0.0f), Vector3(15.0f, 20.0f, 15.0f), Vector3(0, 0.0f, 0), 0, highRise9, conceptTex);
+	AddInvisibleWall(Vector3(-220.0f, 72.0f, 0.0f), Vector3(32.0f, 70.0f, 32.0f));
 
-	AddBuilding(Vector3(-200.0f, 2.5f, 180.0f), Vector3(18.0f, 18.0f, 18.0f), Vector3(0, 0.0f, 0), 0, highRise13, conceptTex);
-	AddInvisibleWall(Vector3(-200.0f, 87.0f, 228.0f), Vector3(24.0f, 89.0f, 24.0f));
-	AddInvisibleWall(Vector3(-198.0f, 87.0f, 133.0f), Vector3(24.0f, 85.0f, 24.0f));
+	AddBuilding(Vector3(-220.0f, 2.5f, 165.0f), Vector3(18.0f, 18.0f, 18.0f), Vector3(0, 0.0f, 0), 0, highRise13, conceptTex);
+	AddInvisibleWall(Vector3(-220.0f, 87.0f, 212.5f), Vector3(24.0f, 89.0f, 24.0f));
+	AddInvisibleWall(Vector3(-218.0f, 87.0f, 119.0f), Vector3(24.0f, 85.0f, 24.0f));
 
-	AddBuilding(Vector3(-200.0f, 2.5f, 300.0f), Vector3(16.0f, 16.0f, 16.0f), Vector3(0, 0.0f, 0), 0, highRise18, conceptTex);
-	AddInvisibleWall(Vector3(-200.0f, 100.0f, 300.0f), Vector3(25.0f, 98.0f, 25.0f));
+	AddBuilding(Vector3(-220.0f, 2.5f, 300.0f), Vector3(16.0f, 16.0f, 16.0f), Vector3(0, 0.0f, 0), 0, highRise18, conceptTex);
+	AddInvisibleWall(Vector3(-220.0f, 100.0f, 300.0f), Vector3(25.0f, 98.0f, 25.0f));
 	AddBuilding(Vector3(-300.0f, 2.5f, 300.0f), Vector3(16.0f, 10.0f, 16.0f), Vector3(0, 0.0f, 0), 0, highRise18, conceptTex);
 	AddInvisibleWall(Vector3(-300.0f, 60.0f, 300.0f), Vector3(25.0f, 60.0f, 25.0f));
 	
-	AddBuilding(Vector3(-300.0f, 2.5f, 180.0f), Vector3(16.0f, 15.0f, 16.0f), Vector3(0, 0.0f, 0), 0, highRise9, conceptTex);
-	AddInvisibleWall(Vector3(-300.0f, 72.0f, 180.0f), Vector3(32.0f, 70.0f, 32.0f));
+	AddBuilding(Vector3(-300.0f, 2.5f, 156.0f), Vector3(16.0f, 15.0f, 16.0f), Vector3(0, 0.0f, 0), 0, highRise9, conceptTex);
+	AddInvisibleWall(Vector3(-300.0f, 72.0f, 156.0f), Vector3(32.0f, 70.0f, 32.0f));
 	
-	AddBuilding(Vector3(-300.0f, 2.5f, -200.0f), Vector3(18.0f, 18.0f, 18.0f), Vector3(0, 0.0f, 0), 0, highRise13, conceptTex);
+	AddBuilding(Vector3(-300.0f, 2.5f, -240.0f), Vector3(18.0f, 18.0f, 18.0f), Vector3(0, 0.0f, 0), 0, highRise13, conceptTex);
+	AddInvisibleWall(Vector3(-300.0f, 87.0f, -288.0f), Vector3(24.0f, 89.0f, 24.0f));
+	AddInvisibleWall(Vector3(-300.0f, 87.0f, -192.0f), Vector3(24.0f, 85.0f, 24.0f));
 
 	//Petrol Pump
 	AddCube(Vector3(0.0, 15.0f, -300.0f), Vector3(64.0f, 24.0f, 32.0f), Vector3(0, 0, 0), 0, Debug::WHITE, "PumpBuildingBase", whiteTex);
@@ -210,5 +212,5 @@ void NCL::CSC8503::CWLevelManager::AddInvisibleWall(const Vector3& wallPos, cons
 
 	world.AddGameObject(wall);
 
-	//Debug::DrawBox(wallPos, wallSize, Debug::YELLOW, 1000.0f);
+	Debug::DrawBox(wallPos, wallSize, Debug::YELLOW, 1000.0f);
 }

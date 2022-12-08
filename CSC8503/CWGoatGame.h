@@ -9,6 +9,8 @@
 #include "CWGoatPlayer.h"
 #include "CWFollowCamera.h"
 
+#include "NavigationGrid.h"
+
 namespace NCL 
 {
 	namespace CSC8503
@@ -20,6 +22,8 @@ namespace NCL
 			~CWGoatGame();
 
 			virtual void UpdateGame(float dt);
+
+			bool GetCursorStatus() const { return toggleCursor; }
 
 		protected:
 			void InitCamera();
@@ -34,8 +38,14 @@ namespace NCL
 			Camera* mainCamera;
 			CWFollowCamera* cameraFollow;
 
+			NavigationGrid* navGrid;
+
 			bool useGravity = true;
 			bool toggleCamera = false;
+			bool toggleCursor = false;
+
+			//Debug Mode
+			GameObject* selectedObject;
 		};
 	}
 }

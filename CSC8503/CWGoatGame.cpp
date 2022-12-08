@@ -21,10 +21,13 @@ NCL::CSC8503::CWGoatGame::CWGoatGame()
 	physics->UseGravity(useGravity);
 	
 	levelManager = new CWLevelManager(*world, *renderer);
-	player = new CWGoatPlayer(*world, *renderer);
+	player = new CWGoatPlayer(*this, *world, *renderer);
 	
 	cameraFollow = new CWFollowCamera(player->GetTransform());
 	world->SetMainCamera(cameraFollow);
+
+	navGrid = new NavigationGrid("CWNavGrid.txt", -512, -512);
+	navGrid->DebugDraw();
 
 	useGravity = true;
 
@@ -59,7 +62,30 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 		if (toggleCamera)
 			world->SetMainCamera(mainCamera);
 		else
-			world->SetMainCamera(cameraFollow);;
+		{
+			world->SetMainCamera(cameraFollow);
+			toggleCursor = false;
+			Window::GetWindow()->ShowOSPointer(false);
+			Window::GetWindow()->LockMouseToWindow(true);
+		}
+	}
+
+	if (toggleCamera)
+	{
+		if (Window::GetMouse()->ButtonPressed(MouseButtons::RIGHT))
+		{
+			toggleCursor = !toggleCursor;
+			if (toggleCursor)
+			{
+				Window::GetWindow()->ShowOSPointer(true);
+				Window::GetWindow()->LockMouseToWindow(false);
+			}
+			else
+			{
+				Window::GetWindow()->ShowOSPointer(false);
+				Window::GetWindow()->LockMouseToWindow(true);
+			}
+		}
 	}
 
 	if (player) player->Update(dt);

@@ -1,11 +1,12 @@
 #include "CWGoatPlayer.h"
+#include "CWGoatGame.h"
 #include "CollisionDetection.h"
 #include "PhysicsObject.h"
 #include "RenderObject.h"
 #include "NetworkObject.h"
 #include "Maths.h"
 
-NCL::CSC8503::CWGoatPlayer::CWGoatPlayer(GameWorld& gWorld, GameTechRenderer& gRenderer) : world(gWorld), renderer(gRenderer)
+NCL::CSC8503::CWGoatPlayer::CWGoatPlayer(CWGoatGame& gGame, GameWorld& gWorld, GameTechRenderer& gRenderer) : game(gGame), world(gWorld), renderer(gRenderer)
 {
 	goatMesh = renderer.LoadMesh("Goat.msh");
 	whiteTex = renderer.LoadTexture("WhiteTex.png");
@@ -49,6 +50,9 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 
 	renderObject->SetColour(isOnGround ? Debug::BLUE : Debug::RED);
 	//physicsObject->SetLinearDamping(isOnGround ? 3.0f : 0.1f);
+
+	if (game.GetCursorStatus())
+		return;
 
 	Vector3 linearMovement;
 	if (Window::GetKeyboard()->KeyHeld(KeyboardKeys::W)) linearMovement.z = -1.0f;

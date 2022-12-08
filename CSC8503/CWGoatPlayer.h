@@ -7,10 +7,12 @@ namespace NCL
 {
     namespace CSC8503
     {
+        class CWGoatGame;
+
         class CWGoatPlayer : public GameObject
         {
         public:
-            CWGoatPlayer(GameWorld& gWorld, GameTechRenderer& gRenderer);
+            CWGoatPlayer(CWGoatGame& gGame, GameWorld& gWorld, GameTechRenderer& gRenderer);
             ~CWGoatPlayer();
 
             virtual void Update(float dt);
@@ -21,6 +23,7 @@ namespace NCL
 
             MeshGeometry* goatMesh = nullptr;
 
+            CWGoatGame& game;
             GameWorld& world;
             GameTechRenderer& renderer;
 
