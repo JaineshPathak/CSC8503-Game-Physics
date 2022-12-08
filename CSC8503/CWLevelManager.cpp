@@ -150,7 +150,7 @@ void NCL::CSC8503::CWLevelManager::AddCube(const Vector3& cubePos, const Vector3
 	cube->SetBoundingVolume((CollisionVolume*)volume);
 
 	cube->GetTransform()
-		.SetPosition(cubePos)
+		.SetPosition(cubePos + Vector3(xOffset, 0, zOffset))
 		.SetOrientation(Quaternion::EulerAnglesToQuaternion(cubeRot.x, cubeRot.y, cubeRot.z))
 		.SetScale(cubeSize * 2);
 
@@ -163,7 +163,7 @@ void NCL::CSC8503::CWLevelManager::AddCube(const Vector3& cubePos, const Vector3
 
 	world.AddGameObject(cube);
 
-	//Debug::DrawBox(cubePos, cubeSize, Debug::GREEN, 1000.0f);
+	//Debug::DrawBox(cubePos + Vector3(xOffset, 0, zOffset), cubeSize, Debug::GREEN, 1000.0f);
 }
 
 void NCL::CSC8503::CWLevelManager::AddBuilding(const Vector3& buildingPos, const Vector3& buildingSize, const Vector3& buildingRot, const float& buildingMass, MeshGeometry* buildingMesh, TextureBase* buildingTex)
@@ -174,7 +174,7 @@ void NCL::CSC8503::CWLevelManager::AddBuilding(const Vector3& buildingPos, const
 	building->SetBoundingVolume((CollisionVolume*)volume);
 
 	building->GetTransform()
-		.SetPosition(buildingPos)
+		.SetPosition(buildingPos + Vector3(xOffset, 0, zOffset))
 		.SetOrientation(Quaternion::EulerAnglesToQuaternion(buildingRot.x, buildingRot.y, buildingRot.z))
 		.SetScale(buildingSize * 2);
 
@@ -187,18 +187,18 @@ void NCL::CSC8503::CWLevelManager::AddBuilding(const Vector3& buildingPos, const
 
 	world.AddGameObject(building);
 
-	//Debug::DrawBox(buildingPos, buildingSize, Debug::RED, 1000.0f);
+	//Debug::DrawBox(buildingPos + Vector3(xOffset, 0, zOffset), buildingSize, Debug::RED, 1000.0f);
 }
 
 void NCL::CSC8503::CWLevelManager::AddInvisibleWall(const Vector3& wallPos, const Vector3 wallSize)
 {
-	GameObject* wall = new GameObject(1, "Building");
+	GameObject* wall = new GameObject(1, "BuildingWall");
 
 	AABBVolume* volume = new AABBVolume(wallSize);
 	wall->SetBoundingVolume((CollisionVolume*)volume);
 
 	wall->GetTransform()
-		.SetPosition(wallPos)
+		.SetPosition(wallPos + Vector3(xOffset, 0, zOffset))
 		.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0))
 		.SetScale(wallSize * 2);
 
@@ -212,5 +212,5 @@ void NCL::CSC8503::CWLevelManager::AddInvisibleWall(const Vector3& wallPos, cons
 
 	world.AddGameObject(wall);
 
-	Debug::DrawBox(wallPos, wallSize, Debug::YELLOW, 1000.0f);
+	//Debug::DrawBox(wallPos + Vector3(xOffset, 0, zOffset), wallSize, Debug::YELLOW, 1000.0f);
 }

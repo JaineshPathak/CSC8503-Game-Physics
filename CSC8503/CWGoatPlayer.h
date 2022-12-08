@@ -28,13 +28,13 @@ namespace NCL
             GameTechRenderer& renderer;
 
         private:
-            Vector3 startPos = Vector3(0, 10.0f, 0);
+            Vector3 startPos = Vector3(512.0f, 10.0f, 512.0f);
             Vector3 startRot = Vector3(0, 0, 0);
             Vector3 startScale = Vector3(3.0f, 3.0f, 3.0f);
 
             Vector3 collisionScale = Vector3(4.0f, 5.0f, 4.0f);
 
-            float moveSpeed = 1550.0f;
+            float moveSpeed = 3550.0f;
             float rotationSpeed = 5.0f;
             float mass = 7.5f;
             float jumpForce = 400.0f;

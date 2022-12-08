@@ -43,6 +43,9 @@ namespace NCL
 
 			GameWorld& world;
 			GameTechRenderer& renderer;
+
+			float xOffset = 510.0f;
+			float zOffset = 510.0f;
 		};
 	}
 }

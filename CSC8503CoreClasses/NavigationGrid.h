@@ -44,7 +44,7 @@ namespace NCL {
 
 			GridNode* GetNodesList() const { return allNodes; }
 
-			void DebugDraw();
+			void DebugDraw(int type = -1);		//-1 = Everything, 0 = Walkable, 1 - Non-Walkable
 				
 		protected:
 			bool		NodeInList(GridNode* n, std::vector<GridNode*>& list) const;

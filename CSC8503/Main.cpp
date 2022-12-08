@@ -35,7 +35,7 @@ using namespace CSC8503;
 std::vector<Vector3> testNodes;
 void TestPathfinding() 
 {
-	NavigationGrid grid("TestGrid1.txt", -512, -512);
+	NavigationGrid grid("TestGrid1.txt");
 	NavigationPath outPath;
 
 	for (int i = 0; i < grid.GetWidth() * grid.GetHeight(); i++)
@@ -46,8 +46,8 @@ void TestPathfinding()
 		Debug::DrawLine(node.position, node.position + Vector3(0, 3.0f, 0), Debug::WHITE, 1000.0f);
 	}
 
-	Vector3 startPos(80, 0, 10);
-	Vector3 endPos(80, 0, 80);
+	Vector3 startPos(50, 0, 50);
+	Vector3 endPos(400, 0, 400);
 
 	Debug::DrawBox(startPos, Vector3(1, 1, 1), Debug::RED, 1000.0f);
 	Debug::DrawBox(endPos, Vector3(1, 1, 1), Debug::BLUE, 1000.0f);

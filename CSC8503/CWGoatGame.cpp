@@ -13,7 +13,7 @@ NCL::CSC8503::CWGoatGame::CWGoatGame()
 	world->GetMainCamera()->SetFarPlane(15000.0f);
 	world->GetMainCamera()->SetPitch(0.0f);
 	world->GetMainCamera()->SetYaw(0.0f);
-	world->GetMainCamera()->SetPosition(Vector3(0, 40, 60));
+	world->GetMainCamera()->SetPosition(startCameraPos);
 
 	renderer = new GameTechRenderer(*world);
 	
@@ -23,31 +23,11 @@ NCL::CSC8503::CWGoatGame::CWGoatGame()
 	levelManager = new CWLevelManager(*world, *renderer);
 	player = new CWGoatPlayer(*this, *world, *renderer);
 	
-	cameraFollow = new CWFollowCamera(player->GetTransform());
+	cameraFollow = new CWFollowCamera(*world, *player);
 	world->SetMainCamera(cameraFollow);
 
-	std::vector<Vector3> testNodes;
-	navGrid = new NavigationGrid("CWNavGrid.txt", -512, -512);
-	navGrid->DebugDraw();
-	Vector3 startPos(0, 2.5, 0);
-	Vector3 endPos(0, 2.5, 256);
-	NavigationPath outPath;
-
-	Debug::DrawBox(startPos, Vector3(1, 1, 1), Debug::RED, 1000.0f);
-	Debug::DrawBox(endPos, Vector3(1, 1, 1), Debug::BLUE, 1000.0f);
-
-	bool found = navGrid->FindPath(startPos, endPos, outPath);
-
-	Vector3 pos;
-	while (outPath.PopWaypoint(pos))
-		testNodes.push_back(pos);
-	for (int i = 1; i < testNodes.size(); ++i)
-	{
-		Vector3 a = testNodes[i - 1];
-		Vector3 b = testNodes[i];
-
-		Debug::DrawLine(a, b, Debug::GREEN);
-	}
+	navGrid = new NavigationGrid("CWNavGrid.txt");
+	navGrid->DebugDraw(1);
 
 	useGravity = true;
 
@@ -108,7 +88,11 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 		}
 	}
 
-	if (player) player->Update(dt);
+	if (player)
+	{
+		player->Update(dt);
+		//TestFindPath();
+	}
 }
 
 void NCL::CSC8503::CWGoatGame::InitCamera()
@@ -120,5 +104,38 @@ void NCL::CSC8503::CWGoatGame::InitCamera()
 	world->GetMainCamera()->SetFarPlane(15000.0f);
 	world->GetMainCamera()->SetPitch(0.0f);
 	world->GetMainCamera()->SetYaw(0.0f);
-	world->GetMainCamera()->SetPosition(Vector3(0, 40, 60));
+	world->GetMainCamera()->SetPosition(startCameraPos);
+}
+
+void NCL::CSC8503::CWGoatGame::TestFindPath()
+{
+	startPathPos = Vector3(512.0f, 2.5, 768.0f);
+	Debug::DrawBox(startPathPos, Vector3(1, 1, 1), Debug::RED, 1000.0f);
+
+	endPathPos = Vector3(player->GetTransform().GetPosition().x, 2.5f, player->GetTransform().GetPosition().z);
+	Debug::DrawBox(endPathPos, Vector3(1, 1, 1), Debug::BLUE);
+	
+	NavigationPath path;
+	bool found = navGrid->FindPath(startPathPos, endPathPos, path);
+
+	if (found)
+	{
+		testNodes.clear();
+		Vector3 pos;
+		while (path.PopWaypoint(pos))
+			testNodes.push_back(pos);
+
+		DisplayTestFindPath();
+	}
+}
+
+void NCL::CSC8503::CWGoatGame::DisplayTestFindPath()
+{
+	for (int i = 1; i < testNodes.size(); ++i)
+	{
+		Vector3 a = testNodes[i - 1];
+		Vector3 b = testNodes[i];
+
+		Debug::DrawLine(a, b, Debug::GREEN);
+	}
 }

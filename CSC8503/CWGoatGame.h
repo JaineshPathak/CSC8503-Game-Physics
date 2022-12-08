@@ -24,7 +24,7 @@ namespace NCL
 
 			virtual void UpdateGame(float dt);
 
-			bool GetCursorStatus() const { return toggleCursor; }
+			bool GetCursorStatus() const { return toggleCamera; }
 
 		protected:
 			void InitCamera();
@@ -37,9 +37,18 @@ namespace NCL
 			CWLevelManager* levelManager;
 
 			Camera* mainCamera;
+			Vector3 startCameraPos = Vector3(512.0f, 40.0f, 512.0f);
+
 			CWFollowCamera* cameraFollow;
 
+			std::vector<Vector3> testNodes;
+			Vector3 startPathPos;
+			Vector3 endPathPos;
 			NavigationGrid* navGrid;
+			NavigationPath navPath;
+			void TestFindPath();
+			void DisplayTestFindPath();
+			float timer = 0.0f;
 
 			bool useGravity = true;
 			bool toggleCamera = false;

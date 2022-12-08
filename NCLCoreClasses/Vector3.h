@@ -172,5 +172,11 @@ namespace NCL::Maths {
 			o << "Vector3(" << v.x << "," << v.y << "," << v.z << ")" << std::endl;
 			return o;
 		}
+
+		static Vector3 Lerp(const Vector3& a, const Vector3& b, float t)
+		{
+			Vector3 finalV = Lerp(a, b, t);
+			return finalV;
+		}
 	};
 }
