@@ -285,7 +285,7 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	Vector3 inertiaB = Vector3::Cross(physB->GetInertiaTensor() * Vector3::Cross(relativeB, p.normal), relativeB);
 
 	float angularEffect = Vector3::Dot(inertiaA + inertiaB, p.normal);
-	float coeffRestitution = 0.66f;
+	float coeffRestitution = physA->GetRestitution() * physB->GetRestitution();
 
 	float j = (-(1.0f + coeffRestitution) * impulseForce) / (totalMass + angularEffect);
 	Vector3 fullImpulse = p.normal * j;
@@ -331,7 +331,7 @@ compare the collisions that we absolutely need to.
 void PhysicsSystem::BroadPhase() 
 {
 	broadphaseCollisions.clear();
-	qTree = QuadTree<GameObject*>(Vector2(768, 768), 7, 6);
+	qTree = QuadTree<GameObject*>(Vector2(1024, 1024), 7, 6);
 
 	std::vector<GameObject*>::const_iterator first;
 	std::vector<GameObject*>::const_iterator last;

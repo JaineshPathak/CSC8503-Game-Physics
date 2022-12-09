@@ -35,7 +35,7 @@ using namespace CSC8503;
 std::vector<Vector3> testNodes;
 void TestPathfinding() 
 {
-	NavigationGrid grid("TestGrid1.txt", -512, -512);
+	NavigationGrid grid("TestGrid1.txt");
 	NavigationPath outPath;
 
 	for (int i = 0; i < grid.GetWidth() * grid.GetHeight(); i++)
@@ -46,8 +46,8 @@ void TestPathfinding()
 		Debug::DrawLine(node.position, node.position + Vector3(0, 3.0f, 0), Debug::WHITE, 1000.0f);
 	}
 
-	Vector3 startPos(80, 0, 10);
-	Vector3 endPos(80, 0, 80);
+	Vector3 startPos(50, 0, 50);
+	Vector3 endPos(400, 0, 400);
 
 	Debug::DrawBox(startPos, Vector3(1, 1, 1), Debug::RED, 1000.0f);
 	Debug::DrawBox(endPos, Vector3(1, 1, 1), Debug::BLUE, 1000.0f);
@@ -112,6 +112,136 @@ void TestStateMachine()
 	}
 }
 
+void TestBehaviourTree()
+{
+	float behaviourTimer;
+	float distanceToTarget;
+	BehaviourAction* findKey = new BehaviourAction("Find Key", [&](float dt, BehaviourState state)->BehaviourState 
+		{
+			if (state == Initialise)
+			{
+				std::cout << "Looking for Key!\n";
+				behaviourTimer = rand() % 100;
+				state = Ongoing;
+			}
+			else if (state == Ongoing)
+			{
+				behaviourTimer -= dt;
+				if (behaviourTimer <= 0.0f)
+				{
+					std::cout << "Found a Key!\n";
+					return Success;
+				}
+			}
+			return state;
+		});
+
+	BehaviourAction* goToRoom = new BehaviourAction("Go To Room", [&](float dt, BehaviourState state)->BehaviourState
+		{
+			if (state == Initialise)
+			{
+				std::cout << "Going to loot room!\n";
+				state = Ongoing;
+			}
+			else if (state == Ongoing)
+			{
+				distanceToTarget -= dt;
+				if (distanceToTarget <= 0.0f)
+				{
+					std::cout << "Reached loot Room!\n";
+					return Success;
+				}
+			}
+			return state;
+		});
+
+	BehaviourAction* openDoor = new BehaviourAction("Open Door", [&](float dt, BehaviourState state)->BehaviourState 
+		{
+			if (state == Initialise)
+			{
+				std::cout << "Opening Door!\n";
+				return Success;
+			}
+
+			return state;
+		});
+
+	BehaviourAction* lookForTreasure = new BehaviourAction("Look For Treasure", [&](float dt, BehaviourState state)->BehaviourState
+		{
+			if (state == Initialise)
+			{
+				std::cout << "Looking for Treasure!\n";
+				return Ongoing;
+			}
+			else if (state == Ongoing)
+			{
+				bool found = rand() % 2;
+				if (found)
+				{
+					std::cout << "I found some treasure!\n";
+					return Success;
+				}
+				std::cout << "No treasure in here....... :/\n";
+				return Failure;
+			}
+			return state;
+		});
+
+	BehaviourAction* lookForItems = new BehaviourAction("Look For Items", [&](float dt, BehaviourState state)->BehaviourState
+		{
+			if (state == Initialise)
+			{
+				std::cout << "Looking for Items!\n";
+				return Ongoing;
+			}
+			else if (state == Ongoing)
+			{
+				bool found = rand() % 2;
+				if (found)
+				{
+					std::cout << "I found some Items!\n";
+					return Success;
+				}
+				std::cout << "No Items in here....... :/\n";
+				return Failure;
+			}
+
+			return state;
+		});
+
+	BehaviourSequence* sequence = new BehaviourSequence("Room Sequence");
+	sequence->AddChild(findKey);
+	sequence->AddChild(goToRoom);
+	sequence->AddChild(openDoor);
+
+	BehaviourSelector* selection = new BehaviourSelector("Loot Selection");
+	selection->AddChild(lookForTreasure);
+	selection->AddChild(lookForItems);
+
+	BehaviourSequence* root = new BehaviourSequence("Root Sequence");
+	root->AddChild(sequence);
+	root->AddChild(selection);
+
+	for (int i = 0; i < 5; i++)
+	{
+		root->Reset();
+		behaviourTimer = 0.0f;
+		distanceToTarget = rand() % 250;
+
+		BehaviourState state = Ongoing;
+		std::cout << "Going for a Loots!\n";
+		while (state == Ongoing)
+			state = root->Execute(1.0f);
+
+		if (state == Success)
+			std::cout << "Great Loots!\n";
+		else if (state == Failure)
+			std::cout << "Mission Failed! We'll get em next time!\n";
+	}
+
+	std::cout << "End Of Behaviour Tree!\n";
+}
+
 /*
 
 The main function should look pretty familar to you!
@@ -137,6 +267,7 @@ int main()
 
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 
+	//TestBehaviourTree();
 	//TestStateMachine();
 	//TestPathfinding();
 	

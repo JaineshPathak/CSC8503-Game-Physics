@@ -1,5 +1,6 @@
 #include "NavigationGrid.h"
 #include "Assets.h"
+#include "Debug.h"
 
 #include <fstream>
 
@@ -220,7 +221,32 @@ bool NavigationGrid::FindPath(const Vector3& from, const Vector3& to, Navigation
 	return false; //open list emptied out with no path!
 }
 
-bool NavigationGrid::NodeInList(GridNode* n, std::vector<GridNode*>& list) const 
+void NCL::CSC8503::NavigationGrid::DebugDraw(int type)
+{
+	for (int i = 0; i < gridWidth * gridHeight; i++)
+	{
+		GridNode& node = allNodes[i];
+		Vector4 nodeColor = node.type == '.' ? Debug::WHITE : Debug::RED;
+
+		if (type == -1)
+		{
+			Debug::DrawBox(node.position, Vector3(nodeSize * 0.5f, 0, nodeSize * 0.5f), nodeColor, 1000.0f);
+			Debug::DrawLine(node.position, node.position + Vector3(0, 3.0f, 0), Debug::WHITE, 1000.0f);
+		}
+		else if (type == 0 && node.type == '.')
+		{
+			Debug::DrawBox(node.position, Vector3(nodeSize * 0.5f, 0, nodeSize * 0.5f), nodeColor, 1000.0f);
+			Debug::DrawLine(node.position, node.position + Vector3(0, 3.0f, 0), Debug::WHITE, 1000.0f);
+		}
+		else if (type == 1 && node.type == 'x')
+		{
+			Debug::DrawBox(node.position, Vector3(nodeSize * 0.5f, 0, nodeSize * 0.5f), nodeColor, 1000.0f);
+			Debug::DrawLine(node.position, node.position + Vector3(0, 3.0f, 0), Debug::WHITE, 1000.0f);
+		}
+	}
+}
+
+bool NavigationGrid::NodeInList(GridNode* n, std::vector<GridNode*>& list) const
 {
 	std::vector<GridNode*>::iterator i = std::find(list.begin(), list.end(), n);
 	return i == list.end() ? false : true;

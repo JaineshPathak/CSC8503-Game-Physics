@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <io.h>
+
 using namespace NCL;
 using namespace Win32Code;
 
@@ -213,7 +214,7 @@ LRESULT CALLBACK Win32Window::WindowProc(HWND hWnd, UINT message, WPARAM wParam,
 
 	bool applyResize = false;
 
-    switch(message)	 {
+	switch(message)	 {
         case(WM_DESTROY):	{
 			thisWindow->ShowOSPointer(true);
 			thisWindow->LockMouseToWindow(false);

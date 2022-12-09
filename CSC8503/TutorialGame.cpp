@@ -276,7 +276,7 @@ void TutorialGame::InitWorld() {
 	AddCubeToWorld(Vector3(-15, 0, 0), Vector3(1, 1, 1), 3.5f);
 
 	//Floor
-	AddCubeToWorld(Vector3(0, 0, 0), Vector3(512, 2, 512), 0);
+	AddCubeToWorld(Vector3(484 - 22, 0, 484 - 22), Vector3(484, 2, 484), 0);
 
 	InitGameExamples();
 	//InitDefaultFloor();
@@ -499,7 +499,7 @@ void TutorialGame::BridgeConstraintTest()
 }
 
 void TutorialGame::InitDefaultFloor() {
-	AddFloorToWorld(Vector3(0, -5, 0));
+	AddFloorToWorld(Vector3(0, 0, 0));
 
 	cubeLooker = AddEnemyToWorld(Vector3(25, 0, 0));
 	cubeLooker->SetLayer(2);

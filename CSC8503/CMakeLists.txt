@@ -13,6 +13,7 @@ set(Header_Files
     "CWLevelManager.h"
     "CWGoatPlayer.h"
     "CWFollowCamera.h"
+    "CWJumpPad.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
@@ -27,6 +28,7 @@ set(Source_Files
     "CWLevelManager.cpp"
     "CWGoatPlayer.cpp"
     "CWFollowCamera.cpp"
+    "CWJumpPad.cpp"
 )
 
 if(USE_VULKAN)
