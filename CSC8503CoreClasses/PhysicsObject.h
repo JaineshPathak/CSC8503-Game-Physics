@@ -89,7 +89,7 @@ namespace NCL {
 			float elasticity;
 			float friction;
 
-			float restitution = 0.6f;
+			float restitution = 1.0f;
 			float damping = 0.8f;
 			float gravityMultiplier = 1.0f;
 

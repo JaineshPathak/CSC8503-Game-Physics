@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.h"
-#include "MeshGeometry.h"
 #include "GameTechRenderer.h"
 
 namespace NCL
@@ -33,12 +32,15 @@ namespace NCL
             Vector3 startScale = Vector3(3.0f, 3.0f, 3.0f);
 
             Vector3 collisionScale = Vector3(4.0f, 5.0f, 4.0f);
+            
+            Vector3 velocityRef;
+            float velocityDampSmoothness = 0.25f;
 
-            float moveSpeed = 3550.0f;
+            float moveSpeed = 15.0f;
             float rotationSpeed = 5.0f;
             float mass = 7.5f;
-            float jumpForce = 400.0f;
-            float airControl = 1.0f;
+            float jumpForce = 7.0f;
+            float airControl = 0.5f;
 
             bool isOnGround = true;
         };

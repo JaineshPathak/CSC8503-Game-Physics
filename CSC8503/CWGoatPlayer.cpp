@@ -26,8 +26,9 @@ NCL::CSC8503::CWGoatPlayer::CWGoatPlayer(CWGoatGame& gGame, GameWorld& gWorld, G
 	physicsObject = new PhysicsObject(&transform, boundingVolume);
 	physicsObject->SetInverseMass(mass);
 	physicsObject->InitCubeInertia();
-	physicsObject->SetLinearDamping(3.0f);
+	physicsObject->SetLinearDamping(0.3f);
 	physicsObject->SetGravityMultiplier(5.0f);
+	physicsObject->SetRestitution(0);
 
 	world.AddGameObject(this);
 }
@@ -61,9 +62,9 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 	if (Window::GetKeyboard()->KeyHeld(KeyboardKeys::A)) linearMovement.x = -1.0f;
 	if (Window::GetKeyboard()->KeyHeld(KeyboardKeys::D)) linearMovement.x = 1.0f;
 
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE) && isOnGround) physicsObject->AddForce(Vector3(0, 1, 0) * jumpForce);
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE) && isOnGround) physicsObject->ApplyLinearImpulse(Vector3(0, 1, 0) * jumpForce);
 
-	airControl = isOnGround ? 1.0f : 0.5f;
+	//airControl = isOnGround ? 1.0f : 0.1f;
 
 	linearMovement.y = 0.0f;
 
@@ -73,9 +74,14 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 		targetAngle = RadiansToDegrees(targetAngle) + world.GetMainCamera()->GetYaw();
 
 		Quaternion newRot = Quaternion::EulerAnglesToQuaternion(0, targetAngle, 0);
-		transform.SetOrientation(Quaternion::Slerp(transform.GetOrientation(), newRot, rotationSpeed * airControl * dt));
+		transform.SetOrientation(Quaternion::Slerp(transform.GetOrientation(), newRot, rotationSpeed * dt));
 
 		Vector3 moveDir = newRot * Vector3(0, 0, -1.0f);
-		physicsObject->AddForce(moveDir.Normalised() * moveSpeed * dt);
+		physicsObject->AddForce(moveDir.Normalised() * (isOnGround ? moveSpeed : moveSpeed * airControl));
+	}
+	else if(physicsObject->GetLinearVelocity().Length() > 0.1f && isOnGround)
+	{
+		Vector3 dampedVel = Vector3::SmoothDamp(physicsObject->GetLinearVelocity(), Vector3(0, 0, 0), velocityRef, velocityDampSmoothness, FLT_MAX, dt);
+		physicsObject->SetLinearVelocity(dampedVel);
 	}
 }

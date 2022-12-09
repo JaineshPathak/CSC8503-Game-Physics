@@ -1,12 +1,13 @@
 #include "RenderObject.h"
 #include "TextureLoader.h"
 #include "CWLevelManager.h"
+#include "CWJumpPad.h"
 #include "PhysicsObject.h"
 
 using namespace NCL;
 using namespace CSC8503;
 
-NCL::CSC8503::CWLevelManager::CWLevelManager(GameWorld& gWorld, GameTechRenderer& gRenderer) : world(gWorld), renderer(gRenderer)
+NCL::CSC8503::CWLevelManager::CWLevelManager(GameWorld& gWorld, CWGoatGame& game, GameTechRenderer& gRenderer) : world(gWorld), goatGame(game), renderer(gRenderer)
 {
 	InitAssets();
 	InitGoatWorld();
@@ -32,6 +33,7 @@ void NCL::CSC8503::CWLevelManager::InitGoatWorld()
 	InitBaseObjects();
 	InitSideWalks();
 	InitBuildings();
+	InitJumpPads();
 }
 
 void NCL::CSC8503::CWLevelManager::InitAssets()
@@ -142,6 +144,11 @@ void NCL::CSC8503::CWLevelManager::InitBuildings()
 	AddCube(Vector3(0.0, 50.0f, -150.0f), Vector3(40.0f, 2.5f, 75.0f), Vector3(0, 0, 0), 0, Debug::RED, "PumpRoof", whiteTex);
 }
 
+void NCL::CSC8503::CWLevelManager::InitJumpPads()
+{
+	AddJumpPad(Vector3(0, 2.5, 128.0f), Vector3(32.0f, 2.0f, 32.0f), Vector3(-45, 180, 0), 15.0f, Debug::RED);
+}
+
 void NCL::CSC8503::CWLevelManager::AddCube(const Vector3& cubePos, const Vector3& cubeSize, const Vector3& cubeRot, const float& cubeMass, const Vector4& cubeColour, const std::string& cubeName, TextureBase* cubeTex)
 {
 	GameObject* cube = new GameObject(1, cubeName);
@@ -213,4 +220,11 @@ void NCL::CSC8503::CWLevelManager::AddInvisibleWall(const Vector3& wallPos, cons
 	world.AddGameObject(wall);
 
 	//Debug::DrawBox(wallPos + Vector3(xOffset, 0, zOffset), wallSize, Debug::YELLOW, 1000.0f);
+}
+
+void NCL::CSC8503::CWLevelManager::AddJumpPad(const Vector3& padPos, const Vector3& padSize, const Vector3& padRotation, const float& padForce, const Vector4& padColor)
+{
+	CWJumpPad* jumpPad = new CWJumpPad(goatGame, padPos + Vector3(xOffset, 0, zOffset), padSize, padForce, padColor, cubeMesh, whiteTex, basicShader);
+	jumpPad->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(padRotation.x, padRotation.y, padRotation.z));
+	world.AddGameObject(jumpPad);
 }

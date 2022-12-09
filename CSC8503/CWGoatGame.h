@@ -25,6 +25,7 @@ namespace NCL
 			virtual void UpdateGame(float dt);
 
 			bool GetCursorStatus() const { return toggleCamera; }
+			CWGoatPlayer* GetPlayer() { return player; }
 
 		protected:
 			void InitCamera();

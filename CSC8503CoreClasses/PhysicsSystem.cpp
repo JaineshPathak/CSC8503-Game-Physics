@@ -285,7 +285,7 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	Vector3 inertiaB = Vector3::Cross(physB->GetInertiaTensor() * Vector3::Cross(relativeB, p.normal), relativeB);
 
 	float angularEffect = Vector3::Dot(inertiaA + inertiaB, p.normal);
-	float coeffRestitution = 0.66f;
+	float coeffRestitution = physA->GetRestitution() * physB->GetRestitution();
 
 	float j = (-(1.0f + coeffRestitution) * impulseForce) / (totalMass + angularEffect);
 	Vector3 fullImpulse = p.normal * j;
