@@ -29,7 +29,7 @@ namespace NCL
 			void InitMaze();
 
 			void InitDestroyableProps();
-			void AddDestroyableProp(const Vector3& pos, const Vector3& size, const Vector3& boxSize, const Vector3& rot, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader);
+			void AddDestroyableProp(const Vector3& pos, const Vector3& size, const Vector3& boxSize, const Vector3& baseYPos, const Vector3& rot, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader, const Vector4& color = Debug::WHITE);
 
 			void AddCube(const Vector3& cubePos, const Vector3& cubeSize, const Vector3& cubeRot, const float& cubeMass, const Vector4& cubeColour = Vector4(1.0f, 1.0f, 1.0f, 1.0f), const std::string& cubeName = "DefaultCube", TextureBase* cubeTex = nullptr);
 			void AddBuilding(const Vector3& buildingPos, const Vector3& buildingSize, const Vector3& buildingRot, const float& buildingMass, MeshGeometry* buildingMesh, TextureBase* buildingTex = nullptr);

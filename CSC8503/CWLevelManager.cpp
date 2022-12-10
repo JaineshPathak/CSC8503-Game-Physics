@@ -208,15 +208,97 @@ void NCL::CSC8503::CWLevelManager::InitMaze()
 void NCL::CSC8503::CWLevelManager::InitDestroyableProps()
 {
 	//StreetLights
-	Vector3 streeLightScale = Vector3(4, 4, 4);
-	Vector3 streeLightBoxScale = Vector3(4, 32, 4);
-	AddDestroyableProp(Vector3(-170.0f, 2.5f, 0), streeLightScale, streeLightBoxScale, Vector3(0, 90, 0), envStreetLight, propTex, basicShader);
+	Vector3 streetLightScale = Vector3(4, 4, 4);
+	Vector3 streetLightBoxScale = Vector3(4, 32, 4);
+	Vector3 streetLightBasePos = Vector3(0, -24.0f, 0);
+	AddDestroyableProp(Vector3(-170.0f, 36.0f, 0), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-170.0f, 36.0f, 100.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-170.0f, 36.0f, 200.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-170.0f, 36.0f, 300.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 90, 0), envStreetLight, whiteTex, basicShader);
+	
+	AddDestroyableProp(Vector3(-170.0f, 36.0f, -100.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-170.0f, 36.0f, -200.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-170.0f, 36.0f, -300.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 90, 0), envStreetLight, whiteTex, basicShader);
+	
+	AddDestroyableProp(Vector3(-350.0f, 36.0f, -300.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-350.0f, 36.0f, -200.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-350.0f, 36.0f, -100.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-350.0f, 36.0f, 0.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-350.0f, 36.0f, 100.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-350.0f, 36.0f, 200.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-350.0f, 36.0f, 300.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	
+	AddDestroyableProp(Vector3(-300.0f, 36.0f, 340.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 0, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-210.0f, 36.0f, 340.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 0, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-210.0f, 36.0f, -340.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 180, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-300.0f, 36.0f, -340.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 180, 0), envStreetLight, whiteTex, basicShader);
+	
+	AddDestroyableProp(Vector3(-90.0f, 36.0f, -300.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-90.0f, 36.0f, -200.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(-90.0f, 36.0f, -100.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	
+	AddDestroyableProp(Vector3(90.0f, 36.0f, -100.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(90.0f, 36.0f, -200.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(90.0f, 36.0f, -300.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, 90, 0), envStreetLight, whiteTex, basicShader);
+	
+	AddDestroyableProp(Vector3(170.0f, 36.0f, -300.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(170.0f, 36.0f, -200.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	
+	AddDestroyableProp(Vector3(170.0f, 36.0f, -50.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(170.0f, 36.0f, 50.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(340.0f, 36.0f, -200.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+	AddDestroyableProp(Vector3(340.0f, 36.0f, -300.0f), streetLightScale, streetLightBoxScale, streetLightBasePos, Vector3(0, -90, 0), envStreetLight, whiteTex, basicShader);
+
+	Vector3 tree2Scale = Vector3(6, 6, 6);
+	Vector3 tree2BoxScale = Vector3(10, 28, 10);
+	Vector3 tree2BasePos = Vector3(0, -24.0f, 0);
+	Vector4 tree2Color = Vector4(0.13f, 0.47f, 0.0f, 1.0f);
+	AddDestroyableProp(Vector3(-224.0f, 34.0f, 70.0f), tree2Scale, tree2BoxScale, tree2BasePos, Vector3(0, 0, 0), envTree3, whiteTex, basicShader, tree2Color);
+	AddDestroyableProp(Vector3(-224.0f, 34.0f, 174.0f), tree2Scale, tree2BoxScale, tree2BasePos, Vector3(0, 0, 0), envTree3, whiteTex, basicShader, tree2Color);
+	AddDestroyableProp(Vector3(-300.0f, 34.0f, 236.0f), tree2Scale, tree2BoxScale, tree2BasePos, Vector3(0, 0, 0), envTree3, whiteTex, basicShader, tree2Color);
+	AddDestroyableProp(Vector3(-64.0f, 34.0f, -72.0f), tree2Scale, tree2BoxScale, tree2BasePos, Vector3(0, 0, 0), envTree3, whiteTex, basicShader, tree2Color);
+	AddDestroyableProp(Vector3(64.0f, 34.0f, -72.0f), tree2Scale, tree2BoxScale, tree2BasePos, Vector3(0, 0, 0), envTree3, whiteTex, basicShader, tree2Color);
+
+	Vector3 tree3Scale = Vector3(3, 3, 3);
+	Vector3 tree3BoxScale = Vector3(5, 30, 5);
+	Vector3 tree3BasePos = Vector3(0, -24.0f, 0);
+	Vector4 tree3Color = Vector4(0.3f, 0.4f, 0.2f, 1.0f);
+	AddDestroyableProp(Vector3(180.0f, 34.0f, 0.0f), tree3Scale, tree3BoxScale, tree3BasePos, Vector3(0, 0, 0), envTree2, whiteTex, basicShader, tree3Color);
+	AddDestroyableProp(Vector3(180.0f, 34.0f, -240.0f), tree3Scale, tree3BoxScale, tree3BasePos, Vector3(0, 0, 0), envTree2, whiteTex, basicShader, tree3Color);
+	AddDestroyableProp(Vector3(320.0f, 34.0f, -240.0f), tree3Scale, tree3BoxScale, tree3BasePos, Vector3(0, 0, 0), envTree2, whiteTex, basicShader, tree3Color);
+	AddDestroyableProp(Vector3(340.0f, 34.0f, -256.0f), tree3Scale, tree3BoxScale, tree3BasePos, Vector3(0, 0, 0), envTree2, whiteTex, basicShader, tree3Color);
+	AddDestroyableProp(Vector3(84.0f, 34.0f, -240.0f), tree3Scale, tree3BoxScale, tree3BasePos, Vector3(0, 0, 0), envTree2, whiteTex, basicShader, tree3Color);
+
+	Vector3 carScale = Vector3(6, 6, 6);
+	Vector3 carBoxScale = Vector3(20, 12, 12);
+	Vector3 carBasePos = Vector3(0, 0.0f, 0);
+	Vector4 carColor = Vector4(0.75f, 0.05f, 0.04f, 1.0f);
+	AddDestroyableProp(Vector3(-210.0f, 8.0f, -70.0f), carScale, carBoxScale, carBasePos, Vector3(0, 90, 0), envCar, whiteTex, basicShader, carColor);
+	AddDestroyableProp(Vector3(0.0f, 8.0f, -240.0f), carScale, carBoxScale, carBasePos, Vector3(0, 90, 0), envCar, whiteTex, basicShader, carColor);
+	AddDestroyableProp(Vector3(206.0f, 8.0f, 480.0f), carScale, carBoxScale, carBasePos, Vector3(0, -90, 0), envCar, whiteTex, basicShader, carColor);
+	AddDestroyableProp(Vector3(5.0f, 8.0f, -140.0f), carScale, carBoxScale, carBasePos, Vector3(0, -90, 0), envCar, whiteTex, basicShader, carColor);
+	AddDestroyableProp(Vector3(410.0f, 8.0f, 130.0f), carScale, carBoxScale, carBasePos, Vector3(0, -90, 0), envCar, whiteTex, basicShader, carColor);
+	AddDestroyableProp(Vector3(410.0f, 8.0f, 90.0f), carScale, carBoxScale, carBasePos, Vector3(0, -90, 0), envCar, whiteTex, basicShader, carColor);
+	AddDestroyableProp(Vector3(410.0f, 8.0f, 50.0f), carScale, carBoxScale, carBasePos, Vector3(0, -90, 0), envCar, whiteTex, basicShader, carColor);
+
+	Vector3 benchScale = Vector3(3, 3, 3);
+	Vector3 benchBoxScale = Vector3(3.8f, 1.85f, 9.8f);
+	Vector3 benchBasePos = Vector3(0, 0.0f, 0);
+	Vector4 benchColor = Vector4(1.0f, 0.52f, 0.35f, 1.0f);
+	AddDestroyableProp(Vector3(-190.0f, 8.0f, 60.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
+	AddDestroyableProp(Vector3(-190.0f, 8.0f, 90.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
+	AddDestroyableProp(Vector3(-320.0f, 8.0f, 256.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
+	AddDestroyableProp(Vector3(-320.0f, 8.0f, 210.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
+	AddDestroyableProp(Vector3(-320.0f, 8.0f, -104.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
+	AddDestroyableProp(Vector3(-320.0f, 8.0f, -150.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
+	AddDestroyableProp(Vector3(256.0f, 8.0f, -320.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 0, 0), envBench, whiteTex, basicShader, benchColor);
 }
 
-void NCL::CSC8503::CWLevelManager::AddDestroyableProp(const Vector3& pos, const Vector3& size, const Vector3& boxSize, const Vector3& rot, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader)
+void NCL::CSC8503::CWLevelManager::AddDestroyableProp(const Vector3& pos, const Vector3& scale, const Vector3& boxSize, const Vector3& baseYPos, const Vector3& rot, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader, const Vector4& color)
 {
-	CWPropDestroy* prop = new CWPropDestroy(goatGame, pos + Vector3(xOffset, 0, zOffset), size, boxSize, mesh, texture, shader);
+	CWPropDestroy* prop = new CWPropDestroy(goatGame, pos + Vector3(xOffset, 0, zOffset), baseYPos, scale, boxSize, mesh, texture, shader);
 	prop->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(rot.x, rot.y, rot.z));
+	prop->GetRenderObject()->SetColour(color);
 
 	Debug::DrawBox(pos + Vector3(xOffset, 0, zOffset), boxSize, Debug::GREEN, 1000.0f);
 	

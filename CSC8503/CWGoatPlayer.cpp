@@ -74,7 +74,7 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 		targetAngle = RadiansToDegrees(targetAngle) + world.GetMainCamera()->GetYaw();
 
 		Quaternion newRot = Quaternion::EulerAnglesToQuaternion(0, targetAngle, 0);
-		float finalRotSpeed = isOnGround ? rotationSpeed : rotationSpeed * (airControl * 0.5);
+		float finalRotSpeed = isOnGround ? rotationSpeed : rotationSpeed * (airControl * 0.5f);
 		transform.SetOrientation(Quaternion::Slerp(transform.GetOrientation(), newRot, finalRotSpeed * dt));
 
 		Vector3 moveDir = newRot * Vector3(0, 0, -1.0f);
