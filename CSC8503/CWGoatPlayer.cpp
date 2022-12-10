@@ -36,6 +36,7 @@ NCL::CSC8503::CWGoatPlayer::CWGoatPlayer(CWGoatGame& gGame, GameWorld& gWorld, G
 NCL::CSC8503::CWGoatPlayer::~CWGoatPlayer()
 {
 	delete goatMesh;
+	delete whiteTex;
 	delete basicShader;
 }
 

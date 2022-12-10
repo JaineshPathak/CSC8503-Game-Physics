@@ -27,6 +27,9 @@ namespace NCL
 			bool GetCursorStatus() const { return toggleCamera; }
 			CWGoatPlayer* GetPlayer() { return player; }
 
+			void OnPropSpawn() { totalPropsToDestroy++; }
+			void OnPropDestroy(const int& propScore) { totalPropsToDestroy--; }
+
 		protected:
 			void InitCamera();
 
@@ -57,6 +60,8 @@ namespace NCL
 
 			//Debug Mode
 			GameObject* selectedObject;
+
+			int totalPropsToDestroy;
 		};
 	}
 }

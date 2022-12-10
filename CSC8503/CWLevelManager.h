@@ -7,6 +7,7 @@ namespace NCL
 	namespace CSC8503
 	{
 		class CWJumpPad;
+		class CWPropDestroy;
 		class CWGoatGame;
 		class CWLevelManager
 		{
@@ -27,6 +28,9 @@ namespace NCL
 			void InitJumpPads();
 			void InitMaze();
 
+			void InitDestroyableProps();
+			void AddDestroyableProp(const Vector3& pos, const Vector3& size, const Vector3& boxSize, const Vector3& rot, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader);
+
 			void AddCube(const Vector3& cubePos, const Vector3& cubeSize, const Vector3& cubeRot, const float& cubeMass, const Vector4& cubeColour = Vector4(1.0f, 1.0f, 1.0f, 1.0f), const std::string& cubeName = "DefaultCube", TextureBase* cubeTex = nullptr);
 			void AddBuilding(const Vector3& buildingPos, const Vector3& buildingSize, const Vector3& buildingRot, const float& buildingMass, MeshGeometry* buildingMesh, TextureBase* buildingTex = nullptr);
 			void AddInvisibleWall(const Vector3& wallPos, const Vector3 wallSize);
@@ -41,7 +45,15 @@ namespace NCL
 			MeshGeometry* highRise13 = nullptr;
 			MeshGeometry* highRise18 = nullptr;
 
+			//Props
+			MeshGeometry* envStreetLight = nullptr;
+			MeshGeometry* envTree2 = nullptr;
+			MeshGeometry* envTree3 = nullptr;
+			MeshGeometry* envCar = nullptr;
+			MeshGeometry* envBench = nullptr;
+
 			TextureBase* basicTex = nullptr;
+			TextureBase* propTex = nullptr;
 			TextureBase* whiteTex = nullptr;
 			TextureBase* conceptTex = nullptr;
 			ShaderBase* basicShader = nullptr;

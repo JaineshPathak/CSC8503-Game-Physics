@@ -2,6 +2,7 @@
 #include "TextureLoader.h"
 #include "CWLevelManager.h"
 #include "CWJumpPad.h"
+#include "CWPropDestroy.h"
 #include "PhysicsObject.h"
 
 using namespace NCL;
@@ -22,7 +23,14 @@ NCL::CSC8503::CWLevelManager::~CWLevelManager()
 	delete highRise13;
 	delete highRise18;
 
+	delete envStreetLight;
+	delete envTree2;
+	delete envTree3;
+	delete envCar;
+	delete envBench;
+
 	delete basicTex;
+	delete propTex;
 	delete whiteTex;
 	delete conceptTex;
 	delete basicShader;
@@ -35,6 +43,7 @@ void NCL::CSC8503::CWLevelManager::InitGoatWorld()
 	InitBuildings();
 	InitJumpPads();
 	InitMaze();
+	InitDestroyableProps();
 }
 
 void NCL::CSC8503::CWLevelManager::InitAssets()
@@ -46,8 +55,15 @@ void NCL::CSC8503::CWLevelManager::InitAssets()
 	highRise13 = renderer.LoadMesh("Highrise_13.msh");
 	highRise18 = renderer.LoadMesh("Highrise_18.msh");
 
+	envStreetLight = renderer.LoadMesh("Env_Road_Column.msh");
+	envTree2 = renderer.LoadMesh("Env_Type2_Tree_2.msh");
+	envTree3 = renderer.LoadMesh("Env_Type3_Tree_2.msh");
+	envCar = renderer.LoadMesh("Env_Car_Hatch.msh");
+	envBench = renderer.LoadMesh("Env_Bench.msh");
+
 	basicTex = renderer.LoadTexture("checkerboard.png");
 	whiteTex = renderer.LoadTexture("WhiteTex.png");
+	propTex = renderer.LoadTexture("PropTexture.png");
 	conceptTex = renderer.LoadTexture("ConceptTexture.jpg");
 
 	basicShader = renderer.LoadShader("scene.vert", "scene.frag");
@@ -187,6 +203,24 @@ void NCL::CSC8503::CWLevelManager::InitMaze()
 	AddCube(Vector3(180.0, 20.0f, 310.0f), Vector3(8.0f, 18.0f, 90.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
 	AddCube(Vector3(235.0, 20.0f, 340.0f), Vector3(8.0f, 18.0f, 55.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);*/
+}
+
+void NCL::CSC8503::CWLevelManager::InitDestroyableProps()
+{
+	//StreetLights
+	Vector3 streeLightScale = Vector3(4, 4, 4);
+	Vector3 streeLightBoxScale = Vector3(4, 32, 4);
+	AddDestroyableProp(Vector3(-170.0f, 2.5f, 0), streeLightScale, streeLightBoxScale, Vector3(0, 90, 0), envStreetLight, propTex, basicShader);
+}
+
+void NCL::CSC8503::CWLevelManager::AddDestroyableProp(const Vector3& pos, const Vector3& size, const Vector3& boxSize, const Vector3& rot, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader)
+{
+	CWPropDestroy* prop = new CWPropDestroy(goatGame, pos + Vector3(xOffset, 0, zOffset), size, boxSize, mesh, texture, shader);
+	prop->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(rot.x, rot.y, rot.z));
+
+	Debug::DrawBox(pos + Vector3(xOffset, 0, zOffset), boxSize, Debug::GREEN, 1000.0f);
+	
+	world.AddGameObject(prop);
 }
 
 void NCL::CSC8503::CWLevelManager::AddCube(const Vector3& cubePos, const Vector3& cubeSize, const Vector3& cubeRot, const float& cubeMass, const Vector4& cubeColour, const std::string& cubeName, TextureBase* cubeTex)
