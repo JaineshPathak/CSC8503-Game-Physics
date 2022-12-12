@@ -9,7 +9,7 @@ namespace NCL {
 
 		class PhysicsObject	{
 		public:
-			PhysicsObject(Transform* parentTransform, const CollisionVolume* parentVolume);
+			PhysicsObject(Transform* parentTransform, const CollisionVolume* parentVolume, const bool& isTrigger = false);
 			~PhysicsObject();
 
 			Vector3 GetLinearVelocity() const {
@@ -80,6 +80,8 @@ namespace NCL {
 			bool GetGravityStatus() const { return enableGravity; }
 			void SetGravityStatus(const bool& s) { enableGravity = s; }
 
+			bool IsTrigger() const { return isTrigger; }
+
 		protected:
 			bool enableGravity = true;
 			const CollisionVolume* volume;
@@ -102,6 +104,8 @@ namespace NCL {
 			Vector3 torque;
 			Vector3 inverseInertia;
 			Matrix3 inverseInteriaTensor;
+
+			bool isTrigger = false;
 		};
 	}
 }

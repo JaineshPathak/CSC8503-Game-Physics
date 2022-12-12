@@ -166,17 +166,24 @@ void PhysicsSystem::UpdateCollisionList()
 	{
 		if ((*i).framesLeft == numCollisionFrames) 
 		{
-			i->a->OnCollisionBegin(i->b);
-			i->b->OnCollisionBegin(i->a);
+			i->a->GetPhysicsObject()->IsTrigger() ? i->a->OnTriggerBegin(i->b) : i->a->OnCollisionBegin(i->b);
+			i->b->GetPhysicsObject()->IsTrigger() ? i->b->OnTriggerBegin(i->a) : i->b->OnCollisionBegin(i->a);
+			//i->b->OnCollisionBegin(i->a);
+
+			//i->a->OnCollisionBegin(i->b);
+			//i->b->OnCollisionBegin(i->a);
 		}
 
 		CollisionDetection::CollisionInfo& in = const_cast<CollisionDetection::CollisionInfo&>(*i);
 		in.framesLeft--;
 
-		if ((*i).framesLeft < 0) 
+		if ((*i).framesLeft < 0)
 		{
-			i->a->OnCollisionEnd(i->b);
-			i->b->OnCollisionEnd(i->a);
+			i->a->GetPhysicsObject()->IsTrigger() ? i->a->OnTriggerEnd(i->b) : i->a->OnCollisionEnd(i->b);
+			//i->b->GetPhysicsObject()->IsTrigger() ? i->b->OnTriggerEnd(i->a) : i->b->OnCollisionEnd(i->a);
+
+			//i->a->OnCollisionEnd(i->b);
+			//i->b->OnCollisionEnd(i->a);
 			i = allCollisions.erase(i);
 		}
 		else 
@@ -254,6 +261,9 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 {
 	PhysicsObject* physA = a.GetPhysicsObject();
 	PhysicsObject* physB = b.GetPhysicsObject();
+
+	if (physA->IsTrigger() || physB->IsTrigger())
+		return;
 
 	Transform& transformA = a.GetTransform();
 	Transform& transformB = b.GetTransform();
@@ -376,6 +386,7 @@ void PhysicsSystem::NarrowPhase()
 		CollisionDetection::CollisionInfo info = *i;
 		if (CollisionDetection::ObjectIntersection(info.a, info.b, info))
 		{
+			//info.framesLeft = numCollisionFrames;
 			info.framesLeft = numCollisionFrames;
 			ImpulseResolveCollision(*info.a, *info.b, info.point);
 			allCollisions.insert(info);
@@ -503,7 +514,9 @@ void PhysicsSystem::UpdateConstraints(float dt) {
 	std::vector<Constraint*>::const_iterator last;
 	gameWorld.GetConstraintIterators(first, last);
 
-	for (auto i = first; i != last; ++i) {
-		(*i)->UpdateConstraint(dt);
+	for (auto i = first; i != last; ++i) 
+	{
+		if((*i)->isEnabled)
+			(*i)->UpdateConstraint(dt);
 	}
 }

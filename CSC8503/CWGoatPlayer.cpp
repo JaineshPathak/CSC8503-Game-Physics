@@ -5,6 +5,7 @@
 #include "RenderObject.h"
 #include "NetworkObject.h"
 #include "Maths.h"
+#include "CWSpringConstraint.h"
 
 NCL::CSC8503::CWGoatPlayer::CWGoatPlayer(CWGoatGame& gGame, GameWorld& gWorld, GameTechRenderer& gRenderer) : game(gGame), world(gWorld), renderer(gRenderer)
 {
@@ -30,6 +31,10 @@ NCL::CSC8503::CWGoatPlayer::CWGoatPlayer(CWGoatGame& gGame, GameWorld& gWorld, G
 	physicsObject->SetGravityMultiplier(5.0f);
 	physicsObject->SetRestitution(0);
 
+	springRope = new CWSpringConstraint(this, Vector3(0, 0, 0), 0.0f, ropeForce, ropeDamping);
+	springRope->isEnabled = false;
+	world.AddConstraint(springRope);
+
 	world.AddGameObject(this);
 }
 
@@ -38,6 +43,8 @@ NCL::CSC8503::CWGoatPlayer::~CWGoatPlayer()
 	delete goatMesh;
 	delete whiteTex;
 	delete basicShader;
+
+	delete springRope;
 }
 
 void NCL::CSC8503::CWGoatPlayer::Update(float dt)
@@ -50,7 +57,7 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 		isOnGround = (distance <= 6.f);
 	}
 
-	renderObject->SetColour(isOnGround ? Debug::BLUE : Debug::RED);
+	//renderObject->SetColour(isOnGround ? Debug::BLUE : Debug::RED);
 	//physicsObject->SetLinearDamping(isOnGround ? 3.0f : 0.1f);
 
 	if (game.GetCursorStatus())
@@ -64,6 +71,31 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 	if (Window::GetKeyboard()->KeyHeld(KeyboardKeys::D)) linearMovement.x = 1.0f;
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE) && isOnGround) physicsObject->AddForce(Vector3(0, 1, 0) * jumpForce * 50.0f);
+
+	if (Window::GetMouse()->ButtonPressed(MouseButtons::LEFT) && enableRope)
+	{
+		isHooked = !isHooked;
+		if (isHooked && !springRope->isEnabled)
+		{
+			Ray camRay = Ray(world.GetMainCamera()->GetPosition(), world.GetMainCamera()->GetForward());
+			RayCollision camRayCollisionData;
+			if (world.Raycast(camRay, camRayCollisionData, true, this))
+			{
+				float ropeDistance = (transform.GetPosition() - groundCollisionData.collidedAt).Length();
+				ropeAnchorPoint = camRayCollisionData.collidedAt;
+
+				springRope->NewData(ropeAnchorPoint, ropeDistance, ropeForce, ropeDamping);
+				springRope->isEnabled = true;
+			}
+			else
+				isHooked = false;
+		}
+		else if (!isHooked && springRope != nullptr)
+			springRope->isEnabled = false;
+	}
+
+	if (isHooked)
+		Debug::DrawLine(transform.GetPosition(), ropeAnchorPoint, Debug::BLACK);
 
 	//airControl = isOnGround ? 1.0f : 0.1f;
 

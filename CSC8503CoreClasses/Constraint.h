@@ -4,6 +4,7 @@ namespace NCL {
 	namespace CSC8503 {
 		class Constraint	{
 		public:
+			bool isEnabled = true;
 			Constraint() {}
 			virtual ~Constraint() {}
 

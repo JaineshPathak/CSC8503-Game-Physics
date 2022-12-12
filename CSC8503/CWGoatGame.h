@@ -30,6 +30,16 @@ namespace NCL
 			void OnPropSpawn() { totalPropsToDestroy++; }
 			void OnPropDestroy(const int& propScore) { totalPropsToDestroy--; }
 
+			MeshGeometry* GetGoatMesh() { return levelManager->GetGoatMesh(); }
+			MeshGeometry* GetDudeMesh() { return levelManager->GetDudeMesh(); }
+			MeshGeometry* GetEnemyMesh() { return levelManager->GetEnemyMesh(); }
+
+			ShaderBase* GetBasicShader() { return levelManager->GetBasicShader(); }
+			TextureBase* GetWhiteTex() { return levelManager->GetWhiteTex(); }
+
+			NavigationGrid* GetNavGrid() const { return navGrid; }
+			void AddPawnToList(CWPawn* pawn) { pawnsList.emplace_back(pawn); }
+
 		protected:
 			void InitCamera();
 
@@ -62,6 +72,8 @@ namespace NCL
 			GameObject* selectedObject;
 
 			int totalPropsToDestroy;
+
+			std::vector<CWPawn*> pawnsList;
 		};
 	}
 }

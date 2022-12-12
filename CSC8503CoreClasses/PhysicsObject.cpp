@@ -4,7 +4,10 @@
 using namespace NCL;
 using namespace CSC8503;
 
-PhysicsObject::PhysicsObject(Transform* parentTransform, const CollisionVolume* parentVolume)	{
+PhysicsObject::PhysicsObject(Transform* parentTransform, const CollisionVolume* parentVolume, const bool& isTrigger)	
+{
+	this->isTrigger = isTrigger;
+
 	transform	= parentTransform;
 	volume		= parentVolume;
 

@@ -7,7 +7,7 @@ namespace NCL
     namespace CSC8503
     {
         class CWGoatGame;
-
+        class CWSpringConstraint;
         class CWGoatPlayer : public GameObject
         {
         public:
@@ -43,6 +43,13 @@ namespace NCL
             float airControl = 0.5f;
 
             bool isOnGround = true;
+            bool isHooked = false;
+
+            bool enableRope = false;
+            CWSpringConstraint* springRope = nullptr;
+            Vector3 ropeAnchorPoint;
+            float ropeForce = 0.1f;
+            float ropeDamping = 0.0f;
         };
     }
 }

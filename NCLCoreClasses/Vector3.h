@@ -180,5 +180,23 @@ namespace NCL::Maths {
 			Vector3 finalV = Lerp(a, b, t);
 			return finalV;
 		}
+
+		static Vector3 MoveTowards(Vector3 current, Vector3 target, float maxDistanceDelta)
+		{
+			// avoid vector ops because current scripting backends are terrible at inlining
+			float toVector_x = target.x - current.x;
+			float toVector_y = target.y - current.y;
+			float toVector_z = target.z - current.z;
+
+			float sqdist = toVector_x * toVector_x + toVector_y * toVector_y + toVector_z * toVector_z;
+
+			if (sqdist == 0 || (maxDistanceDelta >= 0 && sqdist <= maxDistanceDelta * maxDistanceDelta))
+				return target;
+			float dist = (float)sqrt(sqdist);
+
+			return Vector3(current.x + toVector_x / dist * maxDistanceDelta,
+				current.y + toVector_y / dist * maxDistanceDelta,
+				current.z + toVector_z / dist * maxDistanceDelta);
+		}
 	};
 }

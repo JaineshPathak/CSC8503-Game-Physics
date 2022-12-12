@@ -29,24 +29,25 @@ void Camera::UpdateCamera(float dt)
 	float frameSpeed = defaultSpeed * dt;
 
 	Matrix4 rotation = Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Matrix4::Rotation(pitch, Vector3(1, 0, 0));
-	Vector3 forward = rotation * Vector3(0, 0, -1);
-	Vector3 right = rotation * Vector3(1, 0, 0);
+	camForward = rotation * Vector3(0, 0, -1);
+	camRight = rotation * Vector3(1, 0, 0);
+	camUp = rotation * Vector3(0, 1, 0);
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SHIFT))
 		frameSpeed *= 2.0f;
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
-		position += forward * frameSpeed;
+		position += camForward * frameSpeed;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
-		position -= forward * frameSpeed;
+		position -= camForward * frameSpeed;
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
-		position -= right * frameSpeed;
+		position -= camRight * frameSpeed;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
-		position += right * frameSpeed;
+		position += camRight * frameSpeed;
 	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::SPACE)) {

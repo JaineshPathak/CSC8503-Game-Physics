@@ -1,4 +1,6 @@
 #include "CWGoatGame.h"
+#include "CWPawn.h"
+
 #include "GameWorld.h"
 #include "PhysicsObject.h"
 
@@ -47,8 +49,12 @@ NCL::CSC8503::CWGoatGame::~CWGoatGame()
 
 void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 {
-	if(player) player->Update(dt);
 	world->GetMainCamera()->UpdateCamera(dt);
+	
+	for (size_t i = 0; i < pawnsList.size(); i++)
+		pawnsList[i]->Update(dt);
+	
+	if(player) player->Update(dt);
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Q))
 	{

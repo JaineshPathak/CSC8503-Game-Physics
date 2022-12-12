@@ -22,7 +22,7 @@ NCL::CSC8503::CWPropDestroy::CWPropDestroy(CWGoatGame& gGame, const Vector3& pos
 	physicsObject->SetRestitution(0);
 
 	basePos = baseYPos;
-	Debug::DrawBox(transform.GetPosition() + basePos, Vector3(1, 1, 1), Debug::YELLOW, 1000.0f);
+	//Debug::DrawBox(transform.GetPosition() + basePos, Vector3(1, 1, 1), Debug::YELLOW, 1000.0f);
 
 	goatGame.OnPropSpawn();
 }

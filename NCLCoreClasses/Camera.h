@@ -136,6 +136,10 @@ namespace NCL {
 
 		Camera& SetDefaultSpeed(const float& s) { defaultSpeed = s; }
 
+		Vector3 GetForward() const { return camForward; }
+		Vector3 GetRight() const { return camRight; }
+		Vector3 GetUp() const { return camUp; }
+
 		static Camera BuildPerspectiveCamera(const Vector3& pos, float pitch, float yaw, float fov, float near, float far);
 		static Camera BuildOrthoCamera(const Vector3& pos, float pitch, float yaw, float left, float right, float top, float bottom, float near, float far);
 	protected:
@@ -152,6 +156,10 @@ namespace NCL {
 		float	yaw;
 		float	pitch;
 		Vector3 position;
+
+		Vector3 camForward;
+		Vector3 camUp;
+		Vector3 camRight;
 
 		float defaultSpeed = 100.0f;
 	};

@@ -3,6 +3,9 @@
 #include "CWLevelManager.h"
 #include "CWJumpPad.h"
 #include "CWPropDestroy.h"
+#include "CWMazeTrigger.h"
+#include "CWPawn.h"
+#include "CWDude.h"
 #include "PhysicsObject.h"
 
 using namespace NCL;
@@ -29,6 +32,10 @@ NCL::CSC8503::CWLevelManager::~CWLevelManager()
 	delete envCar;
 	delete envBench;
 
+	delete goatMesh;
+	delete dudeMesh;
+	delete enemyMesh;
+
 	delete basicTex;
 	delete propTex;
 	delete whiteTex;
@@ -44,6 +51,7 @@ void NCL::CSC8503::CWLevelManager::InitGoatWorld()
 	InitJumpPads();
 	InitMaze();
 	InitDestroyableProps();
+	InitDudeNPC();
 }
 
 void NCL::CSC8503::CWLevelManager::InitAssets()
@@ -60,6 +68,10 @@ void NCL::CSC8503::CWLevelManager::InitAssets()
 	envTree3 = renderer.LoadMesh("Env_Type3_Tree_2.msh");
 	envCar = renderer.LoadMesh("Env_Car_Hatch.msh");
 	envBench = renderer.LoadMesh("Env_Bench.msh");
+
+	goatMesh = renderer.LoadMesh("Goat.msh");
+	dudeMesh = renderer.LoadMesh("Keeper.msh");
+	enemyMesh = renderer.LoadMesh("goose.msh");
 
 	basicTex = renderer.LoadTexture("checkerboard.png");
 	whiteTex = renderer.LoadTexture("WhiteTex.png");
@@ -169,40 +181,47 @@ void NCL::CSC8503::CWLevelManager::InitJumpPads()
 void NCL::CSC8503::CWLevelManager::InitMaze()
 {
 	Vector4 mazeWallColor = Vector4(0.13f, 0.47f, 0.0f, 1.0f);
-	AddCube(Vector3(288.0, 20.0f, 174.0f), Vector3(125.0f, 18.0f, 8.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(288.0, 20.0f, 414.0f), Vector3(125.0f, 18.0f, 8.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(288.0, 20.0f, 174.0f), Vector3(125.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(288.0, 20.0f, 414.0f), Vector3(125.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	
-	AddCube(Vector3(405.0, 20.0f, 280.0f), Vector3(8.0f, 18.0f, 108.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(172.0, 20.0f, 306.0f), Vector3(8.0f, 18.0f, 108.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(405.0, 20.0f, 280.0f), Vector3(4.0f, 18.0f, 108.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(172.0, 20.0f, 306.0f), Vector3(4.0f, 18.0f, 108.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+												   
+	AddCube(Vector3(235.0, 20.0f, 350.0f), Vector3(4.0f, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(350.0, 20.0f, 235.0f), Vector3(4.0f, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+												   
+	AddCube(Vector3(294.0, 20.0f, 355.0f), Vector3(4.0f, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(294.0, 20.0f, 210.0f), Vector3(4.0f, 18.0f, 30.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
-	AddCube(Vector3(235.0, 20.0f, 350.0f), Vector3(8.0f, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(350.0, 20.0f, 235.0f), Vector3(8.0f, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(200.0, 20.0f, 206.0f), Vector3(22.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(391.0, 20.0f, 382.0f), Vector3(22.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+																 
+	AddCube(Vector3(230.0, 20.0f, 294.0f), Vector3(29.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(365.0, 20.0f, 294.0f), Vector3(22.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+																 
+	AddCube(Vector3(295.0, 20.0f, 360.0f), Vector3(22.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(295.0, 20.0f, 230.0f), Vector3(22.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
-	AddCube(Vector3(294.0, 20.0f, 355.0f), Vector3(8.0f, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(294.0, 20.0f, 210.0f), Vector3(8.0f, 18.0f, 30.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(338.0, 20.0f, 380.0f), Vector3(4.0f, 18.0f, 36.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(246.0, 20.0f, 215.0f), Vector3(4.0f, 18.0f, 36.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
-	AddCube(Vector3(200.0, 20.0f, 206.0f), Vector3(22.0f, 18.0f, 8.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(391.0, 20.0f, 382.0f), Vector3(22.0f, 18.0f, 8.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-
-	AddCube(Vector3(230.0, 20.0f, 294.0f), Vector3(29.0f, 18.0f, 8.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(365.0, 20.0f, 294.0f), Vector3(22.0f, 18.0f, 8.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-
-	AddCube(Vector3(295.0, 20.0f, 360.0f), Vector3(22.0f, 18.0f, 8.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(295.0, 20.0f, 230.0f), Vector3(22.0f, 18.0f, 8.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-
-	AddCube(Vector3(338.0, 20.0f, 380.0f), Vector3(3.0f, 18.0f, 36.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(246.0, 20.0f, 215.0f), Vector3(8.0f, 18.0f, 36.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-
-	AddCube(Vector3(315.0, 20.0f, 262.0f), Vector3(36.0f, 18.0f, 3.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(315.0, 20.0f, 262.0f), Vector3(36.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	
-	AddCube(Vector3(380.0, 20.0f, 318.0f), Vector3(3.0f, 18.0f, 22.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(380.0, 20.0f, 318.0f), Vector3(4.0f, 18.0f, 22.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
-	AddCube(Vector3(232.0, 20.0f, 247.0f), Vector3(18.0f, 18.0f, 3.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(232.0, 20.0f, 247.0f), Vector3(18.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
+
+	AddInvisibleWallTrigger({ 300.0f, 20.0f, 300.0f }, { 130.0f, 20.0f, 130.0f });
 	/*AddCube(Vector3(420.0, 20.0f, 270.0f), Vector3(8.0f, 18.0f, 90.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	AddCube(Vector3(180.0, 20.0f, 310.0f), Vector3(8.0f, 18.0f, 90.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
 	AddCube(Vector3(235.0, 20.0f, 340.0f), Vector3(8.0f, 18.0f, 55.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);*/
+}
+
+void NCL::CSC8503::CWLevelManager::InitDudeNPC()
+{
+	AddNPCDude(Vector3(30.0f, 4.5f, 0.0f), Vector3(0, 0, 0), Vector3(5, 5, 5), 6.8f);
 }
 
 void NCL::CSC8503::CWLevelManager::InitDestroyableProps()
@@ -291,7 +310,8 @@ void NCL::CSC8503::CWLevelManager::InitDestroyableProps()
 	AddDestroyableProp(Vector3(-320.0f, 8.0f, 210.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
 	AddDestroyableProp(Vector3(-320.0f, 8.0f, -104.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
 	AddDestroyableProp(Vector3(-320.0f, 8.0f, -150.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
-	AddDestroyableProp(Vector3(256.0f, 8.0f, -320.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 0, 0), envBench, whiteTex, basicShader, benchColor);
+	AddDestroyableProp(Vector3(256.0f, 8.0f, -320.0f), benchScale, Vector3(9.8f, 1.85f, 3.8f), benchBasePos, Vector3(0, 0, 0), envBench, whiteTex, basicShader, benchColor);
+	AddDestroyableProp(Vector3(256.0f, 8.0f, -180.0f), benchScale, Vector3(9.8f, 1.85f, 3.8f), benchBasePos, Vector3(0, 0, 0), envBench, whiteTex, basicShader, benchColor);
 }
 
 void NCL::CSC8503::CWLevelManager::AddDestroyableProp(const Vector3& pos, const Vector3& scale, const Vector3& boxSize, const Vector3& baseYPos, const Vector3& rot, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader, const Vector4& color)
@@ -300,7 +320,7 @@ void NCL::CSC8503::CWLevelManager::AddDestroyableProp(const Vector3& pos, const 
 	prop->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(rot.x, rot.y, rot.z));
 	prop->GetRenderObject()->SetColour(color);
 
-	Debug::DrawBox(pos + Vector3(xOffset, 0, zOffset), boxSize, Debug::GREEN, 1000.0f);
+	//Debug::DrawBox(pos + Vector3(xOffset, 0, zOffset), boxSize, Debug::GREEN, 1000.0f);
 	
 	world.AddGameObject(prop);
 }
@@ -379,9 +399,25 @@ void NCL::CSC8503::CWLevelManager::AddInvisibleWall(const Vector3& wallPos, cons
 	//Debug::DrawBox(wallPos + Vector3(xOffset, 0, zOffset), wallSize, Debug::YELLOW, 1000.0f);
 }
 
+void NCL::CSC8503::CWLevelManager::AddInvisibleWallTrigger(const Vector3& wallPos, const Vector3 wallSize)
+{
+	CWMazeTrigger* mazeTrigger = new CWMazeTrigger(goatGame, wallSize);
+	mazeTrigger->GetTransform().SetPosition(wallPos + Vector3(xOffset, 0, zOffset)).SetScale(wallSize * 2);
+
+	Debug::DrawBox(wallPos + Vector3(xOffset, 0, zOffset), wallSize, Debug::YELLOW, 1000.0f);
+
+	world.AddGameObject(mazeTrigger);
+}
+
 void NCL::CSC8503::CWLevelManager::AddJumpPad(const Vector3& padPos, const Vector3& padSize, const Vector3& padRotation, const float& padForce, const Vector4& padColor)
 {
 	CWJumpPad* jumpPad = new CWJumpPad(goatGame, padPos + Vector3(xOffset, 0, zOffset), padSize, padForce, padColor, cubeMesh, whiteTex, basicShader);
 	jumpPad->GetTransform().SetOrientation(Quaternion::EulerAnglesToQuaternion(padRotation.x, padRotation.y, padRotation.z));
 	world.AddGameObject(jumpPad);
+}
+
+void NCL::CSC8503::CWLevelManager::AddNPCDude(const Vector3& pos, const Vector3& rot, const Vector3& scale, const float& radius, const Vector4& color)
+{
+	CWDude* dude = new CWDude(goatGame, world, pos + Vector3(xOffset, 0, zOffset), rot, scale, radius, dudeMesh, whiteTex, basicShader, color);
+	world.AddGameObject(dude);
 }

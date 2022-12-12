@@ -91,4 +91,9 @@ void NCL::CSC8503::CWFollowCamera::UpdateCamera(float dt)
 	Quaternion q(viewMatrix);
 	pitch = q.ToEuler().x + pitchOffset;
 	yaw = q.ToEuler().y;
+
+	Matrix4 rotation = Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Matrix4::Rotation(pitch, Vector3(1, 0, 0));
+	camForward = rotation * Vector3(0, 0, -1);
+	camRight = rotation * Vector3(1, 0, 0);
+	camUp = rotation * Vector3(0, 1, 0);
 }
