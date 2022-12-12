@@ -19,10 +19,24 @@ namespace NCL
 
 			virtual void Update(float dt) override;
 			virtual void OnCollisionBegin(GameObject* otherObject) override;
+			void DebugDisplayPath(std::vector<Vector3> paths);
 
 		protected:
-			float moveSpeed = 15.0f;
-			float rotationSpeed = 0.3f;
+			Vector3 basePos = Vector3(0, -6.5f, 0);
+			float moveSpeed = 40.0f;
+			float rotationSpeed = 5.0f;
+			float distanceThreshold = 10.0f;
+			Vector3 previousPosition;
+
+			bool foundPathPrev = false;
+			float chaseRadius = 45.0f;
+			float chaseTimer = 5.0f;
+			float chaseTimerCurrent = 0.0f;
+
+			void MoveTowards(Vector3 src, const Vector3& pos, float dt);
+			void MoveTowards(const Vector3& pos, float dt, bool useForce = false);
+			void RotateTowards(const Vector3& pos, float rotSpeed, float dt);
+			void RotateAway(const Vector3& pos, float rotSpeed, float dt);
 
 			std::vector<Vector3> patrolPoints;
 			int currentPatrolPointIndex = 0;

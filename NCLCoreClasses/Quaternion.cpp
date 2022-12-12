@@ -160,6 +160,14 @@ Quaternion Quaternion::Slerp(const Quaternion &from, const Quaternion &to, float
 	return q;
 }
 
+Quaternion NCL::Maths::Quaternion::RotateTowards(const Vector3& currentPos, const Vector3& targetPos, const Vector3& axis)
+{
+	Matrix4 rotMat = Matrix4::BuildViewMatrix(currentPos, targetPos, axis).Inverse();
+	return Quaternion(rotMat);
+}
+
+
+
 //http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 //Verified! Different values to above, due to difference between x/z being 'forward'
 Vector3 Quaternion::ToEuler() const {

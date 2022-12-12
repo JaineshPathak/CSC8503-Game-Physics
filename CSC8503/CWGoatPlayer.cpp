@@ -54,7 +54,7 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 	if (world.Raycast(groundRay, groundCollisionData, true, this))
 	{
 		float distance = (groundCollisionData.collidedAt - transform.GetPosition()).Length();
-		isOnGround = (distance <= 6.f);
+		isOnGround = (distance <= 6.0f);
 	}
 
 	//renderObject->SetColour(isOnGround ? Debug::BLUE : Debug::RED);

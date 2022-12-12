@@ -28,7 +28,7 @@ NCL::CSC8503::CWGoatGame::CWGoatGame()
 	cameraFollow = new CWFollowCamera(*world, *player);
 	world->SetMainCamera(cameraFollow);
 
-	navGrid = new NavigationGrid("CWNavGrid4.txt");
+	navGrid = new NavigationGrid("CWNavGrid5.txt");
 	//navGrid->DebugDraw(1);
 
 	useGravity = true;

@@ -45,6 +45,8 @@ namespace NCL::Maths {
 		static Quaternion	Lerp(const Quaternion &from, const Quaternion &to, float by);
 		static Quaternion	Slerp(const Quaternion &from, const Quaternion &to, float by);
 
+		static Quaternion RotateTowards(const Vector3& currentPos, const Vector3& targetPos, const Vector3& axis);
+
 		Vector3		ToEuler() const;
 		Quaternion	Conjugate() const;
 		void		CalculateW();	//builds 4th component when loading in shortened, 3 component quaternions

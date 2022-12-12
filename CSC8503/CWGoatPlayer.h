@@ -45,11 +45,11 @@ namespace NCL
             bool isOnGround = true;
             bool isHooked = false;
 
-            bool enableRope = false;
+            bool enableRope = true;
             CWSpringConstraint* springRope = nullptr;
             Vector3 ropeAnchorPoint;
             float ropeForce = 0.1f;
-            float ropeDamping = 0.0f;
+            float ropeDamping = 0.1f;
         };
     }
 }

@@ -24,7 +24,7 @@ void NCL::CSC8503::CWSpringConstraint::UpdateConstraint(float dt)
 {
 	PhysicsObject* physO = objectA->GetPhysicsObject();
 
-	float k = springForce;
+	/*float k = springForce;
 	float b = springDamping;
 	Vector3 x = objectA->GetTransform().GetPosition() - anchorPoint;
 
@@ -32,10 +32,17 @@ void NCL::CSC8503::CWSpringConstraint::UpdateConstraint(float dt)
 
 	Vector3 v = Vector3::Cross(velAdd, anchorPoint - objectA->GetTransform().GetPosition());
 	Vector3 desiredX = x.Normalised() * (x.Length() - distance);
-	Vector3 force = desiredX * (-k) - (v * b);
+	Vector3 force = desiredX * (-k) - (v * b);*/
+
+	Vector3 difference = objectA->GetTransform().GetPosition() - anchorPoint;
+	float currentDistance = difference.Length();
+	float originalDistance = distance;
+	float displacement = (currentDistance - originalDistance) / currentDistance;
+	Vector3 force = difference * displacement * (-springForce);
+	force -= difference.Normalised() * springDamping;
 
 	//-k * x;
-	std::cout << force << std::endl;
+	//std::cout << force << std::endl;
 
 	physO->AddForce(force);
 	//physO->AddTorque(Vector3::Cross(force, anchorPoint - objectA->GetTransform().GetPosition()));

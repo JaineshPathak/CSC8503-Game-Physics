@@ -181,35 +181,36 @@ void NCL::CSC8503::CWLevelManager::InitJumpPads()
 void NCL::CSC8503::CWLevelManager::InitMaze()
 {
 	Vector4 mazeWallColor = Vector4(0.13f, 0.47f, 0.0f, 1.0f);
-	AddCube(Vector3(288.0, 20.0f, 174.0f), Vector3(125.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(288.0, 20.0f, 414.0f), Vector3(125.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	float wallThickness = 5.0f;
+	AddCube(Vector3(288.0, 20.0f, 174.0f), Vector3(125.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(288.0, 20.0f, 414.0f), Vector3(125.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	
-	AddCube(Vector3(405.0, 20.0f, 280.0f), Vector3(4.0f, 18.0f, 108.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(172.0, 20.0f, 306.0f), Vector3(4.0f, 18.0f, 108.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(405.0, 20.0f, 280.0f), Vector3(wallThickness, 18.0f, 108.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(172.0, 20.0f, 306.0f), Vector3(wallThickness, 18.0f, 108.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 												   
-	AddCube(Vector3(235.0, 20.0f, 350.0f), Vector3(4.0f, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(350.0, 20.0f, 235.0f), Vector3(4.0f, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(235.0, 20.0f, 350.0f), Vector3(wallThickness, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(350.0, 20.0f, 235.0f), Vector3(wallThickness, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 												   
-	AddCube(Vector3(294.0, 20.0f, 355.0f), Vector3(4.0f, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(294.0, 20.0f, 210.0f), Vector3(4.0f, 18.0f, 30.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(294.0, 20.0f, 355.0f), Vector3(wallThickness, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(294.0, 20.0f, 210.0f), Vector3(wallThickness, 18.0f, 30.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
-	AddCube(Vector3(200.0, 20.0f, 206.0f), Vector3(22.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(391.0, 20.0f, 382.0f), Vector3(22.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(200.0, 20.0f, 206.0f), Vector3(22.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(391.0, 20.0f, 382.0f), Vector3(22.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 																 
-	AddCube(Vector3(230.0, 20.0f, 294.0f), Vector3(29.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(365.0, 20.0f, 294.0f), Vector3(22.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(230.0, 20.0f, 294.0f), Vector3(29.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(365.0, 20.0f, 294.0f), Vector3(22.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 																 
-	AddCube(Vector3(295.0, 20.0f, 360.0f), Vector3(22.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(295.0, 20.0f, 230.0f), Vector3(22.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(295.0, 20.0f, 360.0f), Vector3(22.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(295.0, 20.0f, 230.0f), Vector3(22.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
-	AddCube(Vector3(338.0, 20.0f, 380.0f), Vector3(4.0f, 18.0f, 36.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(246.0, 20.0f, 215.0f), Vector3(4.0f, 18.0f, 36.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(338.0, 20.0f, 380.0f), Vector3(wallThickness, 18.0f, 36.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(246.0, 20.0f, 215.0f), Vector3(wallThickness, 18.0f, 36.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
-	AddCube(Vector3(315.0, 20.0f, 262.0f), Vector3(36.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(315.0, 20.0f, 262.0f), Vector3(36.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	
-	AddCube(Vector3(380.0, 20.0f, 318.0f), Vector3(4.0f, 18.0f, 22.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(380.0, 20.0f, 318.0f), Vector3(wallThickness, 18.0f, 22.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
-	AddCube(Vector3(232.0, 20.0f, 247.0f), Vector3(18.0f, 18.0f, 4.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(232.0, 20.0f, 247.0f), Vector3(18.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
 
 	AddInvisibleWallTrigger({ 300.0f, 20.0f, 300.0f }, { 130.0f, 20.0f, 130.0f });

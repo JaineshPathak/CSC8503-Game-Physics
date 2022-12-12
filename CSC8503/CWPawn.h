@@ -15,6 +15,7 @@ namespace NCL
 		public:
 			CWPawn(CWGoatGame& gGame, GameWorld& gWorld) : goatGame(gGame), world(gWorld) { };
 			virtual void Update(float dt) = 0;
+			//virtual void DebugDisplayPath(std::vector<Vector3> paths);
 
 		protected:
 			CWGoatGame& goatGame;

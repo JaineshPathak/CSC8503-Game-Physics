@@ -16,7 +16,7 @@ NCL::CSC8503::CWPropDestroy::CWPropDestroy(CWGoatGame& gGame, const Vector3& pos
 	renderObject->SetColour(Debug::WHITE);
 
 	physicsObject = new PhysicsObject(&transform, boundingVolume);
-	physicsObject->SetInverseMass(40.0f);
+	physicsObject->SetInverseMass(0.5f);	//40.0f
 	physicsObject->InitCubeInertia();
 	physicsObject->SetGravityMultiplier(5.0f);
 	physicsObject->SetRestitution(0);
@@ -31,6 +31,7 @@ void NCL::CSC8503::CWPropDestroy::OnCollisionBegin(GameObject* otherObject)
 {
 	if (otherObject == goatGame.GetPlayer())
 	{
+		physicsObject->SetInverseMass(40.0f);
 		Vector3 dir = goatGame.GetPlayer()->GetTransform().GetPosition() - (transform.GetPosition() + basePos);
 		physicsObject->AddForceAtPosition(-dir * 20.0f, goatGame.GetPlayer()->GetTransform().GetPosition());
 
