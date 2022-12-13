@@ -54,6 +54,12 @@ namespace NCL::CSC8503 {
 			return name;
 		}
 
+		const std::string& GetTag() const {
+			return tag;
+		}
+
+		void SetTag(const std::string& newTag) { tag = newTag; }
+
 		virtual void OnCollisionBegin(GameObject* otherObject) {
 			//std::cout << "OnCollisionBegin event occured!\n";
 		}
@@ -91,6 +97,7 @@ namespace NCL::CSC8503 {
 		bool		isActive;
 		int			worldID;
 		std::string	name;
+		std::string	tag = "Default";
 		int layer = 1;		//1 - Default, 2 - Ignore, 3 - UI
 
 		Vector3 broadphaseAABB;

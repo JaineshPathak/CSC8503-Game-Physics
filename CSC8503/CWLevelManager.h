@@ -24,12 +24,22 @@ namespace NCL
 
 			ShaderBase* GetBasicShader() { return basicShader; }
 			TextureBase* GetWhiteTex() { return whiteTex; }
+
+			Vector3 GetRandomRoamPoint() 
+			{
+				if ((int)roamPoints.size() <= 0)
+					return Vector3(0, 0, 0);
+				
+				int rndIndex = rand() % (int)roamPoints.size();
+				return roamPoints[rndIndex];
+			}
 			//void Update(float dt);
 
 		protected:
 
 			void InitAssets();
 			void InitGoatWorld();
+			void InitRoamPoints();
 
 			void InitBaseObjects();
 			void InitSideWalks();
@@ -54,6 +64,7 @@ namespace NCL
 				const Vector4& color = Debug::BLUE);
 
 			MeshGeometry* cubeMesh = nullptr;
+			std::vector<Vector3> roamPoints;
 
 			//Buildings
 			MeshGeometry* highRise3 = nullptr;

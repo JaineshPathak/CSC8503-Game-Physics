@@ -37,6 +37,8 @@ namespace NCL
 			ShaderBase* GetBasicShader() { return levelManager->GetBasicShader(); }
 			TextureBase* GetWhiteTex() { return levelManager->GetWhiteTex(); }
 
+			Vector3 GetRandomRoamPoint() { return levelManager->GetRandomRoamPoint(); }
+
 			NavigationGrid* GetNavGrid() const { return navGrid; }
 			void AddPawnToList(CWPawn* pawn) { pawnsList.emplace_back(pawn); }
 

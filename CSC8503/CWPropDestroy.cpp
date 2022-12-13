@@ -5,6 +5,8 @@
 
 NCL::CSC8503::CWPropDestroy::CWPropDestroy(CWGoatGame& gGame, const Vector3& pos, const Vector3& baseYPos, const Vector3& scale, const Vector3& boxSize, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader) : goatGame(gGame)
 {
+	tag = "Prop";
+
 	AABBVolume* volume = new AABBVolume(boxSize);
 	SetBoundingVolume((CollisionVolume*)volume);
 
@@ -29,7 +31,7 @@ NCL::CSC8503::CWPropDestroy::CWPropDestroy(CWGoatGame& gGame, const Vector3& pos
 
 void NCL::CSC8503::CWPropDestroy::OnCollisionBegin(GameObject* otherObject)
 {
-	if (otherObject == goatGame.GetPlayer())
+	if (otherObject->GetTag() == "Player")
 	{
 		physicsObject->SetInverseMass(40.0f);
 		Vector3 dir = goatGame.GetPlayer()->GetTransform().GetPosition() - (transform.GetPosition() + basePos);

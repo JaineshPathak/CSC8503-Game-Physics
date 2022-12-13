@@ -25,10 +25,12 @@ namespace NCL
 			Vector3 basePos = Vector3(0, -6.5f, 0);
 			float moveSpeed = 40.0f;
 			float rotationSpeed = 5.0f;
-			float distanceThreshold = 10.0f;
+			float distanceThreshold = 15.0f;
 			Vector3 previousPosition;
 
-			bool foundPathPrev = false;
+			float roamTimer = 8.0f;
+			float roamTimerCurrent = 0.0f;
+
 			float chaseRadius = 45.0f;
 			float chaseTimer = 5.0f;
 			float chaseTimerCurrent = 0.0f;
@@ -38,9 +40,14 @@ namespace NCL
 			void RotateTowards(const Vector3& pos, float rotSpeed, float dt);
 			void RotateAway(const Vector3& pos, float rotSpeed, float dt);
 
-			std::vector<Vector3> patrolPoints;
+			Vector3 currentRoamDestination = Vector3(0, 0, 0);
+
+			State* Idle;
+			State* Roaming;
+			State* Running;
+			/*std::vector<Vector3> patrolPoints;
 			int currentPatrolPointIndex = 0;
-			int wpIndex = 0;
+			int wpIndex = 0;*/
 		};
 	}
 }

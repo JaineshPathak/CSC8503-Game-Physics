@@ -14,6 +14,7 @@ using namespace CSC8503;
 NCL::CSC8503::CWLevelManager::CWLevelManager(GameWorld& gWorld, CWGoatGame& game, GameTechRenderer& gRenderer) : world(gWorld), goatGame(game), renderer(gRenderer)
 {
 	InitAssets();
+	InitRoamPoints();
 	InitGoatWorld();
 }
 
@@ -52,6 +53,41 @@ void NCL::CSC8503::CWLevelManager::InitGoatWorld()
 	InitMaze();
 	InitDestroyableProps();
 	InitDudeNPC();
+}
+
+void NCL::CSC8503::CWLevelManager::InitRoamPoints()
+{
+	float xOffset = 512.0f, zOffset = 512.0f;
+	roamPoints.push_back(Vector3(-120.0f + xOffset, 0.0f, 0.0f + zOffset));
+	roamPoints.push_back(Vector3(-120.0f + xOffset, 0.0f, -400.0f + zOffset));
+	roamPoints.push_back(Vector3(120.0f + xOffset, 0.0f, -400.0f + zOffset));
+	roamPoints.push_back(Vector3(120.0f + xOffset, 0.0f, 0.0f + zOffset));
+	roamPoints.push_back(Vector3(120.0f + xOffset, 0.0f, 120.0f + zOffset));
+	roamPoints.push_back(Vector3(120.0f + xOffset, 0.0f, 300.0f + zOffset));
+	roamPoints.push_back(Vector3(120.0f + xOffset, 0.0f, 300.0f + zOffset));
+	roamPoints.push_back(Vector3(0.0f + xOffset, 0.0f, 200.0f + zOffset));
+	roamPoints.push_back(Vector3(-120.0f + xOffset, 0.0f, 300.0f + zOffset));
+	roamPoints.push_back(Vector3(-120.0f + xOffset, 0.0f, 120.0f + zOffset));
+	roamPoints.push_back(Vector3(0.0f + xOffset, 0.0f, 60.0f + zOffset));
+	roamPoints.push_back(Vector3(-180.0f + xOffset, 0.0f, 60.0f + zOffset));
+	roamPoints.push_back(Vector3(-180.0f + xOffset, 0.0f, -320.0f + zOffset));
+	roamPoints.push_back(Vector3(-180.0f + xOffset, 0.0f, 200.0f + zOffset));
+	roamPoints.push_back(Vector3(-180.0f + xOffset, 0.0f, 340.0f + zOffset));
+	roamPoints.push_back(Vector3(-340.0f + xOffset, 0.0f, 340.0f + zOffset));
+	roamPoints.push_back(Vector3(-340.0f + xOffset, 0.0f, 200.0f + zOffset));
+	roamPoints.push_back(Vector3(-340.0f + xOffset, 0.0f, -200.0f + zOffset));
+	roamPoints.push_back(Vector3(-340.0f + xOffset, 0.0f, -320.0f + zOffset));
+	roamPoints.push_back(Vector3(400.0f + xOffset, 0.0f, -400.0f + zOffset));
+	roamPoints.push_back(Vector3(400.0f + xOffset, 0.0f, -250.0f + zOffset));
+	roamPoints.push_back(Vector3(400.0f + xOffset, 0.0f, -120.0f + zOffset));
+	roamPoints.push_back(Vector3(0.0f + xOffset, 0.0f, -400.0f + zOffset));
+	roamPoints.push_back(Vector3(260.0f + xOffset, 0.0f, -240.0f + zOffset));
+
+	//transform.SetPosition(Vector3(patrolPoints[1].x, 3.0f, patrolPoints[1].z));
+	//currentPatrolPointIndex = 1;
+
+	for (size_t i = 0; i < roamPoints.size(); i++)
+		Debug::DrawBox(roamPoints[i], Vector3(1, 1, 1), Debug::GREEN, 1000.0f);
 }
 
 void NCL::CSC8503::CWLevelManager::InitAssets()
@@ -222,7 +258,12 @@ void NCL::CSC8503::CWLevelManager::InitMaze()
 
 void NCL::CSC8503::CWLevelManager::InitDudeNPC()
 {
-	AddNPCDude(Vector3(30.0f, 4.5f, 0.0f), Vector3(0, 0, 0), Vector3(5, 5, 5), 6.8f);
+	for (int i = 0; i < 10; i++)
+	{
+		AddNPCDude(roamPoints[i] + Vector3(0, 6.5f, 0), Vector3(0, 0, 0), Vector3(5, 5, 5), 6.8f);
+	}
+
+	//AddNPCDude(roamPoints[12], Vector3(0, 0, 0), Vector3(5, 5, 5), 6.8f);
 }
 
 void NCL::CSC8503::CWLevelManager::InitDestroyableProps()
@@ -419,6 +460,6 @@ void NCL::CSC8503::CWLevelManager::AddJumpPad(const Vector3& padPos, const Vecto
 
 void NCL::CSC8503::CWLevelManager::AddNPCDude(const Vector3& pos, const Vector3& rot, const Vector3& scale, const float& radius, const Vector4& color)
 {
-	CWDude* dude = new CWDude(goatGame, world, pos + Vector3(xOffset, 0, zOffset), rot, scale, radius, dudeMesh, whiteTex, basicShader, color);
+	CWDude* dude = new CWDude(goatGame, world, pos, rot, scale, radius, dudeMesh, whiteTex, basicShader, color);
 	world.AddGameObject(dude);
 }

@@ -9,6 +9,8 @@
 
 NCL::CSC8503::CWGoatPlayer::CWGoatPlayer(CWGoatGame& gGame, GameWorld& gWorld, GameTechRenderer& gRenderer) : game(gGame), world(gWorld), renderer(gRenderer)
 {
+	tag = "Player";
+
 	goatMesh = renderer.LoadMesh("Goat.msh");
 	whiteTex = renderer.LoadTexture("WhiteTex.png");
 	basicShader = renderer.LoadShader("scene.vert", "scene.frag");
