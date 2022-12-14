@@ -16,6 +16,17 @@ namespace NCL
 
             virtual void Update(float dt);
 
+            void GiveRopePowerup(const float& powerupCharge) 
+            {
+                ropePowerupTimer = powerupCharge;
+                ropePowerupCurrent = ropePowerupTimer;
+            }
+
+            float GetScore() const { return score; }
+            void AddScore(const float& scored) { score += scored; }
+
+            void ResetPlayer();
+
         protected:
             TextureBase* whiteTex = nullptr;
             ShaderBase* basicShader = nullptr;
@@ -45,11 +56,15 @@ namespace NCL
             bool isOnGround = true;
             bool isHooked = false;
 
-            bool enableRope = true;
+            float ropePowerupTimer = 30.0f;
+            float ropePowerupCurrent = 0.0f;
+            bool ropePowerup = true;
             CWSpringConstraint* springRope = nullptr;
             Vector3 ropeAnchorPoint;
             float ropeForce = 0.1f;
             float ropeDamping = 0.1f;
+
+            float score = 0.0f;
         };
     }
 }

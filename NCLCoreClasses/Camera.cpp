@@ -11,6 +11,9 @@ last frame (default value is for simplicities sake...)
 */
 void Camera::UpdateCamera(float dt) 
 {
+	if (!enableInput)
+		return;
+
 	//Update the mouse by how much
 	pitch	-= (Window::GetMouse()->GetRelativePosition().y);
 	yaw		-= (Window::GetMouse()->GetRelativePosition().x);

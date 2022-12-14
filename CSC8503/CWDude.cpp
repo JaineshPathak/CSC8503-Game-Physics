@@ -66,7 +66,7 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 				while (path.PopWaypoint(pos))
 					pathList.push_back(pos);
 
-				DebugDisplayPath(pathList);
+				//DebugDisplayPath(pathList);
 
 				if (pathList.size() > 2)
 				{
@@ -75,7 +75,7 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 					if (nodeDistance <= distanceThreshold)
 					{
 						path.PopWaypoint(wayPoint);
-						Debug::DrawBox(wayPoint, Vector3(1, 1, 1), Debug::MAGENTA);
+						//Debug::DrawBox(wayPoint, Vector3(1, 1, 1), Debug::MAGENTA);
 					}
 					//MoveTowards(wayPoint, dt, false);
 					MoveTowards(pathList[0], wayPoint, dt);
@@ -182,6 +182,7 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 
 	stateMachine->AddState(Idle);
 	stateMachine->AddState(Roaming);
+	stateMachine->AddState(Running);
 	stateMachine->AddTransition(stateIdleToRoaming);
 	stateMachine->AddTransition(stateRoamingToRunning);
 	stateMachine->AddTransition(stateRunningToRoaming);
@@ -204,8 +205,20 @@ void NCL::CSC8503::CWDude::OnCollisionBegin(GameObject* otherObject)
 {
 	if (otherObject->GetTag() == "Prop")
 	{
-		if(stateMachine->GetActiveState() == Roaming)
+		if (stateMachine->GetActiveState() == Roaming)
+		{
+			roamTimerCurrent = 0.0f;
 			currentRoamDestination = goatGame.GetRandomRoamPoint();
+		}
+	}
+
+	if (otherObject->GetTag() == "NPC_Padestrian")
+	{
+		if (stateMachine->GetActiveState() == Roaming)
+		{
+			roamTimerCurrent = 0.0f;
+			currentRoamDestination = goatGame.GetRandomRoamPoint();
+		}
 	}
 }
 
@@ -240,7 +253,7 @@ void NCL::CSC8503::CWDude::MoveTowards(Vector3 src, const Vector3& pos, float dt
 		color = Debug::MAGENTA;
 	}
 
-	Debug::DrawLine(pos, src, color);
+	//Debug::DrawLine(pos, src, color);
 	auto v = (pos - src);
 	v.y = 0;
 	v = (v).Normalised() * moveSpeed;

@@ -26,6 +26,9 @@ void NCL::CSC8503::CWFollowCamera::UpdateCamera(float dt)
 	pitch = angles.x;
 	yaw = angles.y;*/
 
+	if (!enableInput)
+		return;
+
 	v -= (Window::GetMouse()->GetRelativePosition().y);
 	v = Clamp(v, -40.0f, 45.0f);
 

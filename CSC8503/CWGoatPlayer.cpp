@@ -62,7 +62,7 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 	//renderObject->SetColour(isOnGround ? Debug::BLUE : Debug::RED);
 	//physicsObject->SetLinearDamping(isOnGround ? 3.0f : 0.1f);
 
-	if (game.GetCursorStatus())
+	if (game.GetCursorStatus() || game.GetGameState() == GameState::GameEnded)
 		return;
 
 	Vector3 linearMovement;
@@ -74,7 +74,16 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE) && isOnGround) physicsObject->AddForce(Vector3(0, 1, 0) * jumpForce * 50.0f);
 
-	if (Window::GetMouse()->ButtonPressed(MouseButtons::LEFT) && enableRope)
+	if (ropePowerupCurrent > 0.0)
+	{
+		ropePowerupCurrent -= dt;
+		if (ropePowerupCurrent <= 0.0f) ropePowerupCurrent = 0.0f;
+
+		Debug::Print("Grapple: " + std::to_string((int)ropePowerupCurrent), Vector2(2, 95), Debug::YELLOW);
+	}
+	ropePowerup = (ropePowerupCurrent > 0.0f);
+	if(ropePowerup) Debug::Print("x", Vector2(49.5f, 49.5f), Debug::YELLOW);
+	if (Window::GetMouse()->ButtonPressed(MouseButtons::LEFT) && ropePowerup)
 	{
 		isHooked = !isHooked;
 		if (isHooked && !springRope->isEnabled)
@@ -97,7 +106,15 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 	}
 
 	if (isHooked)
+	{
+		if (!ropePowerup && springRope != nullptr)
+		{
+			springRope->isEnabled = false;
+			isHooked = false;
+		}
+
 		Debug::DrawLine(transform.GetPosition(), ropeAnchorPoint, Debug::BLACK);
+	}
 
 	//airControl = isOnGround ? 1.0f : 0.1f;
 
@@ -119,4 +136,21 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 		Vector3 dampedVel = Vector3::SmoothDamp(physicsObject->GetLinearVelocity(), Vector3(0, 0, 0), velocityRef, velocityDampSmoothness, FLT_MAX, dt);
 		physicsObject->SetLinearVelocity(dampedVel);
 	}
+
+	Debug::Print("Score: " + std::to_string((int)score), Vector2(2, 5), Debug::WHITE);
+}
+
+void NCL::CSC8503::CWGoatPlayer::ResetPlayer()
+{
+	physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
+	physicsObject->SetAngularVelocity(Vector3(0, 0, 0));
+
+	transform.SetPosition(startPos);
+	transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(startRot.x, startRot.y, startRot.z));
+
+	score = 0.0f;
+
+	ropePowerupCurrent = 0.0f;
+	isHooked = false;
+	ropePowerup = false;
 }

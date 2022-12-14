@@ -12,6 +12,8 @@ namespace NCL
 		class CWGoatGame;
 		class CWPawn;
 		class CWDude;
+		class CWEvilGoose;
+		class CWGrapplePowerup;
 		class CWLevelManager
 		{
 		public:
@@ -33,6 +35,15 @@ namespace NCL
 				int rndIndex = rand() % (int)roamPoints.size();
 				return roamPoints[rndIndex];
 			}
+
+			Vector3 GetRandomMazePoint()
+			{
+				if ((int)mazePoints.size() <= 0)
+					return Vector3(0, 0, 0);
+
+				int rndIndex = rand() % (int)mazePoints.size();
+				return mazePoints[rndIndex];
+			}
 			//void Update(float dt);
 
 		protected:
@@ -40,6 +51,7 @@ namespace NCL
 			void InitAssets();
 			void InitGoatWorld();
 			void InitRoamPoints();
+			void InitMazePoints();
 
 			void InitBaseObjects();
 			void InitSideWalks();
@@ -47,6 +59,8 @@ namespace NCL
 			void InitJumpPads();
 			void InitMaze();
 			void InitDudeNPC();
+			void InitGooseNPC();
+			void InitPowerups();
 
 			void InitDestroyableProps();
 			void AddDestroyableProp(const Vector3& pos, const Vector3& size, const Vector3& boxSize, const Vector3& baseYPos, const Vector3& rot, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader, const Vector4& color = Debug::WHITE);
@@ -56,6 +70,7 @@ namespace NCL
 			void AddInvisibleWall(const Vector3& wallPos, const Vector3 wallSize);
 			void AddInvisibleWallTrigger(const Vector3& wallPos, const Vector3 wallSize);
 			void AddJumpPad(const Vector3& padPos, const Vector3& padSize, const Vector3& padRotation, const float& padForce, const Vector4& padColor);
+			void AddGrapplePowerup(const Vector3& pos);
 
 			void AddNPCDude(const Vector3& pos,
 				const Vector3& rot,
@@ -63,8 +78,17 @@ namespace NCL
 				const float& radius,
 				const Vector4& color = Debug::BLUE);
 
-			MeshGeometry* cubeMesh = nullptr;
+			void AddNPCEvil(const Vector3& pos,
+				const Vector3& rot,
+				const Vector3& scale,
+				const float& radius,
+				const Vector4& color = Debug::RED);
+
 			std::vector<Vector3> roamPoints;
+			std::vector<Vector3> mazePoints;
+
+			//Meshes
+			MeshGeometry* cubeMesh = nullptr;
 
 			//Buildings
 			MeshGeometry* highRise3 = nullptr;

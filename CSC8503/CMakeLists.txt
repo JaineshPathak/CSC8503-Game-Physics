@@ -19,6 +19,8 @@ set(Header_Files
     "CWSpringConstraint.h"
     "CWPawn.h"
     "CWDude.h"
+    "CWEvilGoose.h"
+    "CWGrapplePowerup.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
@@ -38,6 +40,8 @@ set(Source_Files
     "CWMazeTrigger.cpp"
     "CWSpringConstraint.cpp"
     "CWDude.cpp"
+    "CWEvilGoose.cpp"
+    "CWGrapplePowerup.cpp"
 )
 
 if(USE_VULKAN)

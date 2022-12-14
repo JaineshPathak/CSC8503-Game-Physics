@@ -24,15 +24,29 @@ NCL::CSC8503::CWPropDestroy::CWPropDestroy(CWGoatGame& gGame, const Vector3& pos
 	physicsObject->SetRestitution(0);
 
 	basePos = baseYPos;
+
+	defaultPos = transform.GetPosition();
+	defaultInvMass = physicsObject->GetInverseMass();
 	//Debug::DrawBox(transform.GetPosition() + basePos, Vector3(1, 1, 1), Debug::YELLOW, 1000.0f);
 
-	goatGame.OnPropSpawn();
+	goatGame.OnPropSpawn(this);
 }
 
 void NCL::CSC8503::CWPropDestroy::OnCollisionBegin(GameObject* otherObject)
 {
+	if (firstTime)
+	{
+		defaultRot = transform.GetOrientation().ToEuler();
+		defaultColor = renderObject->GetColour();
+		
+		firstTime = false;
+	}
+
 	if (otherObject->GetTag() == "Player")
 	{
+		if (goatGame.GetGameState() == GameState::GameEnded)
+			return;
+
 		physicsObject->SetInverseMass(40.0f);
 		Vector3 dir = goatGame.GetPlayer()->GetTransform().GetPosition() - (transform.GetPosition() + basePos);
 		physicsObject->AddForceAtPosition(-dir * 20.0f, goatGame.GetPlayer()->GetTransform().GetPosition());
@@ -45,5 +59,23 @@ void NCL::CSC8503::CWPropDestroy::OnCollisionBegin(GameObject* otherObject)
 		renderObject->SetColour(Vector4(0.2f, 0.2f, 0.2f, 1.0f));
 
 		goatGame.OnPropDestroy(scoreAdd);
+
+		CWGoatPlayer* player = dynamic_cast<CWGoatPlayer*>(otherObject);
+		if (player != nullptr)
+			player->AddScore(scoreAdd);
 	}
+}
+
+void NCL::CSC8503::CWPropDestroy::ResetProp()
+{
+	physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
+	physicsObject->SetAngularVelocity(Vector3(0, 0, 0));
+	physicsObject->SetInverseMass(defaultInvMass);
+
+	transform.SetPosition(defaultPos);
+	transform.SetOrientation(Quaternion::EulerAnglesToQuaternion(defaultRot.x, defaultRot.y, defaultRot.z));
+
+	renderObject->SetColour(defaultColor);
+
+	isDestroyed = false;
 }

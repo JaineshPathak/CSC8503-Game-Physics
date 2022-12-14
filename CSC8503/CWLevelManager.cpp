@@ -1,12 +1,15 @@
+#include "PhysicsObject.h"
 #include "RenderObject.h"
 #include "TextureLoader.h"
+
 #include "CWLevelManager.h"
 #include "CWJumpPad.h"
 #include "CWPropDestroy.h"
 #include "CWMazeTrigger.h"
 #include "CWPawn.h"
 #include "CWDude.h"
-#include "PhysicsObject.h"
+#include "CWEvilGoose.h"
+#include "CWGrapplePowerup.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -15,6 +18,7 @@ NCL::CSC8503::CWLevelManager::CWLevelManager(GameWorld& gWorld, CWGoatGame& game
 {
 	InitAssets();
 	InitRoamPoints();
+	InitMazePoints();
 	InitGoatWorld();
 }
 
@@ -53,6 +57,8 @@ void NCL::CSC8503::CWLevelManager::InitGoatWorld()
 	InitMaze();
 	InitDestroyableProps();
 	InitDudeNPC();
+	InitGooseNPC();
+	InitPowerups();
 }
 
 void NCL::CSC8503::CWLevelManager::InitRoamPoints()
@@ -86,8 +92,22 @@ void NCL::CSC8503::CWLevelManager::InitRoamPoints()
 	//transform.SetPosition(Vector3(patrolPoints[1].x, 3.0f, patrolPoints[1].z));
 	//currentPatrolPointIndex = 1;
 
-	for (size_t i = 0; i < roamPoints.size(); i++)
-		Debug::DrawBox(roamPoints[i], Vector3(1, 1, 1), Debug::GREEN, 1000.0f);
+	//for (size_t i = 0; i < roamPoints.size(); i++)
+		//Debug::DrawBox(roamPoints[i], Vector3(1, 1, 1), Debug::GREEN, 1000.0f);
+}
+
+void NCL::CSC8503::CWLevelManager::InitMazePoints()
+{
+	float xOffset = 512.0f, zOffset = 512.0f;
+	mazePoints.push_back(Vector3(269.0f + xOffset, 0.0f, 395.0f + zOffset));
+	mazePoints.push_back(Vector3(215.5f + xOffset, 0.0f, 395.5f + zOffset));
+	mazePoints.push_back(Vector3(390.25f + xOffset, 0.0f, 202.5f + zOffset));
+	mazePoints.push_back(Vector3(330.0f + xOffset, 0.0f, 202.5f + zOffset));
+	mazePoints.push_back(Vector3(277.0f + xOffset, 0.0f, 202.5f + zOffset));
+	mazePoints.push_back(Vector3(321.5f + xOffset, 0.0f, 394.5f + zOffset));
+
+	//for (size_t i = 0; i < mazePoints.size(); i++)
+		//Debug::DrawBox(mazePoints[i], Vector3(1, 1, 1), Debug::RED, 1000.0f);
 }
 
 void NCL::CSC8503::CWLevelManager::InitAssets()
@@ -211,13 +231,13 @@ void NCL::CSC8503::CWLevelManager::InitBuildings()
 
 void NCL::CSC8503::CWLevelManager::InitJumpPads()
 {
-	AddJumpPad(Vector3(0, 2.5, 128.0f), Vector3(32.0f, 2.0f, 32.0f), Vector3(-45, 180, 0), 15.0f, Debug::RED);
+	AddJumpPad(Vector3(0, 26.0f, 488.0f), Vector3(32.0f, 2.0f, 32.0f), Vector3(-45.0f, 0, 0), 20.0f, Debug::RED);
 }
 
 void NCL::CSC8503::CWLevelManager::InitMaze()
 {
 	Vector4 mazeWallColor = Vector4(0.13f, 0.47f, 0.0f, 1.0f);
-	float wallThickness = 5.0f;
+	float wallThickness = 4.0f;
 	AddCube(Vector3(288.0, 20.0f, 174.0f), Vector3(125.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	AddCube(Vector3(288.0, 20.0f, 414.0f), Vector3(125.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	
@@ -227,8 +247,8 @@ void NCL::CSC8503::CWLevelManager::InitMaze()
 	AddCube(Vector3(235.0, 20.0f, 350.0f), Vector3(wallThickness, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	AddCube(Vector3(350.0, 20.0f, 235.0f), Vector3(wallThickness, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 												   
-	AddCube(Vector3(294.0, 20.0f, 355.0f), Vector3(wallThickness, 18.0f, 60.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
-	AddCube(Vector3(294.0, 20.0f, 210.0f), Vector3(wallThickness, 18.0f, 30.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(294.0, 20.0f, 355.0f), Vector3(wallThickness, 18.0f, 40.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(294.0, 20.0f, 210.0f), Vector3(wallThickness, 18.0f, 20.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
 	AddCube(Vector3(200.0, 20.0f, 206.0f), Vector3(22.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	AddCube(Vector3(391.0, 20.0f, 382.0f), Vector3(22.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
@@ -244,12 +264,12 @@ void NCL::CSC8503::CWLevelManager::InitMaze()
 
 	AddCube(Vector3(315.0, 20.0f, 262.0f), Vector3(36.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	
-	AddCube(Vector3(380.0, 20.0f, 318.0f), Vector3(wallThickness, 18.0f, 22.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(380.0, 20.0f, 318.0f), Vector3(wallThickness, 18.0f, 18.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
 	AddCube(Vector3(232.0, 20.0f, 247.0f), Vector3(18.0f, 18.0f, wallThickness), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
 
-	AddInvisibleWallTrigger({ 300.0f, 20.0f, 300.0f }, { 130.0f, 20.0f, 130.0f });
+	//AddInvisibleWallTrigger({ 300.0f, 20.0f, 300.0f }, { 130.0f, 20.0f, 130.0f });
 	/*AddCube(Vector3(420.0, 20.0f, 270.0f), Vector3(8.0f, 18.0f, 90.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 	AddCube(Vector3(180.0, 20.0f, 310.0f), Vector3(8.0f, 18.0f, 90.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);
 
@@ -264,6 +284,16 @@ void NCL::CSC8503::CWLevelManager::InitDudeNPC()
 	}
 
 	//AddNPCDude(roamPoints[12], Vector3(0, 0, 0), Vector3(5, 5, 5), 6.8f);
+}
+
+void NCL::CSC8503::CWLevelManager::InitGooseNPC()
+{
+	AddNPCEvil(Vector3(326.5f, 10.6f, 300.0f), Vector3(0, 0, 0), Vector3(3, 3, 3), 5.0f);
+}
+
+void NCL::CSC8503::CWLevelManager::InitPowerups()
+{
+	AddGrapplePowerup(Vector3(-300.0f, 230.0f, 0.0f));
 }
 
 void NCL::CSC8503::CWLevelManager::InitDestroyableProps()
@@ -458,8 +488,20 @@ void NCL::CSC8503::CWLevelManager::AddJumpPad(const Vector3& padPos, const Vecto
 	world.AddGameObject(jumpPad);
 }
 
+void NCL::CSC8503::CWLevelManager::AddGrapplePowerup(const Vector3& pos)
+{
+	CWGrapplePowerup* powerup = new CWGrapplePowerup(goatGame, world, pos + Vector3(xOffset, 0, zOffset), cubeMesh, whiteTex, basicShader);
+	world.AddGameObject(powerup);
+}
+
 void NCL::CSC8503::CWLevelManager::AddNPCDude(const Vector3& pos, const Vector3& rot, const Vector3& scale, const float& radius, const Vector4& color)
 {
 	CWDude* dude = new CWDude(goatGame, world, pos, rot, scale, radius, dudeMesh, whiteTex, basicShader, color);
 	world.AddGameObject(dude);
+}
+
+void NCL::CSC8503::CWLevelManager::AddNPCEvil(const Vector3& pos, const Vector3& rot, const Vector3& scale, const float& radius, const Vector4& color)
+{
+	CWEvilGoose* goose = new CWEvilGoose(goatGame, world, pos + Vector3(xOffset, 0, zOffset), rot, scale, radius, enemyMesh, whiteTex, basicShader, color);
+	world.AddGameObject(goose);
 }

@@ -10,7 +10,7 @@ using namespace CSC8503;
 NCL::CSC8503::CWGoatGame::CWGoatGame()
 {
 	world = new GameWorld();
-	mainCamera = world->GetMainCamera();
+	cameraMain = world->GetMainCamera();
 	world->GetMainCamera()->SetNearPlane(0.1f);
 	world->GetMainCamera()->SetFarPlane(15000.0f);
 	world->GetMainCamera()->SetPitch(0.0f);
@@ -26,10 +26,11 @@ NCL::CSC8503::CWGoatGame::CWGoatGame()
 	player = new CWGoatPlayer(*this, *world, *renderer);
 	
 	cameraFollow = new CWFollowCamera(*world, *player);
-	world->SetMainCamera(cameraFollow);
 
 	navGrid = new NavigationGrid("CWNavGrid5.txt");
 	//navGrid->DebugDraw(1);
+
+	gameTimeCurrent = gameTime;
 
 	useGravity = true;
 
@@ -53,6 +54,9 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 	
 	for (size_t i = 0; i < pawnsList.size(); i++)
 		pawnsList[i]->Update(dt);
+
+	for (size_t i = 0; i < powerupList.size(); i++)
+		powerupList[i]->Update(dt);
 	
 	if(player) player->Update(dt);
 
@@ -60,7 +64,7 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 	{
 		toggleCamera = !toggleCamera;
 		if (toggleCamera)
-			world->SetMainCamera(mainCamera);
+			world->SetMainCamera(cameraMain);
 		else
 		{
 			world->SetMainCamera(cameraFollow);
@@ -72,6 +76,8 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 
 	if (toggleCamera)
 	{
+		//Debug::Print(mainCamera->GetPosition())
+		//std::cout << mainCamera->GetPitch() << ", " << mainCamera->GetYaw() << std::endl;
 		if (Window::GetMouse()->ButtonPressed(MouseButtons::RIGHT))
 		{
 			toggleCursor = !toggleCursor;
@@ -94,6 +100,68 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 
 	renderer->Render();
 	Debug::UpdateRenderables(dt);
+
+	if (gameState == GameState::GameStarted)
+	{
+		Debug::Print("Items: " + std::to_string(currentPropsDestroyed) + " / " + std::to_string(totalPropsToDestroy), Vector2(2, 10), Debug::GREEN);
+
+		gameTimeCurrent -= dt;
+		int minutes = floor(gameTimeCurrent / 60.0f);
+		int seconds = std::round(std::fmod(gameTimeCurrent, 60.0f));
+
+		if (seconds == 60)
+		{
+			seconds = 0;
+			minutes += 1;
+		}
+
+		Vector4 timerColor = gameTimeCurrent <= 20.0f ? Debug::RED : Debug::YELLOW;
+		std::string time = "Time: " + std::to_string(minutes) + ":" + std::to_string(seconds);
+		Debug::Print(time, Vector2(90 - time.length(), 5), timerColor);
+		if (gameTimeCurrent <= 0.0f)
+		{
+			gameTimeCurrent = 0.0f;
+			EndGame();
+		}
+	}
+	else if (gameState == GameState::GameEnded)
+	{
+		Debug::Print(gameOver, Vector2(50 - gameOver.length(), 20), Debug::RED);
+		Debug::Print(yourScore, Vector2(50 - yourScore.length(), 50), Debug::YELLOW);
+		Debug::Print(wantToPlayAgain, Vector2(50 - wantToPlayAgain.length(), 70), Debug::WHITE);
+		Debug::Print(yes, Vector2(50 - yes.length(), 80), Debug::CYAN);
+		Debug::Print(no, Vector2(50 - no.length(), 85), Debug::RED);
+
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::N)) exit(0);
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Y))
+		{
+			InitCamera();
+
+			gameTimeCurrent = gameTime;
+
+			player->ResetPlayer();
+			for (size_t i = 0; i < propsList.size(); i++)
+				propsList[i]->ResetProp();
+
+			currentPropsDestroyed = 0;
+			gameState = GameState::GameStarted;
+		}
+	}
+}
+
+void NCL::CSC8503::CWGoatGame::EndGame()
+{
+	gameState = GameState::GameEnded;
+
+	cameraMain->enableInput = false;
+	cameraFollow->enableInput = false;
+
+	world->SetMainCamera(cameraMain);
+	world->GetMainCamera()->SetPosition(Vector3(0 + 512.0f, 280.0f, 500.0f + 512.0f));
+	world->GetMainCamera()->SetPitch(-35.0f);
+	world->GetMainCamera()->SetYaw(0.0f);
+
+	yourScore = "Your Score: " + std::to_string((int)player->GetScore());
 }
 
 void NCL::CSC8503::CWGoatGame::InitCamera()
@@ -101,11 +169,15 @@ void NCL::CSC8503::CWGoatGame::InitCamera()
 	if (world == nullptr || world->GetMainCamera() == nullptr)
 		return;
 
+	world->SetMainCamera(cameraFollow);
 	world->GetMainCamera()->SetNearPlane(0.1f);
 	world->GetMainCamera()->SetFarPlane(15000.0f);
 	world->GetMainCamera()->SetPitch(0.0f);
 	world->GetMainCamera()->SetYaw(0.0f);
 	world->GetMainCamera()->SetPosition(startCameraPos);
+
+	cameraMain->enableInput = true;
+	cameraFollow->enableInput = true;
 }
 
 void NCL::CSC8503::CWGoatGame::TestFindPath()

@@ -8,6 +8,8 @@
 #include "CWLevelManager.h"
 #include "CWGoatPlayer.h"
 #include "CWFollowCamera.h"
+#include "CWGrapplePowerup.h"
+#include "CWPropDestroy.h"
 
 #include "NavigationGrid.h"
 #include "NavigationPath.h"
@@ -16,6 +18,12 @@ namespace NCL
 {
 	namespace CSC8503
 	{
+		enum GameState
+		{
+			GameStarted = 0,
+			GameEnded = 1
+		};
+
 		class CWGoatGame
 		{
 		public:
@@ -27,8 +35,20 @@ namespace NCL
 			bool GetCursorStatus() const { return toggleCamera; }
 			CWGoatPlayer* GetPlayer() { return player; }
 
-			void OnPropSpawn() { totalPropsToDestroy++; }
-			void OnPropDestroy(const int& propScore) { totalPropsToDestroy--; }
+			GameState GetGameState() { return gameState; }
+			void EndGame();
+
+			void OnPropSpawn(CWPropDestroy* prop) 
+			{ 
+				totalPropsToDestroy++; 
+				propsList.emplace_back(prop);
+			}
+			void OnPropDestroy(const int& propScore) 
+			{ 
+				currentPropsDestroyed++;
+				if (currentPropsDestroyed >= totalPropsToDestroy)
+					EndGame();
+			}
 
 			MeshGeometry* GetGoatMesh() { return levelManager->GetGoatMesh(); }
 			MeshGeometry* GetDudeMesh() { return levelManager->GetDudeMesh(); }
@@ -38,11 +58,15 @@ namespace NCL
 			TextureBase* GetWhiteTex() { return levelManager->GetWhiteTex(); }
 
 			Vector3 GetRandomRoamPoint() { return levelManager->GetRandomRoamPoint(); }
+			Vector3 GetRandomMazePoint() { return levelManager->GetRandomMazePoint(); }
 
 			NavigationGrid* GetNavGrid() const { return navGrid; }
 			void AddPawnToList(CWPawn* pawn) { pawnsList.emplace_back(pawn); }
+			void AddPowerupToList(CWGrapplePowerup* powerUp) { powerupList.emplace_back(powerUp); }
 
 		protected:
+			GameState gameState;
+
 			void InitCamera();
 
 			GameTechRenderer* renderer;
@@ -52,9 +76,8 @@ namespace NCL
 
 			CWLevelManager* levelManager;
 
-			Camera* mainCamera;
 			Vector3 startCameraPos = Vector3(512.0f, 40.0f, 512.0f);
-
+			Camera* cameraMain;
 			CWFollowCamera* cameraFollow;
 
 			std::vector<Vector3> testNodes;
@@ -71,11 +94,23 @@ namespace NCL
 			bool toggleCursor = false;
 
 			//Debug Mode
-			GameObject* selectedObject;
+			//GameObject* selectedObject;
 
 			int totalPropsToDestroy;
+			int currentPropsDestroyed;
 
 			std::vector<CWPawn*> pawnsList;
+			std::vector<CWGrapplePowerup*> powerupList;
+			std::vector<CWPropDestroy*> propsList;
+
+			float gameTime = 180.0f;
+			float gameTimeCurrent = 0.0f;
+
+			std::string gameOver = std::string("Game Over");
+			std::string yourScore = std::string("Your Score: ");
+			std::string wantToPlayAgain = std::string("Do you want to play again?");
+			std::string yes = std::string("Press Y to Replay");
+			std::string no = std::string("Press N to Quit");
 		};
 	}
 }
