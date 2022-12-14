@@ -9,7 +9,8 @@ namespace NCL
         enum PowerUpState
         {
             Active = 0,
-            Cooldown = 1
+            Cooldown = 1,
+            Disabled = 2
         };
 
         class CWGoatPlayer;
@@ -18,6 +19,7 @@ namespace NCL
         class CWGrapplePowerup : public GameObject
         {
         public:
+            CWGrapplePowerup() {}
             CWGrapplePowerup(CWGoatGame& gGame, GameWorld& gWorld, const Vector3& pos,
                             MeshGeometry* mesh,
                             TextureBase* tex,

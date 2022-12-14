@@ -103,7 +103,7 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 
 	if (gameState == GameState::GameStarted)
 	{
-		Debug::Print("Items: " + std::to_string(currentPropsDestroyed) + " / " + std::to_string(totalPropsToDestroy), Vector2(2, 10), Debug::GREEN);
+		Debug::Print("Items: " + std::to_string(currentPropsDestroyed) + " / " + std::to_string(totalPropsToDestroy), Vector2(2, 10), Debug::CYAN);
 
 		gameTimeCurrent -= dt;
 		int minutes = floor(gameTimeCurrent / 60.0f);

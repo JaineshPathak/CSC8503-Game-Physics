@@ -22,6 +22,8 @@ namespace NCL
 			void DebugDisplayPath(std::vector<Vector3> paths);
 
 		protected:
+			float scoreBonus = 10.0f;
+
 			Vector3 basePos = Vector3(0, -6.5f, 0);
 			float moveSpeed = 40.0f;
 			float rotationSpeed = 5.0f;
@@ -40,7 +42,12 @@ namespace NCL
 			void RotateTowards(const Vector3& pos, float rotSpeed, float dt);
 			void RotateAway(const Vector3& pos, float rotSpeed, float dt);
 
-			Vector3 currentRoamDestination = Vector3(0, 0, 0);
+			void FindRandomPatrolPoint();
+			void FindPath(const Vector3& destination, std::vector<Vector3>& _pathList);
+
+			NavigationPath path;
+			int currentDestinationIndex = 0;
+			Vector3 currentDestination = Vector3(0, 0, 0);
 
 			State* Idle;
 			State* Roaming;

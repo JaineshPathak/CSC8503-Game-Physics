@@ -15,12 +15,13 @@ set(Header_Files
     "CWFollowCamera.h"
     "CWJumpPad.h"
     "CWPropDestroy.h"
-    "CWMazeTrigger.h"
+    "CWDoorTrigger.h"
     "CWSpringConstraint.h"
     "CWPawn.h"
     "CWDude.h"
     "CWEvilGoose.h"
     "CWGrapplePowerup.h"
+    "CWDoorKey.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
@@ -37,11 +38,12 @@ set(Source_Files
     "CWFollowCamera.cpp"
     "CWJumpPad.cpp"
     "CWPropDestroy.cpp"
-    "CWMazeTrigger.cpp"
+    "CWDoorTrigger.cpp"
     "CWSpringConstraint.cpp"
     "CWDude.cpp"
     "CWEvilGoose.cpp"
     "CWGrapplePowerup.cpp"
+    "CWDoorKey.cpp"
 )
 
 if(USE_VULKAN)

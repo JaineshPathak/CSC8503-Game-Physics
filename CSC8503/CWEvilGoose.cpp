@@ -17,7 +17,6 @@ NCL::CSC8503::CWEvilGoose::CWEvilGoose(CWGoatGame& gGame, GameWorld& gWorld,
 	SphereVolume* volume = new SphereVolume(radius);
 	SetBoundingVolume((CollisionVolume*)volume);
 
-
 	tag = "NPC_Evil";
 	transform.SetPosition(pos).
 		SetOrientation(Quaternion::EulerAnglesToQuaternion(rot.x, rot.y, rot.z)).
@@ -29,7 +28,7 @@ NCL::CSC8503::CWEvilGoose::CWEvilGoose(CWGoatGame& gGame, GameWorld& gWorld,
 	physicsObject = new PhysicsObject(&transform, boundingVolume);
 	physicsObject->SetInverseMass(5.5f);
 	physicsObject->InitCubeInertia();
-	physicsObject->SetLinearDamping(0.3f);
+	physicsObject->SetLinearDamping(4.0f);
 	physicsObject->SetGravityMultiplier(5.0f);
 	physicsObject->SetRestitution(0);
 
@@ -48,120 +47,105 @@ NCL::CSC8503::CWEvilGoose::CWEvilGoose(CWGoatGame& gGame, GameWorld& gWorld,
 		{
 			//renderObject->SetColour(Debug::RED);
 
-			float patrolDistance = ((transform.GetPosition() + basePos) - currentRoamDestination).Length();
+			/*pathTimerCurrent = 0.0f;
+			float patrolDistance = (currentDestination - (transform.GetPosition() + basePos)).Length();
 			if (patrolDistance <= distanceThreshold)
-				currentRoamDestination = goatGame.GetRandomMazePoint();
-
-			NavigationPath path;
-			bool found = goatGame.GetNavGrid()->FindPath(transform.GetPosition(), currentRoamDestination, path) && (patrolDistance > distanceThreshold);
-			if (found)
 			{
-				pathList.clear();
-				Vector3 pos;
-				while (path.PopWaypoint(pos))
-					pathList.push_back(pos);
-
+				
+			}*/
+			
+			if (pathList.size() > 0)
+			{
 				//DebugDisplayPath(pathList);
+				float nodeDistance = (pathList[currentDestinationIndex] - (transform.GetPosition() + basePos)).Length();
+				if (nodeDistance <= distanceThreshold)
+				{
+					currentDestinationIndex++;
+					if (currentDestinationIndex >= (int)pathList.size() - 1)
+						FindRandomPatrolPoint();
+				}
 
-				if (pathList.size() > 2)
-				{
-					Vector3 wayPoint = pathList[1];
-					float nodeDistance = (wayPoint - (transform.GetPosition() + basePos)).Length();
-					if (nodeDistance <= distanceThreshold)
-					{
-						path.PopWaypoint(wayPoint);
-						//Debug::DrawBox(wayPoint, Vector3(1, 1, 1), Debug::MAGENTA);
-					}
-					//MoveTowards(wayPoint, dt, false);
-					MoveTowards(pathList[0], wayPoint, dt);
-					RotateTowards(wayPoint, rotationSpeed, dt);
-				}
-				else
-				{
-					MoveTowards(currentRoamDestination, dt, false);
-					RotateTowards(currentRoamDestination, rotationSpeed, dt);
-				}
-			}
-			else
-			{
-				MoveTowards(currentRoamDestination, dt, false);
-				RotateTowards(currentRoamDestination, rotationSpeed, dt);
+				MoveTowards(pathList[currentDestinationIndex], dt, true);
+				RotateTowards(pathList[currentDestinationIndex], rotationSpeed, dt);
 			}
 		}
 	);
 
 	Chasing = new State([&](float dt)->void
 		{
-			//renderObject->SetColour(Debug::YELLOW);
-
 			if (goatGame.GetPlayer() == nullptr)
 				return;
 
-			currentRoamDestination = goatGame.GetPlayer()->GetTransform().GetPosition();
-			NavigationPath path;
-			bool found = goatGame.GetNavGrid()->FindPath(transform.GetPosition(), currentRoamDestination, path);
-			if (found)
+			currentDestination = goatGame.GetPlayer()->GetTransform().GetPosition();
+			if (LookingAtPlayer())
 			{
+				MoveTowards(currentDestination, dt, true);
+				RotateTowards(currentDestination, rotationSpeed, dt);
+
 				pathList.clear();
-				Vector3 pos;
-				while (path.PopWaypoint(pos))
-					pathList.push_back(pos);
-
-				//DebugDisplayPath(pathList);
-
-				if (pathList.size() > 2)
-				{
-					Vector3 wayPoint = pathList[1];
-					float nodeDistance = (wayPoint - (transform.GetPosition() + basePos)).Length();
-					if (nodeDistance <= distanceThreshold)
-					{
-						path.PopWaypoint(wayPoint);
-						Debug::DrawBox(wayPoint, Vector3(1, 1, 1), Debug::MAGENTA);
-					}
-					//MoveTowards(wayPoint, dt, false);
-					MoveTowards(pathList[0], wayPoint, dt);
-					RotateTowards(wayPoint, rotationSpeed, dt);
-				}
-				else
-				{
-					MoveTowards(currentRoamDestination, dt, false);
-					RotateTowards(currentRoamDestination, rotationSpeed, dt);
-				}
 			}
 			else
 			{
-				MoveTowards(currentRoamDestination, dt, false);
-				RotateTowards(currentRoamDestination, rotationSpeed, dt);
+				pathTimerCurrent += dt;
+				if (pathTimerCurrent >= pathTimer)
+				{
+					FindPath(currentDestination, pathList);
+					currentDestinationIndex = 0;
+					pathTimerCurrent = 0.0f;
+				}
 			}
+
+			//DebugDisplayPath(pathList);
+
+			if (pathList.size() > 0)
+			{
+				float nodeDistance = (pathList[currentDestinationIndex] - (transform.GetPosition() + basePos)).Length();
+				if (nodeDistance <= distanceThreshold)
+					currentDestinationIndex = (currentDestinationIndex + 1) % pathList.size();
+				
+				MoveTowards(pathList[currentDestinationIndex], dt, true);
+				RotateTowards(pathList[currentDestinationIndex], rotationSpeed, dt);
+			}
+			/*if (pathList.size() > 2)
+			{
+				Vector3 wayPoint = pathList[1];
+				float nodeDistance = (wayPoint - (transform.GetPosition() + basePos)).Length();
+				if (nodeDistance <= distanceThreshold)
+				{
+					path.PopWaypoint(wayPoint);
+					Debug::DrawBox(wayPoint, Vector3(1, 1, 1), Debug::MAGENTA);
+				}
+				//MoveTowards(wayPoint, dt, false);
+				MoveTowards(pathList[0], wayPoint, dt);
+				RotateTowards(pathList[2], rotationSpeed, dt);
+			}*/
 		}
 	);
 
 	StateTransition* stateIdleToRoaming = new StateTransition(Idle, Roaming, [&](void)->bool
 		{
-			currentRoamDestination = goatGame.GetRandomMazePoint();
+			FindRandomPatrolPoint();
 			return true;
 		}
 	);
 
 	StateTransition* stateRoamingToChasing = new StateTransition(Roaming, Chasing, [&](void)->bool
 		{
-			if (goatGame.GetPlayer() == nullptr)
-				return false;
-
-			float distance = (goatGame.GetPlayer()->GetTransform().GetPosition() - mazePos).Length();
-			return distance <= mazeRadius;
+			float distance = (mazePos - goatGame.GetPlayer()->GetTransform().GetPosition()).LengthSquared();
+			return distance < (mazeRadius * mazeRadius);
 		}
 	);
 
 	StateTransition* stateChasingToRoaming = new StateTransition(Chasing, Roaming, [&](void)->bool
 		{
-			if (goatGame.GetPlayer() == nullptr)
+			float distance = (mazePos - goatGame.GetPlayer()->GetTransform().GetPosition()).LengthSquared();
+			if (distance > (mazeRadius * mazeRadius))
+			{
+				FindRandomPatrolPoint();
+				return true;
+			}
+			else
 				return false;
-
-			float distance = (goatGame.GetPlayer()->GetTransform().GetPosition() - transform.GetPosition()).Length();
-			return distance >= mazeRadius;
-
-			return false;
 		}
 	);
 
@@ -191,20 +175,23 @@ void NCL::CSC8503::CWEvilGoose::OnCollisionBegin(GameObject* otherObject)
 	if (otherObject->GetTag() == "Prop")
 	{
 		if (stateMachine->GetActiveState() == Roaming)
-			currentRoamDestination = goatGame.GetRandomMazePoint();
+			currentDestination = goatGame.GetRandomMazePoint();
 	}
 
 	if (otherObject->GetTag() == "NPC_Padestrian")
 	{
 		if (stateMachine->GetActiveState() == Roaming)
-			currentRoamDestination = goatGame.GetRandomMazePoint();
+			currentDestination = goatGame.GetRandomMazePoint();
 	}
 
 	if (otherObject->GetTag() == "Player")
 	{
 		if (stateMachine->GetActiveState() == Chasing)
 		{
-			goatGame.GetPlayer()->ResetPlayer();
+			//goatGame.GetPlayer()->ResetPlayer();
+			goatGame.GetPlayer()->TakeDamage(meleeDamage);
+			if(goatGame.GetPlayer()->GetHealth() <= 0.0f)
+				FindRandomPatrolPoint();		//Go Back to Patrol State
 		}
 	}
 }
@@ -220,13 +207,27 @@ void NCL::CSC8503::CWEvilGoose::DebugDisplayPath(std::vector<Vector3> paths)
 	}
 }
 
+bool NCL::CSC8503::CWEvilGoose::LookingAtPlayer()
+{
+	bool status = false;
+
+	Vector3 playerDir = currentDestination - transform.GetPosition();
+	Ray ray = Ray(transform.GetPosition(), playerDir.Normalised());
+	RayCollision rayCol;
+
+	if (world.Raycast(ray, rayCol, true, this))
+		status = rayCol.node == goatGame.GetPlayer();
+
+	return status;
+}
+
 void NCL::CSC8503::CWEvilGoose::MoveTowards(const Vector3& pos, float dt, bool useForce)
 {
 	if (useForce)
 	{
 		auto v = (pos - transform.GetPosition()).Normalised();
 		v.y = 0.0f;
-		physicsObject->SetLinearVelocity(v * moveSpeed);
+		physicsObject->AddForce(v * moveSpeed);
 	}
 	else
 		transform.SetPosition(Vector3::MoveTowards(transform.GetPosition(), pos, moveSpeed * dt));
@@ -241,10 +242,12 @@ void NCL::CSC8503::CWEvilGoose::MoveTowards(Vector3 src, const Vector3& pos, flo
 	}
 
 	//Debug::DrawLine(pos, src, color);
-	auto v = (pos - src);
-	v.y = 0;
-	v = (v).Normalised() * moveSpeed;
-	physicsObject->SetLinearVelocity(v);
+	auto v = (pos - src).Normalised();
+	v.y = 0.0f;
+	physicsObject->AddForce(v * moveSpeed);
+	//v = (v).Normalised() * moveSpeed;
+	//physicsObject->SetLinearVelocity(v);
+
 	previousPosition = transform.GetPosition();
 
 	//transform.SetPosition(Vector3::MoveTowards(transform.GetPosition(), pos, moveSpeed * dt));
@@ -256,6 +259,7 @@ void NCL::CSC8503::CWEvilGoose::RotateTowards(const Vector3& pos, float rotSpeed
 	Vector3 ogRotEuler = ogRot.ToEuler();
 	ogRotEuler.x = 0;
 	ogRotEuler.z = 0;
+	
 	Quaternion finalRot = Quaternion::EulerAnglesToQuaternion(ogRotEuler.x, ogRotEuler.y, ogRotEuler.z);
 	transform.SetOrientation(Quaternion::Slerp(transform.GetOrientation(), finalRot, rotSpeed * dt));
 }
@@ -267,6 +271,26 @@ void NCL::CSC8503::CWEvilGoose::RotateAway(const Vector3& pos, float rotSpeed, f
 	ogRotEuler.x = 0;
 	ogRotEuler.y -= 180.0f;
 	ogRotEuler.z = 0;
+	
 	Quaternion finalRot = Quaternion::EulerAnglesToQuaternion(ogRotEuler.x, ogRotEuler.y, ogRotEuler.z);
 	transform.SetOrientation(Quaternion::Slerp(transform.GetOrientation(), finalRot, rotSpeed * dt));
+}
+
+void NCL::CSC8503::CWEvilGoose::FindRandomPatrolPoint()
+{
+	currentDestination = goatGame.GetRandomMazePoint();
+	FindPath(currentDestination, pathList);
+	currentDestinationIndex = 0;
+}
+
+void NCL::CSC8503::CWEvilGoose::FindPath(const Vector3& destination, std::vector<Vector3>& _pathList)
+{
+	if (goatGame.GetNavGrid()->FindPath(transform.GetPosition(), destination, path))
+	{
+		if (_pathList.size() > 0) _pathList.clear();
+
+		Vector3 pos;
+		while (path.PopWaypoint(pos))
+			_pathList.push_back(pos);
+	}
 }

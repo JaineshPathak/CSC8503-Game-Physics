@@ -5,11 +5,12 @@
 #include "CWLevelManager.h"
 #include "CWJumpPad.h"
 #include "CWPropDestroy.h"
-#include "CWMazeTrigger.h"
+#include "CWDoorTrigger.h"
 #include "CWPawn.h"
 #include "CWDude.h"
 #include "CWEvilGoose.h"
 #include "CWGrapplePowerup.h"
+#include "CWDoorKey.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -55,6 +56,7 @@ void NCL::CSC8503::CWLevelManager::InitGoatWorld()
 	InitBuildings();
 	InitJumpPads();
 	InitMaze();
+	InitWarehouse();
 	InitDestroyableProps();
 	InitDudeNPC();
 	InitGooseNPC();
@@ -276,6 +278,24 @@ void NCL::CSC8503::CWLevelManager::InitMaze()
 	AddCube(Vector3(235.0, 20.0f, 340.0f), Vector3(8.0f, 18.0f, 55.0f), Vector3(0, 0, 0), 0, mazeWallColor, "MazeWall01", whiteTex);*/
 }
 
+void NCL::CSC8503::CWLevelManager::InitWarehouse()
+{
+	Vector4 warehouseWallColor = Debug::WHITE;
+	Vector4 warehouseDoorColor = Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+	Vector4 warehouseRoofColor = Debug::BLUE;
+
+	float wallThickness = 2.0f;
+	AddCube(Vector3(507.0f, 30.0f, 466.0f), Vector3(wallThickness, 30.0f, 40.0f), Vector3(0, 0, 0), 0, warehouseWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(437.0f, 30.0f, 427.0f), Vector3(70.0f, 30.0f, wallThickness), Vector3(0, 0, 0), 0, warehouseWallColor, "MazeWall01", whiteTex);
+	AddCube(Vector3(437.0f, 30.0f, 507.0f), Vector3(70.0f, 30.0f, wallThickness), Vector3(0, 0, 0), 0, warehouseWallColor, "MazeWall01", whiteTex);
+	
+	AddCube(Vector3(437.0f, 62.0f, 467.0f), Vector3(70.0f, wallThickness, 42.0f), Vector3(0, 0, 0), 0, warehouseRoofColor, "MazeWall01", whiteTex);
+	warehouseDoor = AddCube(Vector3(365.0f, 30.0f, 466.0f), Vector3(wallThickness, 30.0f, 40.0f), Vector3(0, 0, 0), 0, warehouseDoorColor, "MazeWall01", whiteTex);
+
+	warehouseDoorTrigger = AddInvisibleWallTrigger(Vector3(320.0f, 4.0f, 500.0f), Vector3(10.0f, 1.0f, 10.0f));
+	warehouseDoorTrigger->SetDoorObject(warehouseDoor);
+}
+
 void NCL::CSC8503::CWLevelManager::InitDudeNPC()
 {
 	for (int i = 0; i < 10; i++)
@@ -293,7 +313,9 @@ void NCL::CSC8503::CWLevelManager::InitGooseNPC()
 
 void NCL::CSC8503::CWLevelManager::InitPowerups()
 {
-	AddGrapplePowerup(Vector3(-300.0f, 230.0f, 0.0f));
+	//AddGrapplePowerup(Vector3(-300.0f, 230.0f, 0.0f));
+	AddGrapplePowerup(Vector3(-220.0f, 180.0f, 120.0f));
+	AddKeyPowerup(Vector3(330.0f, 10.0f, 200.0f));
 }
 
 void NCL::CSC8503::CWLevelManager::InitDestroyableProps()
@@ -384,6 +406,10 @@ void NCL::CSC8503::CWLevelManager::InitDestroyableProps()
 	AddDestroyableProp(Vector3(-320.0f, 8.0f, -150.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
 	AddDestroyableProp(Vector3(256.0f, 8.0f, -320.0f), benchScale, Vector3(9.8f, 1.85f, 3.8f), benchBasePos, Vector3(0, 0, 0), envBench, whiteTex, basicShader, benchColor);
 	AddDestroyableProp(Vector3(256.0f, 8.0f, -180.0f), benchScale, Vector3(9.8f, 1.85f, 3.8f), benchBasePos, Vector3(0, 0, 0), envBench, whiteTex, basicShader, benchColor);
+	
+	AddDestroyableProp(Vector3(468.0f, 8.0f, 448.0f), benchScale, Vector3(9.8f, 1.85f, 3.8f), benchBasePos, Vector3(0, 0, 0), envBench, whiteTex, basicShader, benchColor);
+	AddDestroyableProp(Vector3(457.0f, 8.0f, 485.0f), benchScale, Vector3(9.8f, 1.85f, 3.8f), benchBasePos, Vector3(0, 0, 0), envBench, whiteTex, basicShader, benchColor);
+	AddDestroyableProp(Vector3(427.0f, 8.0f, 464.0f), benchScale, benchBoxScale, benchBasePos, Vector3(0, 90, 0), envBench, whiteTex, basicShader, benchColor);
 }
 
 void NCL::CSC8503::CWLevelManager::AddDestroyableProp(const Vector3& pos, const Vector3& scale, const Vector3& boxSize, const Vector3& baseYPos, const Vector3& rot, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader, const Vector4& color)
@@ -397,7 +423,7 @@ void NCL::CSC8503::CWLevelManager::AddDestroyableProp(const Vector3& pos, const 
 	world.AddGameObject(prop);
 }
 
-void NCL::CSC8503::CWLevelManager::AddCube(const Vector3& cubePos, const Vector3& cubeSize, const Vector3& cubeRot, const float& cubeMass, const Vector4& cubeColour, const std::string& cubeName, TextureBase* cubeTex)
+GameObject* NCL::CSC8503::CWLevelManager::AddCube(const Vector3& cubePos, const Vector3& cubeSize, const Vector3& cubeRot, const float& cubeMass, const Vector4& cubeColour, const std::string& cubeName, TextureBase* cubeTex)
 {
 	GameObject* cube = new GameObject(1, cubeName);
 
@@ -418,6 +444,7 @@ void NCL::CSC8503::CWLevelManager::AddCube(const Vector3& cubePos, const Vector3
 
 	world.AddGameObject(cube);
 
+	return cube;
 	//Debug::DrawBox(cubePos + Vector3(xOffset, 0, zOffset), cubeSize, Debug::GREEN, 1000.0f);
 	//Debug::DrawAxisLines(cube->GetTransform().GetMatrix(), 1.0f, 1000.0f);
 }
@@ -471,14 +498,18 @@ void NCL::CSC8503::CWLevelManager::AddInvisibleWall(const Vector3& wallPos, cons
 	//Debug::DrawBox(wallPos + Vector3(xOffset, 0, zOffset), wallSize, Debug::YELLOW, 1000.0f);
 }
 
-void NCL::CSC8503::CWLevelManager::AddInvisibleWallTrigger(const Vector3& wallPos, const Vector3 wallSize)
+CWDoorTrigger* NCL::CSC8503::CWLevelManager::AddInvisibleWallTrigger(const Vector3& wallPos, const Vector3 wallSize)
 {
-	CWMazeTrigger* mazeTrigger = new CWMazeTrigger(goatGame, wallSize);
-	mazeTrigger->GetTransform().SetPosition(wallPos + Vector3(xOffset, 0, zOffset)).SetScale(wallSize * 2);
+	CWDoorTrigger* trigger = new CWDoorTrigger(goatGame, wallSize);
+	trigger->GetTransform().SetPosition(wallPos + Vector3(xOffset, 0, zOffset)).SetScale(wallSize * 2);
 
-	Debug::DrawBox(wallPos + Vector3(xOffset, 0, zOffset), wallSize, Debug::YELLOW, 1000.0f);
+	trigger->SetRenderObject(new RenderObject(&trigger->GetTransform(), cubeMesh, whiteTex, basicShader));
+	trigger->GetRenderObject()->SetColour(Debug::BLUE);
+	//Debug::DrawBox(wallPos + Vector3(xOffset, 0, zOffset), wallSize, Debug::YELLOW, 1000.0f);
 
-	world.AddGameObject(mazeTrigger);
+	world.AddGameObject(trigger);
+
+	return trigger;
 }
 
 void NCL::CSC8503::CWLevelManager::AddJumpPad(const Vector3& padPos, const Vector3& padSize, const Vector3& padRotation, const float& padForce, const Vector4& padColor)
@@ -492,6 +523,12 @@ void NCL::CSC8503::CWLevelManager::AddGrapplePowerup(const Vector3& pos)
 {
 	CWGrapplePowerup* powerup = new CWGrapplePowerup(goatGame, world, pos + Vector3(xOffset, 0, zOffset), cubeMesh, whiteTex, basicShader);
 	world.AddGameObject(powerup);
+}
+
+void NCL::CSC8503::CWLevelManager::AddKeyPowerup(const Vector3& pos)
+{
+	CWDoorKey* key = new CWDoorKey(goatGame, world, pos + Vector3(xOffset, 0, zOffset), cubeMesh, whiteTex, basicShader);
+	world.AddGameObject(key);
 }
 
 void NCL::CSC8503::CWLevelManager::AddNPCDude(const Vector3& pos, const Vector3& rot, const Vector3& scale, const float& radius, const Vector4& color)

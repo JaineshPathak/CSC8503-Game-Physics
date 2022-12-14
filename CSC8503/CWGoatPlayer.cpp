@@ -11,6 +11,8 @@ NCL::CSC8503::CWGoatPlayer::CWGoatPlayer(CWGoatGame& gGame, GameWorld& gWorld, G
 {
 	tag = "Player";
 
+	currentHealth = maxHealth;
+
 	goatMesh = renderer.LoadMesh("Goat.msh");
 	whiteTex = renderer.LoadTexture("WhiteTex.png");
 	basicShader = renderer.LoadShader("scene.vert", "scene.frag");
@@ -107,7 +109,7 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 
 	if (isHooked)
 	{
-		if (!ropePowerup && springRope != nullptr)
+		if (!ropePowerup && (springRope != nullptr && springRope->isEnabled))
 		{
 			springRope->isEnabled = false;
 			isHooked = false;
@@ -138,10 +140,19 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 	}
 
 	Debug::Print("Score: " + std::to_string((int)score), Vector2(2, 5), Debug::WHITE);
+	
+	Vector4 healthColor = Debug::GREEN;
+	if (currentHealth < 30.0f) healthColor = Debug::RED;
+	if (currentHealth > 30.0f && currentHealth < 60.0f) healthColor = Debug::YELLOW;
+	
+	std::string healthStr = "Health: " + std::to_string((int)currentHealth);
+	Debug::Print(healthStr, Vector2(90 - healthStr.length(), 10), healthColor);
 }
 
 void NCL::CSC8503::CWGoatPlayer::ResetPlayer()
 {
+	currentHealth = maxHealth;
+
 	physicsObject->SetLinearVelocity(Vector3(0, 0, 0));
 	physicsObject->SetAngularVelocity(Vector3(0, 0, 0));
 
@@ -153,4 +164,5 @@ void NCL::CSC8503::CWGoatPlayer::ResetPlayer()
 	ropePowerupCurrent = 0.0f;
 	isHooked = false;
 	ropePowerup = false;
+	springRope->isEnabled = false;
 }

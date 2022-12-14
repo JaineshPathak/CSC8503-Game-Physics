@@ -45,25 +45,30 @@ void NCL::CSC8503::CWPropDestroy::OnCollisionBegin(GameObject* otherObject)
 	if (otherObject->GetTag() == "Player")
 	{
 		if (goatGame.GetGameState() == GameState::GameEnded)
-			return;
+			return;	
 
-		physicsObject->SetInverseMass(40.0f);
-		Vector3 dir = goatGame.GetPlayer()->GetTransform().GetPosition() - (transform.GetPosition() + basePos);
-		physicsObject->AddForceAtPosition(-dir * 20.0f, goatGame.GetPlayer()->GetTransform().GetPosition());
-
-		if (isDestroyed)
-			return;
-
-		isDestroyed = true;
-		physicsObject->SetRestitution(0.5);
-		renderObject->SetColour(Vector4(0.2f, 0.2f, 0.2f, 1.0f));
-
-		goatGame.OnPropDestroy(scoreAdd);
-
-		CWGoatPlayer* player = dynamic_cast<CWGoatPlayer*>(otherObject);
-		if (player != nullptr)
-			player->AddScore(scoreAdd);
+		DestroyProp(otherObject);
 	}
+}
+
+void NCL::CSC8503::CWPropDestroy::DestroyProp(GameObject* playerObject, int scoreBonus)
+{
+	physicsObject->SetInverseMass(40.0f);
+	Vector3 dir = goatGame.GetPlayer()->GetTransform().GetPosition() - (transform.GetPosition() + basePos);
+	physicsObject->AddForceAtPosition(-dir * 20.0f, goatGame.GetPlayer()->GetTransform().GetPosition());
+
+	if (isDestroyed)
+		return;
+
+	isDestroyed = true;
+	physicsObject->SetRestitution(0.5f);
+	renderObject->SetColour(Vector4(0.2f, 0.2f, 0.2f, 1.0f));
+
+	goatGame.OnPropDestroy(scoreAdd);
+
+	CWGoatPlayer* player = dynamic_cast<CWGoatPlayer*>(playerObject);
+	if (player != nullptr)
+		player->AddScore(scoreAdd + scoreBonus);
 }
 
 void NCL::CSC8503::CWPropDestroy::ResetProp()

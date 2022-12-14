@@ -21,7 +21,11 @@ namespace NCL
 			virtual void OnCollisionBegin(GameObject* otherObject) override;
 			void DebugDisplayPath(std::vector<Vector3> paths);
 
+			bool LookingAtPlayer();
+
 		protected:
+			float meleeDamage = 2.0f;
+
 			Vector3 basePos = Vector3(0, -6.5f, 0);
 			float moveSpeed = 40.0f;
 			float rotationSpeed = 30.0f;
@@ -32,15 +36,23 @@ namespace NCL
 			float chaseTimer = 5.0f;
 			float chaseTimerCurrent = 0.0f;
 
+			float pathTimer = 2.0f;
+			float pathTimerCurrent = 0.0f;
+
 			Vector3 mazePos;
-			float mazeRadius = 120.0f;
+			float mazeRadius = 160.0f;
 
 			void MoveTowards(Vector3 src, const Vector3& pos, float dt);
 			void MoveTowards(const Vector3& pos, float dt, bool useForce = false);
 			void RotateTowards(const Vector3& pos, float rotSpeed, float dt);
 			void RotateAway(const Vector3& pos, float rotSpeed, float dt);
 
-			Vector3 currentRoamDestination = Vector3(0, 0, 0);
+			void FindRandomPatrolPoint();
+			void FindPath(const Vector3& destination, std::vector<Vector3>& _pathList);
+
+			NavigationPath path;
+			int currentDestinationIndex = 0;
+			Vector3 currentDestination = Vector3(0, 0, 0);
 
 			State* Idle;
 			State* Roaming;

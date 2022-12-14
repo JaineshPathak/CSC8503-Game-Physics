@@ -25,7 +25,20 @@ namespace NCL
             float GetScore() const { return score; }
             void AddScore(const float& scored) { score += scored; }
 
+            float GetHealth() const { return currentHealth; }
+            void TakeDamage(float damage)
+            {
+                currentHealth -= damage;
+                if (currentHealth <= 0.0f)
+                {
+                    currentHealth = 0.0f;
+                    ResetPlayer();
+                }
+            }
+
             void ResetPlayer();
+
+            bool hasDoorKey = false;
 
         protected:
             TextureBase* whiteTex = nullptr;
@@ -47,6 +60,9 @@ namespace NCL
             Vector3 velocityRef;
             float velocityDampSmoothness = 0.25f;
 
+            float currentHealth = 0.0f;
+            float maxHealth = 100.0f;           
+
             float moveSpeed = 15.0f;
             float rotationSpeed = 5.0f;
             float mass = 7.5f;
@@ -54,8 +70,8 @@ namespace NCL
             float airControl = 0.5f;
 
             bool isOnGround = true;
-            bool isHooked = false;
 
+            bool isHooked = false;
             float ropePowerupTimer = 30.0f;
             float ropePowerupCurrent = 0.0f;
             bool ropePowerup = true;

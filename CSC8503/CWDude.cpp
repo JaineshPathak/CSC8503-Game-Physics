@@ -30,7 +30,7 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 	physicsObject = new PhysicsObject(&transform, boundingVolume);
 	physicsObject->SetInverseMass(5.5f);
 	physicsObject->InitCubeInertia();
-	physicsObject->SetLinearDamping(0.3f);
+	physicsObject->SetLinearDamping(4.0f);	//0.3f
 	physicsObject->SetGravityMultiplier(5.0f);
 	physicsObject->SetRestitution(0);
 
@@ -44,14 +44,29 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 
 	Roaming = new State([&](float dt)->void
 		{
-			roamTimerCurrent += dt;
+			if (pathList.size() > 0)
+			{
+				//DebugDisplayPath(pathList);
+				float nodeDistance = (pathList[currentDestinationIndex] - (transform.GetPosition() + basePos)).Length();
+				if (nodeDistance <= distanceThreshold)
+				{
+					currentDestinationIndex++;
+					if (currentDestinationIndex >= (int)pathList.size() - 1)
+						FindRandomPatrolPoint();
+				}
+
+				MoveTowards(pathList[currentDestinationIndex], dt, true);
+				RotateTowards(pathList[currentDestinationIndex], rotationSpeed, dt);
+			}
+			#pragma region OLD CODE
+			/*roamTimerCurrent += dt;
 			if (roamTimerCurrent >= roamTimer)
 			{
 				roamTimerCurrent = 0.0f;
-				currentRoamDestination = goatGame.GetRandomRoamPoint();
+				currentDestination = goatGame.GetRandomRoamPoint();
 			}
 
-			float patrolDistance = ((transform.GetPosition() + basePos) - currentRoamDestination).Length();
+			float patrolDistance = ((transform.GetPosition() + basePos) - currentDestination).Length();
 			if (patrolDistance <= distanceThreshold)
 				currentRoamDestination = goatGame.GetRandomRoamPoint();
 
@@ -91,9 +106,9 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 			{
 				MoveTowards(currentRoamDestination, dt, false);
 				RotateTowards(currentRoamDestination, rotationSpeed, dt);
-			}
-
-			#pragma region Helped by Giacomo
+			}*/
+			#pragma endregion
+			#pragma region Helped by Mr Giacomo Bergami
 			/*
 			NavigationPath path;
 			bool found = goatGame.GetNavGrid()->FindPath(transform.GetPosition(), patrolPoints[currentPatrolPointIndex], path);
@@ -146,7 +161,7 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 
 	StateTransition* stateIdleToRoaming = new StateTransition(Idle, Roaming, [&](void)->bool
 		{
-			currentRoamDestination = goatGame.GetRandomRoamPoint();
+			FindRandomPatrolPoint();
 			return true;
 		}
 	);
@@ -156,9 +171,9 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 			if (goatGame.GetPlayer() == nullptr)
 				return false;
 
-			float distance = (goatGame.GetPlayer()->GetTransform().GetPosition() - transform.GetPosition()).Length();
+			float distance = (goatGame.GetPlayer()->GetTransform().GetPosition() - transform.GetPosition()).LengthSquared();
 			chaseTimerCurrent = 0.0f;
-			return distance <= chaseRadius;
+			return distance <= (chaseRadius * chaseRadius);
 		}
 	);
 
@@ -167,12 +182,13 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 			if (goatGame.GetPlayer() == nullptr)
 				return false;
 
-			float distance = (goatGame.GetPlayer()->GetTransform().GetPosition() - transform.GetPosition()).Length();
+			float distance = (goatGame.GetPlayer()->GetTransform().GetPosition() - transform.GetPosition()).LengthSquared();
 			//return distance >= chaseRadius;
 
-			if (chaseTimerCurrent >= chaseTimer && distance > chaseRadius)
+			if (chaseTimerCurrent >= chaseTimer && distance > (chaseRadius * chaseRadius))
 			{
 				chaseTimerCurrent = 0.0f;
+				FindRandomPatrolPoint();
 				return true;
 			}
 			
@@ -208,7 +224,13 @@ void NCL::CSC8503::CWDude::OnCollisionBegin(GameObject* otherObject)
 		if (stateMachine->GetActiveState() == Roaming)
 		{
 			roamTimerCurrent = 0.0f;
-			currentRoamDestination = goatGame.GetRandomRoamPoint();
+			FindRandomPatrolPoint();
+		}
+		else if (stateMachine->GetActiveState() == Running)
+		{
+			CWPropDestroy* prop = static_cast<CWPropDestroy*>(otherObject);
+			if (prop != nullptr)
+				prop->DestroyProp(goatGame.GetPlayer(), (int)scoreBonus);
 		}
 	}
 
@@ -217,7 +239,7 @@ void NCL::CSC8503::CWDude::OnCollisionBegin(GameObject* otherObject)
 		if (stateMachine->GetActiveState() == Roaming)
 		{
 			roamTimerCurrent = 0.0f;
-			currentRoamDestination = goatGame.GetRandomRoamPoint();
+			FindRandomPatrolPoint();
 		}
 	}
 }
@@ -239,7 +261,7 @@ void NCL::CSC8503::CWDude::MoveTowards(const Vector3& pos, float dt, bool useFor
 	{
 		auto v = (pos - transform.GetPosition()).Normalised();
 		v.y = 0.0f;
-		physicsObject->SetLinearVelocity(v * moveSpeed);
+		physicsObject->AddForce(v * moveSpeed);
 	}
 	else
 		transform.SetPosition(Vector3::MoveTowards(transform.GetPosition(), pos, moveSpeed * dt));
@@ -249,15 +271,17 @@ void NCL::CSC8503::CWDude::MoveTowards(Vector3 src, const Vector3& pos, float dt
 {
 	auto color = Debug::BLUE;
 	if ((previousPosition - transform.GetPosition()).Length() < (distanceThreshold * 0.01)) {
-		src = transform.GetPosition(); 
+		src = transform.GetPosition();
 		color = Debug::MAGENTA;
 	}
 
 	//Debug::DrawLine(pos, src, color);
-	auto v = (pos - src);
-	v.y = 0;
-	v = (v).Normalised() * moveSpeed;
-	physicsObject->SetLinearVelocity(v);
+	auto v = (pos - src).Normalised();
+	v.y = 0.0f;
+	physicsObject->AddForce(v * moveSpeed);
+	//v = (v).Normalised() * moveSpeed;
+	//physicsObject->SetLinearVelocity(v);
+
 	previousPosition = transform.GetPosition();
 
 	//transform.SetPosition(Vector3::MoveTowards(transform.GetPosition(), pos, moveSpeed * dt));
@@ -282,4 +306,23 @@ void NCL::CSC8503::CWDude::RotateAway(const Vector3& pos, float rotSpeed, float 
 	ogRotEuler.z = 0;
 	Quaternion finalRot = Quaternion::EulerAnglesToQuaternion(ogRotEuler.x, ogRotEuler.y, ogRotEuler.z);
 	transform.SetOrientation(Quaternion::Slerp(transform.GetOrientation(), finalRot, rotSpeed * dt));
+}
+
+void NCL::CSC8503::CWDude::FindRandomPatrolPoint()
+{
+	currentDestination = goatGame.GetRandomRoamPoint();
+	FindPath(currentDestination, pathList);
+	currentDestinationIndex = 0;
+}
+
+void NCL::CSC8503::CWDude::FindPath(const Vector3& destination, std::vector<Vector3>& _pathList)
+{
+	if (goatGame.GetNavGrid()->FindPath(transform.GetPosition(), destination, path))
+	{
+		if (_pathList.size() > 0) _pathList.clear();
+
+		Vector3 pos;
+		while (path.PopWaypoint(pos))
+			_pathList.push_back(pos);
+	}
 }

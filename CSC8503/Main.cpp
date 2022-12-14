@@ -17,7 +17,6 @@
 #include "NetworkedGame.h"
 
 #include "PushdownMachine.h"
-
 #include "PushdownState.h"
 
 #include "BehaviourNode.h"
@@ -31,6 +30,98 @@ using namespace CSC8503;
 #include <chrono>
 #include <thread>
 #include <sstream>
+
+class PauseScreen : public PushdownState
+{
+	PushdownResult OnUpdate(float dt, PushdownState** newState) override
+	{
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::U))
+			return PushdownResult::Pop;
+
+		return PushdownResult::NoChange;
+	}
+
+	void OnAwake() override
+	{
+		std::cout << "Press U to unpause game!\n";
+	}
+};
+
+class GameScreen : public PushdownState
+{
+	PushdownResult OnUpdate(float dt, PushdownState** newState) override
+	{
+		pauseReminder -= dt;
+		if (pauseReminder < 0)
+		{
+			std::cout << "Coins Mined: " << coinsMined << "\n";
+			std::cout << "Press P to pause game, or F1 to return to main menu!\n";
+			pauseReminder += 1.0f;
+		}
+
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::P))
+		{
+			*newState = new PauseScreen();
+			return PushdownResult::Push;
+		}
+
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::F1))
+		{
+			std::cout << "Returning to main menu!\n";
+			return PushdownResult::Pop;
+		}
+
+		if (rand() % 7 == 0)
+			coinsMined++;
+
+		return PushdownResult::NoChange;
+	}
+
+	void OnAwake() override
+	{
+		std::cout << "Preparing to mine coins!\n";
+	}
+
+protected:
+	int coinsMined = 0;
+	float pauseReminder = 1.0f;
+};
+
+class IntroScreen : public PushdownState
+{
+	PushdownResult OnUpdate(float dt, PushdownState** newState) override
+	{
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::M))
+		{
+			*newState = new GameScreen();
+			return PushdownResult::Push;
+		}
+
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::N))
+		{
+			return PushdownResult::Pop;
+		}
+
+		return PushdownResult::NoChange;
+	}
+
+	void OnAwake() override
+	{
+		std::cout << "Welcome to a really awesome game!\n";
+		std::cout << "Press Space To Begin or escape to quit!\n";
+	}
+};
+
+void TestPushdownAutomata(Window* w)
+{
+	PushdownMachine machine(new IntroScreen());
+	while (w->UpdateWindow())
+	{
+		float dt = w->GetTimer()->GetTimeDeltaSeconds();
+		if (!machine.Update(dt))
+			return;
+	}
+}
 
 std::vector<Vector3> testNodes;
 void TestPathfinding() 
@@ -256,7 +347,9 @@ hide or show the
 */
 int main() 
 {
-	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720, true);
+	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720, false);
+
+	//TestPushdownAutomata(w);
 
 	if (!w->HasInitialised()) {
 		return -1;
