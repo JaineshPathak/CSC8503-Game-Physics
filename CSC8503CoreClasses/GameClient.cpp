@@ -11,12 +11,36 @@ GameClient::~GameClient()	{
 	enet_host_destroy(netHandle);
 }
 
-bool GameClient::Connect(uint8_t a, uint8_t b, uint8_t c, uint8_t d, int portNum) {
-	return false;
+bool GameClient::Connect(uint8_t a, uint8_t b, uint8_t c, uint8_t d, int portNum) 
+{
+	ENetAddress address;
+	address.port = portNum;
+	address.host = (d << 24) | (c << 16) | (b << 8) | (a);
+
+	netPeer = enet_host_connect(netHandle, &address, 2, 0);
+	return netPeer != nullptr;
 }
 
-void GameClient::UpdateClient() {
+void GameClient::UpdateClient() 
+{
+	if (netHandle == nullptr) return;
+
+	ENetEvent event;
+	while (enet_host_service(netHandle, &event, 0) > 0)
+	{
+		if (event.type == ENET_EVENT_TYPE_CONNECT)
+			std::cout << "Connected to Server!" << std::endl;
+		else if (event.type == ENET_EVENT_TYPE_RECEIVE)
+		{
+			std::cout << "Client: Packet Received...." << std::endl;
+			GamePacket* packet = (GamePacket*)event.packet->data;
+			ProcessPacket(packet);
+		}
+		enet_packet_destroy(event.packet);
+	}
 }
 
-void GameClient::SendPacket(GamePacket&  payload) {
+void GameClient::SendPacket(GamePacket&  payload) 
+{
+	ENetPacket* dataPacket = enet_packet_create(&payload, payload.GetTotalSize(), 0);
 }

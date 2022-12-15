@@ -333,6 +333,63 @@ void TestBehaviourTree()
 	std::cout << "End Of Behaviour Tree!\n";
 }
 
+class TestPacketReceiver : public PacketReceiver
+{
+public:
+	TestPacketReceiver(string name)
+	{
+		this->name = name;
+	}
+
+	void ReceivePacket(int type, GamePacket* payload, int source)
+	{
+		if (type == String_Message)
+		{
+			StringPacket* realPacket = (StringPacket*)payload;
+			std::string msg = realPacket->GetStringFromData();
+
+			std::cout << name << " received message: " << msg << std::endl;
+		}
+	}
+
+protected:
+	std::string name;
+};
+
+void TestNetworking()
+{
+	NetworkBase::Initialise();
+
+	TestPacketReceiver serverReceiver("Server");
+	TestPacketReceiver clientReceiver("Client");
+
+	int port = NetworkBase::GetDefaultPort();
+
+	GameServer* server = new GameServer(port, 1);
+	GameClient* client = new GameClient();
+
+	server->RegisterPacketHandler(String_Message, &serverReceiver);
+	client->RegisterPacketHandler(String_Message, &clientReceiver);
+
+	bool canConnect = client->Connect(127, 0, 0, 1, port);
+
+	for (int i = 0; i < 100; i++)
+	{
+		StringPacket serverPacket = StringPacket("Server says hello! " + std::to_string(i));
+		StringPacket clientPacket = StringPacket("Client says Hello: " + std::to_string(i));
+		
+		server->SendGlobalPacket(serverPacket);
+		client->SendPacket(clientPacket);
+
+		server->UpdateServer();
+		client->UpdateClient();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+
+	NetworkBase::Destroy();
+}
+
 /*
 
 The main function should look pretty familar to you!
@@ -347,9 +404,10 @@ hide or show the
 */
 int main() 
 {
-	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720, false);
+	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 640, 480, false);
 
 	//TestPushdownAutomata(w);
+	//TestNetworking();
 
 	if (!w->HasInitialised()) {
 		return -1;
@@ -366,6 +424,7 @@ int main()
 	
 	//TutorialGame* g = new TutorialGame();
 	CWGoatGame* g = new CWGoatGame();
+	//NetworkedGame* g = new NetworkedGame();
 	
 	w->GetTimer()->GetTimeDeltaSeconds(); //Clear the timer so we don't get a larget first dt!
 

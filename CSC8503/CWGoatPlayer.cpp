@@ -146,7 +146,7 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 	if (currentHealth > 30.0f && currentHealth < 60.0f) healthColor = Debug::YELLOW;
 	
 	std::string healthStr = "Health: " + std::to_string((int)currentHealth);
-	Debug::Print(healthStr, Vector2(90 - healthStr.length(), 10), healthColor);
+	Debug::Print(healthStr, Vector2(89 - healthStr.length(), 10), healthColor);
 }
 
 void NCL::CSC8503::CWGoatPlayer::ResetPlayer(bool includeKey)
