@@ -36,7 +36,7 @@ namespace NCL
                 }
             }
 
-            void ResetPlayer();
+            void ResetPlayer(bool includeKey = false);
 
             bool hasDoorKey = false;
 

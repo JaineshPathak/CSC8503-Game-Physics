@@ -9,6 +9,7 @@
 #include "CWGoatPlayer.h"
 #include "CWFollowCamera.h"
 #include "CWGrapplePowerup.h"
+#include "CWDoorTrigger.h"
 #include "CWPropDestroy.h"
 
 #include "NavigationGrid.h"
@@ -103,7 +104,7 @@ namespace NCL
 			std::vector<CWGrapplePowerup*> powerupList;
 			std::vector<CWPropDestroy*> propsList;
 
-			float gameTime = 180.0f;
+			float gameTime = 300.0f;
 			float gameTimeCurrent = 0.0f;
 
 			std::string gameOver = std::string("Game Over");

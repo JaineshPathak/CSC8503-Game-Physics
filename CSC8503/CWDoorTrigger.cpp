@@ -13,6 +13,8 @@ NCL::CSC8503::CWDoorTrigger::CWDoorTrigger(CWGoatGame& gGame, const Vector3& wal
 	physicsObject->InitCubeInertia();
 	physicsObject->SetGravityMultiplier(5.0f);
 	physicsObject->SetRestitution(0);
+
+	isTriggered = false;
 }
 
 void NCL::CSC8503::CWDoorTrigger::OnTriggerBegin(GameObject* otherObject)
@@ -31,4 +33,12 @@ void NCL::CSC8503::CWDoorTrigger::OnTriggerBegin(GameObject* otherObject)
 			warehouseDoor->GetTransform().SetPosition(Vector3(doorPos));
 		}
 	}
+}
+
+void NCL::CSC8503::CWDoorTrigger::ResetTrigger()
+{
+	if (warehouseDoor == nullptr) return;
+
+	isTriggered = false;
+	warehouseDoor->GetTransform().SetPosition(defaultDoorPos);
 }

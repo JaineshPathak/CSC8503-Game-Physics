@@ -40,14 +40,7 @@ void NCL::CSC8503::CWGrapplePowerup::Update(float dt)
 	if (currentState == PowerUpState::Cooldown)
 	{
 		respawnTimeCurrent -= dt;
-		if (respawnTimeCurrent <= 0.0f)
-		{
-			respawnTimeCurrent = 0.0f;
-			currentState = PowerUpState::Active;
-
-			transform.SetPosition(defaultPos);
-			transform.SetScale(powerupScale * 2.0f);
-		}
+		if (respawnTimeCurrent <= 0.0f) ResetPowerup();
 	}
 	else if (currentState == PowerUpState::Active)
 	{
@@ -76,4 +69,13 @@ void NCL::CSC8503::CWGrapplePowerup::OnTriggerBegin(GameObject* otherObject)
 			currentState = PowerUpState::Cooldown;
 		}
 	}
+}
+
+void NCL::CSC8503::CWGrapplePowerup::ResetPowerup()
+{
+	respawnTimeCurrent = 0.0f;
+	currentState = PowerUpState::Active;
+
+	transform.SetPosition(defaultPos);
+	transform.SetScale(powerupScale * 2.0f);
 }

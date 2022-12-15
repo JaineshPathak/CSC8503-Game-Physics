@@ -26,8 +26,9 @@ namespace NCL
                             ShaderBase* shader,
                             const Vector4& color = Debug::BLACK);
 
-            void Update(float dt);
+            virtual void Update(float dt);
             virtual void OnTriggerBegin(GameObject* otherObject) override;
+            virtual void ResetPowerup();
 
         protected:
             float elaspedTime = 0.0f;

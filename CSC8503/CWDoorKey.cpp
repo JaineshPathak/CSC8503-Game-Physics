@@ -54,7 +54,7 @@ void NCL::CSC8503::CWDoorKey::OnTriggerBegin(GameObject* otherObject)
 	if (otherObject->GetTag() == "Player" && currentState == PowerUpState::Active)
 	{
 		CWGoatPlayer* player = dynamic_cast<CWGoatPlayer*>(otherObject);
-		if (player != nullptr)
+		if (player != nullptr && !player->hasDoorKey)
 		{
 			player->hasDoorKey = true;
 

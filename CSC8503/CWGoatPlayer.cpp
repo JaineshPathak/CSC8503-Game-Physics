@@ -149,7 +149,7 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 	Debug::Print(healthStr, Vector2(90 - healthStr.length(), 10), healthColor);
 }
 
-void NCL::CSC8503::CWGoatPlayer::ResetPlayer()
+void NCL::CSC8503::CWGoatPlayer::ResetPlayer(bool includeKey)
 {
 	currentHealth = maxHealth;
 
@@ -165,4 +165,6 @@ void NCL::CSC8503::CWGoatPlayer::ResetPlayer()
 	isHooked = false;
 	ropePowerup = false;
 	springRope->isEnabled = false;
+
+	if (includeKey) hasDoorKey = false;
 }

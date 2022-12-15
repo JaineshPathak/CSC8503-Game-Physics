@@ -17,7 +17,7 @@ namespace NCL
                 ShaderBase* shader,
                 const Vector4& color = Debug::CYAN);
 
-            void Update(float dt);
+            virtual void Update(float dt) override;
             virtual void OnTriggerBegin(GameObject* otherObject) override;
         };
     }

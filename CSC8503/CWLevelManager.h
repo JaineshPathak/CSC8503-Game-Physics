@@ -29,6 +29,8 @@ namespace NCL
 			ShaderBase* GetBasicShader() { return basicShader; }
 			TextureBase* GetWhiteTex() { return whiteTex; }
 
+			CWDoorTrigger* GetDoorTrigger() { return warehouseDoorTrigger; }
+
 			Vector3 GetRandomRoamPoint() 
 			{
 				if ((int)roamPoints.size() <= 0)

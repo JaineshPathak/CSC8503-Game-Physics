@@ -139,9 +139,15 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 
 			gameTimeCurrent = gameTime;
 
-			player->ResetPlayer();
+			player->ResetPlayer(true);
 			for (size_t i = 0; i < propsList.size(); i++)
 				propsList[i]->ResetProp();
+
+			for (size_t i = 0; i < powerupList.size(); i++)
+				powerupList[i]->ResetPowerup();
+
+			if (levelManager->GetDoorTrigger() != nullptr)
+				levelManager->GetDoorTrigger()->ResetTrigger();
 
 			currentPropsDestroyed = 0;
 			gameState = GameState::GameStarted;

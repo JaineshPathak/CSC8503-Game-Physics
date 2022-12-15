@@ -13,14 +13,20 @@ namespace NCL
             CWDoorTrigger(CWGoatGame& gGame, const Vector3& wallSize);
             ~CWDoorTrigger() {}
 
-            void SetDoorObject(GameObject* door) { warehouseDoor = door; }
+            void SetDoorObject(GameObject* door) 
+            { 
+                warehouseDoor = door; 
+                defaultDoorPos = warehouseDoor->GetTransform().GetPosition();
+            }
             virtual void OnTriggerBegin(GameObject* otherObject) override;
+            void ResetTrigger();
 
         protected:
             CWGoatGame& goatGame;
             bool isTriggered = false;
 
             GameObject* warehouseDoor;
+            Vector3 defaultDoorPos;
         };
     }
 }
