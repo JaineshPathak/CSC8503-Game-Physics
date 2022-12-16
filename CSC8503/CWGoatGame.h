@@ -21,8 +21,9 @@ namespace NCL
 	{
 		enum GameState
 		{
-			GameStarted = 0,
-			GameEnded = 1
+			GameMenu = 0,
+			GameStarted = 1,
+			GameEnded = 2
 		};
 
 		class CWGoatGame
@@ -69,6 +70,7 @@ namespace NCL
 			GameState gameState;
 
 			void InitCamera();
+			void InitPlayer();
 
 			GameTechRenderer* renderer;
 			PhysicsSystem* physics;
@@ -107,6 +109,9 @@ namespace NCL
 			float gameTime = 300.0f;
 			float gameTimeCurrent = 0.0f;
 
+			std::string gameTitleStr = std::string("Goat Imitator");
+			std::string gameStartStr = std::string("1 - Play Game");
+			std::string gameQuitStr = std::string("2 - Quit Game");
 			std::string gameOver = std::string("Game Over");
 			std::string yourScore = std::string("Your Score: ");
 			std::string wantToPlayAgain = std::string("Do you want to play again?");

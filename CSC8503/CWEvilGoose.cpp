@@ -17,7 +17,7 @@ NCL::CSC8503::CWEvilGoose::CWEvilGoose(CWGoatGame& gGame, GameWorld& gWorld,
 	SphereVolume* volume = new SphereVolume(radius);
 	SetBoundingVolume((CollisionVolume*)volume);
 
-	tag = "NPC_Evil";
+	tag = "NPC_Enemy";
 	transform.SetPosition(pos).
 		SetOrientation(Quaternion::EulerAnglesToQuaternion(rot.x, rot.y, rot.z)).
 		SetScale(scale * 2);
@@ -188,6 +188,8 @@ void NCL::CSC8503::CWEvilGoose::OnCollisionBegin(GameObject* otherObject)
 	{
 		if (stateMachine->GetActiveState() == Chasing)
 		{
+			if (goatGame.GetGameState() == GameState::GameMenu || goatGame.GetGameState() == GameState::GameEnded) return;
+
 			//goatGame.GetPlayer()->ResetPlayer();
 			goatGame.GetPlayer()->TakeDamage(meleeDamage);
 			if(goatGame.GetPlayer()->GetHealth() <= 0.0f)
@@ -221,76 +223,9 @@ bool NCL::CSC8503::CWEvilGoose::LookingAtPlayer()
 	return status;
 }
 
-void NCL::CSC8503::CWEvilGoose::MoveTowards(const Vector3& pos, float dt, bool useForce)
-{
-	if (useForce)
-	{
-		auto v = (pos - transform.GetPosition()).Normalised();
-		v.y = 0.0f;
-		physicsObject->AddForce(v * moveSpeed);
-	}
-	else
-		transform.SetPosition(Vector3::MoveTowards(transform.GetPosition(), pos, moveSpeed * dt));
-}
-
-void NCL::CSC8503::CWEvilGoose::MoveTowards(Vector3 src, const Vector3& pos, float dt)
-{
-	auto color = Debug::BLUE;
-	if ((previousPosition - transform.GetPosition()).Length() < (distanceThreshold * 0.01)) {
-		src = transform.GetPosition();
-		color = Debug::MAGENTA;
-	}
-
-	//Debug::DrawLine(pos, src, color);
-	auto v = (pos - src).Normalised();
-	v.y = 0.0f;
-	physicsObject->AddForce(v * moveSpeed);
-	//v = (v).Normalised() * moveSpeed;
-	//physicsObject->SetLinearVelocity(v);
-
-	previousPosition = transform.GetPosition();
-
-	//transform.SetPosition(Vector3::MoveTowards(transform.GetPosition(), pos, moveSpeed * dt));
-}
-
-void NCL::CSC8503::CWEvilGoose::RotateTowards(const Vector3& pos, float rotSpeed, float dt)
-{
-	Quaternion ogRot = Quaternion::RotateTowards(transform.GetPosition(), pos, Vector3(0, 1, 0));
-	Vector3 ogRotEuler = ogRot.ToEuler();
-	ogRotEuler.x = 0;
-	ogRotEuler.z = 0;
-	
-	Quaternion finalRot = Quaternion::EulerAnglesToQuaternion(ogRotEuler.x, ogRotEuler.y, ogRotEuler.z);
-	transform.SetOrientation(Quaternion::Slerp(transform.GetOrientation(), finalRot, rotSpeed * dt));
-}
-
-void NCL::CSC8503::CWEvilGoose::RotateAway(const Vector3& pos, float rotSpeed, float dt)
-{
-	Quaternion ogRot = Quaternion::RotateTowards(transform.GetPosition(), pos, Vector3(0, 1, 0));
-	Vector3 ogRotEuler = ogRot.ToEuler();
-	ogRotEuler.x = 0;
-	ogRotEuler.y -= 180.0f;
-	ogRotEuler.z = 0;
-	
-	Quaternion finalRot = Quaternion::EulerAnglesToQuaternion(ogRotEuler.x, ogRotEuler.y, ogRotEuler.z);
-	transform.SetOrientation(Quaternion::Slerp(transform.GetOrientation(), finalRot, rotSpeed * dt));
-}
-
 void NCL::CSC8503::CWEvilGoose::FindRandomPatrolPoint()
 {
 	currentDestination = goatGame.GetRandomMazePoint();
 	FindPath(currentDestination, pathList);
 	currentDestinationIndex = 0;
-}
-
-void NCL::CSC8503::CWEvilGoose::FindPath(const Vector3& destination, std::vector<Vector3>& _pathList)
-{
-	if (goatGame.GetNavGrid()->FindPath(transform.GetPosition(), destination, path))
-	{
-		if (_pathList.size() > 0) _pathList.clear();
-
-		Vector3 pos;
-		while (path.PopWaypoint(pos))
-			_pathList.push_back(pos);
-	}
 }

@@ -30,7 +30,10 @@ NetworkedGame::~NetworkedGame()	{
 	delete thisClient;
 }
 
-void NetworkedGame::StartAsServer() {
+void NetworkedGame::StartAsServer() 
+{
+	std::cout << "Started as Server!\n";
+
 	thisServer = new GameServer(NetworkBase::GetDefaultPort(), 4);
 
 	thisServer->RegisterPacketHandler(Received_State, this);
@@ -38,7 +41,10 @@ void NetworkedGame::StartAsServer() {
 	StartLevel();
 }
 
-void NetworkedGame::StartAsClient(char a, char b, char c, char d) {
+void NetworkedGame::StartAsClient(char a, char b, char c, char d) 
+{
+	std::cout << "Started as Client!\n";
+
 	thisClient = new GameClient();
 	thisClient->Connect(a, b, c, d, NetworkBase::GetDefaultPort());
 

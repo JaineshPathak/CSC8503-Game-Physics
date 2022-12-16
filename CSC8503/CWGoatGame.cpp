@@ -13,9 +13,11 @@ NCL::CSC8503::CWGoatGame::CWGoatGame()
 	cameraMain = world->GetMainCamera();
 	world->GetMainCamera()->SetNearPlane(0.1f);
 	world->GetMainCamera()->SetFarPlane(15000.0f);
-	world->GetMainCamera()->SetPitch(0.0f);
+	world->SetMainCamera(cameraMain);
+	world->GetMainCamera()->SetPosition(Vector3(0 + 512.0f, 280.0f, 500.0f + 512.0f));
+	world->GetMainCamera()->SetPitch(-35.0f);
 	world->GetMainCamera()->SetYaw(0.0f);
-	world->GetMainCamera()->SetPosition(startCameraPos);
+	world->GetMainCamera()->enableInput = false;
 
 	renderer = new GameTechRenderer(*world);
 	
@@ -23,18 +25,16 @@ NCL::CSC8503::CWGoatGame::CWGoatGame()
 	physics->UseGravity(useGravity);
 	
 	levelManager = new CWLevelManager(*world, *this, *renderer);
-	player = new CWGoatPlayer(*this, *world, *renderer);
-	
-	cameraFollow = new CWFollowCamera(*world, *player);
+	InitPlayer();
+	//InitCamera();
 
 	navGrid = new NavigationGrid("CWNavGrid5.txt");
 	//navGrid->DebugDraw(1);
 
 	gameTimeCurrent = gameTime;
+	gameState = GameState::GameMenu;
 
 	useGravity = true;
-
-	InitCamera();
 }
 
 NCL::CSC8503::CWGoatGame::~CWGoatGame()
@@ -58,21 +58,7 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 	for (size_t i = 0; i < powerupList.size(); i++)
 		powerupList[i]->Update(dt);
 	
-	if(player) player->Update(dt);
-
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Q))
-	{
-		toggleCamera = !toggleCamera;
-		if (toggleCamera)
-			world->SetMainCamera(cameraMain);
-		else
-		{
-			world->SetMainCamera(cameraFollow);
-			toggleCursor = false;
-			Window::GetWindow()->ShowOSPointer(false);
-			Window::GetWindow()->LockMouseToWindow(true);
-		}
-	}
+	if(player) player->Update(dt);	
 
 	if (toggleCamera)
 	{
@@ -101,8 +87,37 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 	renderer->Render();
 	Debug::UpdateRenderables(dt);
 
-	if (gameState == GameState::GameStarted)
+	if (gameState == GameState::GameMenu)
 	{
+		Debug::Print(gameTitleStr, Vector2(50 - gameTitleStr.length(), 40), Debug::WHITE);
+		Debug::Print(gameStartStr, Vector2(50 - gameStartStr.length(), 50), Debug::GREEN);
+		Debug::Print(gameQuitStr, Vector2(50 - gameQuitStr.length(), 55), Debug::RED);
+
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::NUM1))
+		{
+			InitCamera();
+
+			gameState = GameState::GameStarted;
+		}
+		else if(Window::GetKeyboard()->KeyPressed(KeyboardKeys::NUM2))
+			exit(0);
+	}
+	else if (gameState == GameState::GameStarted)
+	{
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Q))
+		{
+			toggleCamera = !toggleCamera;
+			if (toggleCamera)
+				world->SetMainCamera(cameraMain);
+			else
+			{
+				world->SetMainCamera(cameraFollow);
+				toggleCursor = false;
+				Window::GetWindow()->ShowOSPointer(false);
+				Window::GetWindow()->LockMouseToWindow(true);
+			}
+		}
+
 		Debug::Print("Items: " + std::to_string(currentPropsDestroyed) + " / " + std::to_string(totalPropsToDestroy), Vector2(2, 10), Debug::CYAN);
 
 		gameTimeCurrent -= dt;
@@ -170,10 +185,18 @@ void NCL::CSC8503::CWGoatGame::EndGame()
 	yourScore = "Your Score: " + std::to_string((int)player->GetScore());
 }
 
+void NCL::CSC8503::CWGoatGame::InitPlayer()
+{
+	player = new CWGoatPlayer(*this, *world, *renderer);
+}
+
 void NCL::CSC8503::CWGoatGame::InitCamera()
 {
 	if (world == nullptr || world->GetMainCamera() == nullptr)
 		return;
+
+	if(cameraFollow == nullptr)
+		cameraFollow = new CWFollowCamera(*world, *player);
 
 	world->SetMainCamera(cameraFollow);
 	world->GetMainCamera()->SetNearPlane(0.1f);

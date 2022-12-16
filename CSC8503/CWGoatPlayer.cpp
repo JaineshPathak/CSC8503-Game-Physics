@@ -53,6 +53,9 @@ NCL::CSC8503::CWGoatPlayer::~CWGoatPlayer()
 
 void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 {
+	if (game.GetGameState() == GameState::GameMenu || game.GetGameState() == GameEnded)
+		return;
+
 	Ray groundRay = Ray(transform.GetPosition(), Vector3(0, -1.0f, 0));
 	RayCollision groundCollisionData;
 	if (world.Raycast(groundRay, groundCollisionData, true, this))
@@ -64,7 +67,7 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 	//renderObject->SetColour(isOnGround ? Debug::BLUE : Debug::RED);
 	//physicsObject->SetLinearDamping(isOnGround ? 3.0f : 0.1f);
 
-	if (game.GetCursorStatus() || game.GetGameState() == GameState::GameEnded)
+	if (game.GetCursorStatus())
 		return;
 
 	Vector3 linearMovement;
@@ -76,10 +79,13 @@ void NCL::CSC8503::CWGoatPlayer::Update(float dt)
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE) && isOnGround) physicsObject->AddForce(Vector3(0, 1, 0) * jumpForce * 50.0f);
 
-	if (ropePowerupCurrent > 0.0)
+	if (ropePowerupCurrent > 0.0f)
 	{
 		ropePowerupCurrent -= dt;
-		if (ropePowerupCurrent <= 0.0f) ropePowerupCurrent = 0.0f;
+		if (ropePowerupCurrent <= 0.0f)
+		{
+			ropePowerupCurrent = 0.0f;
+		}
 
 		Debug::Print("Grapple: " + std::to_string((int)ropePowerupCurrent), Vector2(2, 95), Debug::YELLOW);
 	}

@@ -72,6 +72,7 @@ namespace NCL
 			void InitDudeNPC();
 			void InitGooseNPC();
 			void InitPowerups();
+			void InitBridge();
 
 			void InitDestroyableProps();
 			void AddDestroyableProp(const Vector3& pos, const Vector3& size, const Vector3& boxSize, const Vector3& baseYPos, const Vector3& rot, MeshGeometry* mesh, TextureBase* texture, ShaderBase* shader, const Vector4& color = Debug::WHITE);

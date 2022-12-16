@@ -12,6 +12,8 @@
 #include "CWGrapplePowerup.h"
 #include "CWDoorKey.h"
 
+#include "PositionConstraint.h"
+
 using namespace NCL;
 using namespace CSC8503;
 
@@ -61,6 +63,7 @@ void NCL::CSC8503::CWLevelManager::InitGoatWorld()
 	InitDudeNPC();
 	InitGooseNPC();
 	InitPowerups();
+	InitBridge();
 }
 
 void NCL::CSC8503::CWLevelManager::InitRoamPoints()
@@ -316,6 +319,40 @@ void NCL::CSC8503::CWLevelManager::InitPowerups()
 	//AddGrapplePowerup(Vector3(-300.0f, 230.0f, 0.0f));
 	AddGrapplePowerup(Vector3(-220.0f, 180.0f, 120.0f));
 	AddKeyPowerup(Vector3(330.0f, 10.0f, 200.0f));
+}
+
+void NCL::CSC8503::CWLevelManager::InitBridge()
+{
+	Vector3 cubeSize = Vector3(20, 1, 6);
+
+	float invCubeMass = 2.0f;
+	int numLinks = 7;
+	float maxDistance = 25.0f;
+	float cubeDistance = 20.0f;
+
+	Vector3 startPos = Vector3(-220.0f, 200.0f, 256.0f + numLinks * (cubeDistance * 0.5f));
+
+	Vector4 bridgeColor = Vector4(1.0f, 0.52f, 0.35f, 1.0f);
+	//GameObject* start = AddCube(startPos + Vector3(0, 0, 0), cubeSize, 0);
+	GameObject* start = AddCube(startPos, cubeSize, Vector3(0, 0, 0), 0.0f, bridgeColor, "Bridge1", whiteTex);
+	GameObject* end = AddCube(startPos + Vector3(0, 0, (numLinks + 2) * cubeDistance), cubeSize, Vector3(0, 0, 0), 0.0f, bridgeColor, "Bridge" + std::to_string(numLinks), whiteTex);
+
+	GameObject* previous = start;
+
+	for (int i = 0; i < numLinks; i++)
+	{
+		GameObject* block = AddCube(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, Vector3(0, 0, 0), invCubeMass, bridgeColor, "Bridge" + std::to_string(i), whiteTex);
+		PositionConstraint* distanceConstraint = new PositionConstraint(previous, block, maxDistance);
+		world.AddConstraint(distanceConstraint);
+		previous = block;
+	}
+
+	PositionConstraint* constraint = new PositionConstraint(previous, end, maxDistance);
+	world.AddConstraint(constraint);
+
+	AddCube(Vector3(-256.0f, 100.0f, 512.0f - 4.0f) + Vector3(20.0f, 0, 0), Vector3(4, 100.0f, 4), Vector3(0, 0, 0), 0.0f, bridgeColor, "BridgePillar01", whiteTex);
+	AddCube(Vector3(-256.0f, 100.0f, 512.0f - 4.0f) + Vector3(50.0f, 0, 0), Vector3(4, 100.0f, 4), Vector3(0, 0, 0), 0.0f, bridgeColor, "BridgePillar01", whiteTex);
+	//AddCube(Vector3(-256.0f, 100.0f, 512.0f) + Vector3(8.0f, 0, 0), Vector3(4, 100.0f, 4), Vector3(0, 0, 0), 0.0f, bridgeColor, "BridgePillar02", whiteTex);
 }
 
 void NCL::CSC8503::CWLevelManager::InitDestroyableProps()

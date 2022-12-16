@@ -40,6 +40,7 @@ set(Source_Files
     "CWPropDestroy.cpp"
     "CWDoorTrigger.cpp"
     "CWSpringConstraint.cpp"
+    "CWPawn.cpp"
     "CWDude.cpp"
     "CWEvilGoose.cpp"
     "CWGrapplePowerup.cpp"

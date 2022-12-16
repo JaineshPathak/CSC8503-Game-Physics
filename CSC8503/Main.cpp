@@ -404,10 +404,10 @@ hide or show the
 */
 int main() 
 {
-	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 640, 480, false);
+	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 768, false);
 
 	//TestPushdownAutomata(w);
-	//TestNetworking();
+	TestNetworking();
 
 	if (!w->HasInitialised()) {
 		return -1;

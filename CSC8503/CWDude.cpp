@@ -152,7 +152,7 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 
 			Vector3 dir = (goatGame.GetPlayer()->GetTransform().GetPosition() - transform.GetPosition()).Normalised();
 			dir.y = 0;
-			physicsObject->SetLinearVelocity(-dir * moveSpeed);
+			physicsObject->SetLinearVelocity(-dir * runningSpeed);
 			RotateAway(goatGame.GetPlayer()->GetTransform().GetPosition(), rotationSpeed * 1.5f, dt);
 
 			chaseTimerCurrent += dt;
@@ -168,7 +168,7 @@ NCL::CSC8503::CWDude::CWDude(CWGoatGame& gGame, GameWorld& gWorld,
 
 	StateTransition* stateRoamingToRunning = new StateTransition(Roaming, Running, [&](void)->bool
 		{
-			if (goatGame.GetPlayer() == nullptr)
+			if (goatGame.GetPlayer() == nullptr || goatGame.GetGameState() == GameState::GameMenu || goatGame.GetGameState() == GameState::GameEnded)
 				return false;
 
 			float distance = (goatGame.GetPlayer()->GetTransform().GetPosition() - transform.GetPosition()).LengthSquared();
@@ -228,6 +228,8 @@ void NCL::CSC8503::CWDude::OnCollisionBegin(GameObject* otherObject)
 		}
 		else if (stateMachine->GetActiveState() == Running)
 		{
+			if (goatGame.GetGameState() == GameState::GameMenu || goatGame.GetGameState() == GameState::GameEnded) return;
+
 			CWPropDestroy* prop = static_cast<CWPropDestroy*>(otherObject);
 			if (prop != nullptr)
 				prop->DestroyProp(goatGame.GetPlayer(), (int)scoreBonus);
@@ -255,74 +257,9 @@ void NCL::CSC8503::CWDude::DebugDisplayPath(std::vector<Vector3> paths)
 	}
 }
 
-void NCL::CSC8503::CWDude::MoveTowards(const Vector3& pos, float dt, bool useForce)
-{
-	if (useForce)
-	{
-		auto v = (pos - transform.GetPosition()).Normalised();
-		v.y = 0.0f;
-		physicsObject->AddForce(v * moveSpeed);
-	}
-	else
-		transform.SetPosition(Vector3::MoveTowards(transform.GetPosition(), pos, moveSpeed * dt));
-}
-
-void NCL::CSC8503::CWDude::MoveTowards(Vector3 src, const Vector3& pos, float dt)
-{
-	auto color = Debug::BLUE;
-	if ((previousPosition - transform.GetPosition()).Length() < (distanceThreshold * 0.01)) {
-		src = transform.GetPosition();
-		color = Debug::MAGENTA;
-	}
-
-	//Debug::DrawLine(pos, src, color);
-	auto v = (pos - src).Normalised();
-	v.y = 0.0f;
-	physicsObject->AddForce(v * moveSpeed);
-	//v = (v).Normalised() * moveSpeed;
-	//physicsObject->SetLinearVelocity(v);
-
-	previousPosition = transform.GetPosition();
-
-	//transform.SetPosition(Vector3::MoveTowards(transform.GetPosition(), pos, moveSpeed * dt));
-}
-
-void NCL::CSC8503::CWDude::RotateTowards(const Vector3& pos, float rotSpeed, float dt)
-{
-	Quaternion ogRot = Quaternion::RotateTowards(transform.GetPosition(), pos, Vector3(0, 1, 0));
-	Vector3 ogRotEuler = ogRot.ToEuler();
-	ogRotEuler.x = 0;
-	ogRotEuler.z = 0;
-	Quaternion finalRot = Quaternion::EulerAnglesToQuaternion(ogRotEuler.x, ogRotEuler.y, ogRotEuler.z);
-	transform.SetOrientation(Quaternion::Slerp(transform.GetOrientation(), finalRot, rotSpeed * dt));
-}
-
-void NCL::CSC8503::CWDude::RotateAway(const Vector3& pos, float rotSpeed, float dt)
-{
-	Quaternion ogRot = Quaternion::RotateTowards(transform.GetPosition(), pos, Vector3(0, 1, 0));
-	Vector3 ogRotEuler = ogRot.ToEuler();
-	ogRotEuler.x = 0;
-	ogRotEuler.y -= 180.0f;
-	ogRotEuler.z = 0;
-	Quaternion finalRot = Quaternion::EulerAnglesToQuaternion(ogRotEuler.x, ogRotEuler.y, ogRotEuler.z);
-	transform.SetOrientation(Quaternion::Slerp(transform.GetOrientation(), finalRot, rotSpeed * dt));
-}
-
 void NCL::CSC8503::CWDude::FindRandomPatrolPoint()
 {
 	currentDestination = goatGame.GetRandomRoamPoint();
 	FindPath(currentDestination, pathList);
 	currentDestinationIndex = 0;
-}
-
-void NCL::CSC8503::CWDude::FindPath(const Vector3& destination, std::vector<Vector3>& _pathList)
-{
-	if (goatGame.GetNavGrid()->FindPath(transform.GetPosition(), destination, path))
-	{
-		if (_pathList.size() > 0) _pathList.clear();
-
-		Vector3 pos;
-		while (path.PopWaypoint(pos))
-			_pathList.push_back(pos);
-	}
 }
