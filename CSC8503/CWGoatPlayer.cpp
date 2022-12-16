@@ -35,6 +35,9 @@ NCL::CSC8503::CWGoatPlayer::CWGoatPlayer(CWGoatGame& gGame, GameWorld& gWorld, G
 	physicsObject->SetGravityMultiplier(5.0f);
 	physicsObject->SetRestitution(0);
 
+	ropeForce = 0.25f;
+	ropeDamping = 0.1f;
+
 	springRope = new CWSpringConstraint(this, Vector3(0, 0, 0), 0.0f, ropeForce, ropeDamping);
 	springRope->isEnabled = false;
 	world.AddConstraint(springRope);

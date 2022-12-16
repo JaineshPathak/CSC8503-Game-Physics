@@ -77,8 +77,8 @@ namespace NCL
             bool ropePowerup = true;
             CWSpringConstraint* springRope = nullptr;
             Vector3 ropeAnchorPoint;
-            float ropeForce = 0.1f;
-            float ropeDamping = 0.1f;
+            float ropeForce;
+            float ropeDamping;
 
             float score = 0.0f;
         };

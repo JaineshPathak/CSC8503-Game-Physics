@@ -38,7 +38,7 @@ namespace NCL
 			CWGoatPlayer* GetPlayer() { return player; }
 
 			GameState GetGameState() { return gameState; }
-			void EndGame();
+			void EndGame(bool win = false);
 
 			void OnPropSpawn(CWPropDestroy* prop) 
 			{ 
@@ -49,7 +49,7 @@ namespace NCL
 			{ 
 				currentPropsDestroyed++;
 				if (currentPropsDestroyed >= totalPropsToDestroy)
-					EndGame();
+					EndGame(true);
 			}
 
 			MeshGeometry* GetGoatMesh() { return levelManager->GetGoatMesh(); }
@@ -68,6 +68,7 @@ namespace NCL
 
 		protected:
 			GameState gameState;
+			bool roundWinLost = false;
 
 			void InitCamera();
 			void InitPlayer();
@@ -117,6 +118,9 @@ namespace NCL
 			std::string wantToPlayAgain = std::string("Do you want to play again?");
 			std::string yes = std::string("Press Y to Replay");
 			std::string no = std::string("Press N to Quit");
+
+			std::string youWin = std::string("You Win!");
+			std::string youLost = std::string("You Lost!");
 		};
 	}
 }

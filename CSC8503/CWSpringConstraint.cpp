@@ -44,6 +44,7 @@ void NCL::CSC8503::CWSpringConstraint::UpdateConstraint(float dt)
 	//-k * x;
 	//std::cout << force << std::endl;
 
-	physO->AddForce(force);
+	physO->ApplyLinearImpulse(force * dt);
+	//physO->AddForce(force);
 	//physO->AddTorque(Vector3::Cross(force, anchorPoint - objectA->GetTransform().GetPosition()));
 }

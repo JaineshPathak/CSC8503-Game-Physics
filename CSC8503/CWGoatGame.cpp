@@ -117,6 +117,8 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 				Window::GetWindow()->LockMouseToWindow(true);
 			}
 		}
+		/*if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Y))
+			EndGame(true);*/
 
 		Debug::Print("Items: " + std::to_string(currentPropsDestroyed) + " / " + std::to_string(totalPropsToDestroy), Vector2(2, 10), Debug::CYAN);
 
@@ -141,6 +143,10 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 	}
 	else if (gameState == GameState::GameEnded)
 	{
+		std::string winStatus = roundWinLost ? youWin : youLost;
+		Vector4 winStatusColor = roundWinLost ? Debug::GREEN : Debug::RED;
+		Debug::Print(winStatus, Vector2(50 - winStatus.length(), 40), winStatusColor);
+
 		Debug::Print(gameOver, Vector2(50 - gameOver.length(), 20), Debug::RED);
 		Debug::Print(yourScore, Vector2(50 - yourScore.length(), 50), Debug::YELLOW);
 		Debug::Print(wantToPlayAgain, Vector2(50 - wantToPlayAgain.length(), 70), Debug::WHITE);
@@ -166,13 +172,16 @@ void NCL::CSC8503::CWGoatGame::UpdateGame(float dt)
 
 			currentPropsDestroyed = 0;
 			gameState = GameState::GameStarted;
+
+			roundWinLost = false;
 		}
 	}
 }
 
-void NCL::CSC8503::CWGoatGame::EndGame()
+void NCL::CSC8503::CWGoatGame::EndGame(bool win)
 {
 	gameState = GameState::GameEnded;
+	roundWinLost = win;
 
 	cameraMain->enableInput = false;
 	cameraFollow->enableInput = false;
