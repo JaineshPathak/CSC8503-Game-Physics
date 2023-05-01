@@ -108,5 +108,15 @@ namespace NCL {
 		float FloatAreaOfTri(const Vector3 &a, const Vector3 &b, const Vector3 & c);
 
 		float CrossAreaOfTri(const Vector3 &a, const Vector3 &b, const Vector3 & c);
+
+		inline float Sign(const float& x)
+		{
+			if (x < 0.0f)
+				return -1.0f;
+			else if(x > 0.0f)
+				return 1.0f;
+
+			return 0.0f;
+		}
 	}
 }

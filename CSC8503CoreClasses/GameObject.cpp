@@ -1,12 +1,13 @@
 #include "GameObject.h"
-#include "CollisionDetection.h"
 #include "PhysicsObject.h"
 #include "RenderObject.h"
 #include "NetworkObject.h"
+#include "CollisionDetection.h"
 
 using namespace NCL::CSC8503;
 
-GameObject::GameObject(string objectName)	{
+GameObject::GameObject(int layer, string objectName)	{
+	this->layer = layer;
 	name			= objectName;
 	worldID			= -1;
 	isActive		= true;

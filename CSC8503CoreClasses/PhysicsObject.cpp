@@ -4,7 +4,10 @@
 using namespace NCL;
 using namespace CSC8503;
 
-PhysicsObject::PhysicsObject(Transform* parentTransform, const CollisionVolume* parentVolume)	{
+PhysicsObject::PhysicsObject(Transform* parentTransform, const CollisionVolume* parentVolume, const bool& isTrigger)	
+{
+	this->isTrigger = isTrigger;
+
 	transform	= parentTransform;
 	volume		= parentVolume;
 
@@ -27,6 +30,12 @@ void PhysicsObject::ApplyLinearImpulse(const Vector3& force) {
 
 void PhysicsObject::AddForce(const Vector3& addedForce) {
 	force += addedForce;
+}
+
+void PhysicsObject::AddForceAtPositionLocal(const Vector3& addedForce, const Vector3& position)
+{
+	force += addedForce;
+	torque += Vector3::Cross(position, addedForce);
 }
 
 void PhysicsObject::AddForceAtPosition(const Vector3& addedForce, const Vector3& position) {
@@ -62,6 +71,13 @@ void PhysicsObject::InitSphereInertia() {
 	float i			= 2.5f * inverseMass / (radius*radius);
 
 	inverseInertia	= Vector3(i, i, i);
+}
+
+void PhysicsObject::InitHollowSphereInertia() {
+	float radius = transform->GetScale().GetMaxElement();
+	float i = 2.3f * inverseMass / (radius * radius);
+
+	inverseInertia = Vector3(i, i, i);
 }
 
 void PhysicsObject::UpdateInertiaTensor() {

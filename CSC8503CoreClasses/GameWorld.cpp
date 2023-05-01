@@ -91,6 +91,8 @@ bool GameWorld::Raycast(Ray& r, RayCollision& closestCollision, bool closestObje
 		if (i == ignoreThis) {
 			continue;
 		}
+		if (i->GetLayer() == 2)		//Ignore
+			continue;
 		RayCollision thisCollision;
 		if (CollisionDetection::RayIntersection(r, *i, thisCollision)) {
 				

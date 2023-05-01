@@ -39,8 +39,10 @@ GameTechRenderer::GameTechRenderer(GameWorld& world) : OGLRenderer(*Window::GetW
 
 	//Set up the light properties
 	lightColour = Vector4(0.8f, 0.8f, 0.5f, 1.0f);
-	lightRadius = 1000.0f;
-	lightPosition = Vector3(-200.0f, 60.0f, -200.0f);
+	lightRadius = 50000.0f;
+	lightPosition = Vector3(312.0f, 120.0f, 312.0f);		//-200, 60, -200
+	//Debug::DrawBox(lightPosition, Vector3(5, 5, 5), Debug::MAGENTA, 1000.0f);
+	//lightPosition = Vector3(0.0f, 60.0f, 0.0f);
 
 	//Skybox!
 	skyboxShader = new OGLShader("skybox.vert", "skybox.frag");
@@ -321,12 +323,13 @@ void GameTechRenderer::NewRenderLines() {
 
 	debugLineData.clear();
 
-	int frameLineCount = lines.size() * 2;
+	int frameLineCount = (int)lines.size() * 2;
 
 	SetDebugLineBufferSizes(frameLineCount);
 
 	glBindBuffer(GL_ARRAY_BUFFER, lineVertVBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, frameLineCount * sizeof(Debug::DebugLineEntry), lines.data());
+	//glBufferSubData(GL_ARRAY_BUFFER, 0, frameLineCount * sizeof(Debug::DebugLineEntry), lines.data());
+	glBufferSubData(GL_ARRAY_BUFFER, 0, lines.size() * sizeof(Debug::DebugLineEntry), lines.data());
 	
 
 	glBindVertexArray(lineVAO);

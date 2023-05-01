@@ -61,9 +61,15 @@ namespace NCL {
 			this->defaultSpeed = defaultSpeed;
 		}
 
+		Camera& SetCamType(CameraType type)
+		{
+			camType = type;
+			return *this;
+		}
+
 		~Camera(void) = default;
 
-		void UpdateCamera(float dt);
+		virtual void UpdateCamera(float dt);
 
 		float GetFieldOfVision() const {
 			return fov;
@@ -84,6 +90,26 @@ namespace NCL {
 		
 		Camera& SetFarPlane(float val) {
 			farPlane = val;
+			return *this;
+		}
+
+		Camera& SetLeft(float val) {
+			left = val;
+			return *this;
+		}
+
+		Camera& SetRight(float val) {
+			right = val;
+			return *this;
+		}
+
+		Camera& SetTop(float val) {
+			top = val;
+			return *this;
+		}
+
+		Camera& SetBottom(float val) {
+			bottom = val;
 			return *this;
 		}
 
@@ -110,8 +136,15 @@ namespace NCL {
 
 		Camera& SetDefaultSpeed(const float& s) { defaultSpeed = s; }
 
+		Vector3 GetForward() const { return camForward; }
+		Vector3 GetRight() const { return camRight; }
+		Vector3 GetUp() const { return camUp; }
+
 		static Camera BuildPerspectiveCamera(const Vector3& pos, float pitch, float yaw, float fov, float near, float far);
 		static Camera BuildOrthoCamera(const Vector3& pos, float pitch, float yaw, float left, float right, float top, float bottom, float near, float far);
+
+		bool enableInput = true;
+
 	protected:
 		CameraType camType;
 
@@ -126,6 +159,10 @@ namespace NCL {
 		float	yaw;
 		float	pitch;
 		Vector3 position;
+
+		Vector3 camForward;
+		Vector3 camUp;
+		Vector3 camRight;
 
 		float defaultSpeed = 100.0f;
 	};

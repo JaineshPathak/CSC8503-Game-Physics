@@ -181,6 +181,8 @@ void OGLRenderer::BindTextureToShader(const TextureBase*t, const std::string& un
 	}
 
 	glActiveTexture(GL_TEXTURE0 + texUnit);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glBindTexture(GL_TEXTURE_2D, texID);
 
 	glUniform1i(slot, texUnit);

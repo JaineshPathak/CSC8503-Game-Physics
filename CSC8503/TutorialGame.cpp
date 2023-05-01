@@ -22,6 +22,7 @@ TutorialGame::TutorialGame()	{
 #endif
 
 	physics		= new PhysicsSystem(*world);
+	//physics->SetGravity(Vector3(0, 9.81f, 0));
 
 	forceMagnitude	= 10.0f;
 	useGravity		= false;
@@ -67,7 +68,8 @@ TutorialGame::~TutorialGame()	{
 	delete world;
 }
 
-void TutorialGame::UpdateGame(float dt) {
+void TutorialGame::UpdateGame(float dt) 
+{
 	if (!inSelectionMode) {
 		world->GetMainCamera()->UpdateCamera(dt);
 	}
@@ -87,6 +89,18 @@ void TutorialGame::UpdateGame(float dt) {
 		world->GetMainCamera()->SetYaw(angles.y);
 	}
 
+	if (cubeLooker != nullptr && selectionObject != nullptr)
+	{
+		Vector3 cubePos = cubeLooker->GetTransform().GetPosition();
+		//Vector3 camPos = world->GetMainCamera()->GetPosition();
+
+		Matrix4 temp = Matrix4::BuildViewMatrix(cubePos, selectionObject->GetTransform().GetPosition(), Vector3(0, 1, 0));
+		Matrix4 modelMat = temp.Inverse();		//Gives World Position
+
+		Quaternion q(modelMat);
+		cubeLooker->GetTransform().SetOrientation(Quaternion::Slerp(cubeLooker->GetTransform().GetOrientation(), q, dt));
+	}
+
 	UpdateKeys();
 
 	if (useGravity) {
@@ -101,7 +115,7 @@ void TutorialGame::UpdateGame(float dt) {
 		Vector3 rayPos;
 		Vector3 rayDir;
 
-		rayDir = selectionObject->GetTransform().GetOrientation() * Vector3(0, 0, -1);
+		rayDir = selectionObject->GetTransform().GetOrientation() * Vector3(0, 0, -1);	//Forward Direction
 
 		rayPos = selectionObject->GetTransform().GetPosition();
 
@@ -117,7 +131,10 @@ void TutorialGame::UpdateGame(float dt) {
 		}
 	}
 
-	Debug::DrawLine(Vector3(), Vector3(0, 100, 0), Vector4(1, 0, 0, 1));
+	//Debug::DrawLine(Vector3(), Vector3(0, 100, 0), Vector4(1, 0, 0, 1));
+
+	if (testStateObject)
+		testStateObject->Update(dt);
 
 	SelectObject();
 	MoveSelectedObject();
@@ -236,9 +253,10 @@ void TutorialGame::DebugObjectMovement() {
 	}
 }
 
-void TutorialGame::InitCamera() {
+void TutorialGame::InitCamera() 
+{
 	world->GetMainCamera()->SetNearPlane(0.1f);
-	world->GetMainCamera()->SetFarPlane(500.0f);
+	world->GetMainCamera()->SetFarPlane(15000.0f);
 	world->GetMainCamera()->SetPitch(-15.0f);
 	world->GetMainCamera()->SetYaw(315.0f);
 	world->GetMainCamera()->SetPosition(Vector3(-60, 40, 60));
@@ -249,10 +267,21 @@ void TutorialGame::InitWorld() {
 	world->ClearAndErase();
 	physics->Clear();
 
-	InitMixedGridWorld(15, 15, 3.5f, 3.5f);
+	//InitMixedGridWorld(15, 15, 3.5f, 3.5f);
+	//AddSphereToWorld(Vector3(2, 0, 0), 1.0f, 3.5f);
+	testStateObject = AddStateObjectToWorld(Vector3(0, 25, 0));
+
+	AddSphereToWorld(Vector3(0, 0, 15), 1.0f, 7.5f);
+	AddCubeToWorld(Vector3(15, 0, 0), Vector3(1, 1, 1), 3.5f);
+	AddCubeToWorld(Vector3(-15, 0, 0), Vector3(1, 1, 1), 3.5f);
+
+	//Floor
+	AddCubeToWorld(Vector3(484 - 22, 0, 484 - 22), Vector3(484, 2, 484), 0);
 
 	InitGameExamples();
-	InitDefaultFloor();
+	//InitDefaultFloor();
+	BridgeConstraintTest();
+
 }
 
 /*
@@ -261,22 +290,29 @@ A single function to add a large immoveable cube to the bottom of our world
 
 */
 GameObject* TutorialGame::AddFloorToWorld(const Vector3& position) {
-	GameObject* floor = new GameObject();
+	GameObject* floor = new GameObject(2, "Floor");		//Ignored layer
 
 	Vector3 floorSize = Vector3(200, 2, 200);
-	AABBVolume* volume = new AABBVolume(floorSize);
+	OBBVolume* volume = new OBBVolume(floorSize);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
 	floor->GetTransform()
-		.SetScale(floorSize * 2)
+		.SetScale(floorSize * 2.0f)
+		.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0))
 		.SetPosition(position);
 
+	PhysicsObject* floorPhys = new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume());
+	floorPhys->SetRestitution(1.0f);
+
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
-	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
+	floor->SetPhysicsObject(floorPhys);
 
 	floor->GetPhysicsObject()->SetInverseMass(0);
 	floor->GetPhysicsObject()->InitCubeInertia();
 
 	world->AddGameObject(floor);
+
+	//Debug::DrawBox(volume->GetCenter(), volume->GetHalfDimensions(), Debug::WHITE, 1000.0f);
+	Debug::DrawBox(floor->GetTransform().GetPosition(), floor->GetTransform().GetOrientation(), volume->GetHalfDimensions(), Debug::GREEN, 1000.0f);
 
 	return floor;
 }
@@ -289,7 +325,7 @@ physics worlds. You'll probably need another function for the creation of OBB cu
 
 */
 GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
-	GameObject* sphere = new GameObject();
+	GameObject* sphere = new GameObject(1, "Sphere01");
 
 	Vector3 sphereSize = Vector3(radius, radius, radius);
 	SphereVolume* volume = new SphereVolume(radius);
@@ -303,21 +339,30 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
 
 	sphere->GetPhysicsObject()->SetInverseMass(inverseMass);
-	sphere->GetPhysicsObject()->InitSphereInertia();
+
+	if(rand() % 2)
+		sphere->GetPhysicsObject()->InitSphereInertia();
+	else
+	{
+		sphere->GetPhysicsObject()->InitHollowSphereInertia();
+		sphere->GetRenderObject()->SetColour(Debug::CYAN);
+	}
 
 	world->AddGameObject(sphere);
 
 	return sphere;
 }
 
+//http://thunderfist-podium.blogspot.com/2012/02/capsule-capsule-collision-in-games.html
 GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass) {
-	GameObject* cube = new GameObject();
+	GameObject* cube = new GameObject(1, "Cube01");
 
 	AABBVolume* volume = new AABBVolume(dimensions);
 	cube->SetBoundingVolume((CollisionVolume*)volume);
 
 	cube->GetTransform()
 		.SetPosition(position)
+		.SetOrientation(Quaternion::EulerAnglesToQuaternion(0, 0, 0))
 		.SetScale(dimensions * 2);
 
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
@@ -327,6 +372,9 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 	cube->GetPhysicsObject()->InitCubeInertia();
 
 	world->AddGameObject(cube);
+
+	//Debug::DrawBox(cube->GetTransform().GetMatrix(), cube->GetTransform().GetOrientation(), volume->GetHalfDimensions(), Debug::WHITE, 1000.0f);
+	Debug::DrawBox(position, dimensions, Debug::GREEN, 1000.0f);
 
 	return cube;
 }
@@ -399,8 +447,63 @@ GameObject* TutorialGame::AddBonusToWorld(const Vector3& position) {
 	return apple;
 }
 
+StateGameObject* TutorialGame::AddStateObjectToWorld(const Vector3& position)
+{
+	StateGameObject* stateObj = new StateGameObject();
+
+	SphereVolume* volume = new SphereVolume(4.0f);
+	stateObj->SetBoundingVolume((CollisionVolume*)volume);
+	stateObj->GetTransform()
+		.SetScale(Vector3(4, 4, 4))
+		.SetPosition(position);
+
+	stateObj->SetRenderObject(new RenderObject(&stateObj->GetTransform(), sphereMesh, basicTex, basicShader));
+	stateObj->SetPhysicsObject(new PhysicsObject(&stateObj->GetTransform(), stateObj->GetBoundingVolume()));
+
+	stateObj->GetPhysicsObject()->SetInverseMass(1.0f);
+	stateObj->GetPhysicsObject()->InitSphereInertia();
+
+	world->AddGameObject(stateObj);
+
+	return stateObj;
+}
+
+void TutorialGame::BridgeConstraintTest()
+{
+	Vector3 cubeSize = Vector3(10, 1, 4);
+
+	float invCubeMass = 2;
+	int numLinks = 10;
+	float maxDistance = 15.0f;
+	float cubeDistance = 15.0f;
+
+	Vector3 startPos = Vector3(200, 200, 200);
+
+	GameObject* start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, 0);
+	start->GetRenderObject()->SetColour(Debug::RED);
+	GameObject* end = AddCubeToWorld(startPos + Vector3((numLinks + 2) * cubeDistance, 0, 0), cubeSize, 0);
+	end->GetRenderObject()->SetColour(Debug::GREEN);
+
+	GameObject* previous = start;
+
+	for (int i = 0; i < numLinks; i++)
+	{
+		GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, invCubeMass);
+		PositionConstraint* distanceConstraint = new PositionConstraint(previous, block, maxDistance);
+		world->AddConstraint(distanceConstraint);
+		previous = block;
+	}
+
+	PositionConstraint* constraint = new PositionConstraint(previous, end, maxDistance);
+	world->AddConstraint(constraint);
+}
+
 void TutorialGame::InitDefaultFloor() {
-	AddFloorToWorld(Vector3(0, -20, 0));
+	AddFloorToWorld(Vector3(0, 0, 0));
+
+	cubeLooker = AddEnemyToWorld(Vector3(25, 0, 0));
+	cubeLooker->SetLayer(2);
+	cubeLooker->GetRenderObject()->SetColour(Debug::RED);
 }
 
 void TutorialGame::InitGameExamples() {
@@ -435,6 +538,8 @@ void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing
 			}
 		}
 	}
+
+	//AddCubeToWorld(Vector3(0, 0, 0), Vector3(3, 1, 60), 0.1f);
 }
 
 void TutorialGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims) {
@@ -465,11 +570,15 @@ bool TutorialGame::SelectObject() {
 			Window::GetWindow()->LockMouseToWindow(true);
 		}
 	}
+
+	if (selectionObject != nullptr)
+	{
+		//Debug::DrawLine(selectionObject->GetTransform().GetPosition(), selectionObject->GetTransform().GetPosition() + selectionObject->GetTransform().GetForward(), Debug::BLUE);
+		//Debug::DrawAxisLines(selectionObject->GetTransform().GetMatrix(), 2.0f);
+	}
+
 	if (inSelectionMode) {
 		Debug::Print("Press Q to change to camera mode!", Vector2(5, 85));
-
-		if (selectionObject != nullptr)
-			Debug::DrawAxisLines(selectionObject->GetTransform().GetMatrix(), 2.0f, 10.0f);
 
 		if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
 			if (selectionObject) {	//set colour to deselected;
@@ -485,6 +594,7 @@ bool TutorialGame::SelectObject() {
 
 				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
 				Debug::DrawLine(ray.GetPosition(), closestCollision.collidedAt, Debug::WHITE, 5.0f);
+				Debug::DrawLine(closestCollision.collidedAt, closestCollision.collidedAt + closestCollision.collidedNormal, Debug::YELLOW, 5.0f);
 
 				return true;
 			}
@@ -536,4 +646,10 @@ void TutorialGame::MoveSelectedObject() {
 	}
 }
 
+//--------------------------------------------------------------------------------------------------------------
 
+#pragma region CW_GOAT_GAME
+#pragma endregion
+
+
+//--------------------------------------------------------------------------------------------------------------

@@ -9,7 +9,7 @@ namespace NCL {
 
 		class PhysicsObject	{
 		public:
-			PhysicsObject(Transform* parentTransform, const CollisionVolume* parentVolume);
+			PhysicsObject(Transform* parentTransform, const CollisionVolume* parentVolume, const bool& isTrigger = false);
 			~PhysicsObject();
 
 			Vector3 GetLinearVelocity() const {
@@ -41,6 +41,8 @@ namespace NCL {
 			
 			void AddForce(const Vector3& force);
 
+			void AddForceAtPositionLocal(const Vector3& addedForce, const Vector3& position);
+
 			void AddForceAtPosition(const Vector3& force, const Vector3& position);
 
 			void AddTorque(const Vector3& torque);
@@ -56,8 +58,18 @@ namespace NCL {
 				angularVelocity = v;
 			}
 
+			float GetLinearDamping() const { return damping; }
+			void SetLinearDamping(float d) { damping = d; }
+
+			float GetGravityMultiplier() const { return gravityMultiplier; }
+			void SetGravityMultiplier(float g) { gravityMultiplier = g; }
+
+			float GetRestitution() const { return restitution; }
+			void SetRestitution(float r) { restitution = r; }
+
 			void InitCubeInertia();
 			void InitSphereInertia();
+			void InitHollowSphereInertia();
 
 			void UpdateInertiaTensor();
 
@@ -65,13 +77,23 @@ namespace NCL {
 				return inverseInteriaTensor;
 			}
 
+			bool GetGravityStatus() const { return enableGravity; }
+			void SetGravityStatus(const bool& s) { enableGravity = s; }
+
+			bool IsTrigger() const { return isTrigger; }
+
 		protected:
+			bool enableGravity = true;
 			const CollisionVolume* volume;
 			Transform*		transform;
 
 			float inverseMass;
 			float elasticity;
 			float friction;
+
+			float restitution = 1.0f;
+			float damping = 0.8f;
+			float gravityMultiplier = 1.0f;
 
 			//linear stuff
 			Vector3 linearVelocity;
@@ -82,6 +104,8 @@ namespace NCL {
 			Vector3 torque;
 			Vector3 inverseInertia;
 			Matrix3 inverseInteriaTensor;
+
+			bool isTrigger = false;
 		};
 	}
 }

@@ -133,6 +133,11 @@ Quaternion Quaternion::Slerp(const Quaternion &from, const Quaternion &to, float
 	float t = by;// / 2.0f;
 
 	float dot = std::clamp(Quaternion::Dot(from,to), -1.0f, 1.0f);
+	if (dot < 0.0f)
+	{
+		Quaternion newFrom = -from;
+		return Quaternion::Slerp(newFrom, to, by);
+	}
 
 	if (dot == 1.0f) {
 		return from;
@@ -154,6 +159,14 @@ Quaternion Quaternion::Slerp(const Quaternion &from, const Quaternion &to, float
 	q.Normalise();
 	return q;
 }
+
+Quaternion NCL::Maths::Quaternion::RotateTowards(const Vector3& currentPos, const Vector3& targetPos, const Vector3& axis)
+{
+	Matrix4 rotMat = Matrix4::BuildViewMatrix(currentPos, targetPos, axis).Inverse();
+	return Quaternion(rotMat);
+}
+
+
 
 //http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 //Verified! Different values to above, due to difference between x/z being 'forward'

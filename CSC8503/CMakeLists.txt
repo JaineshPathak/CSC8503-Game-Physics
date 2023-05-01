@@ -9,6 +9,19 @@ set(Header_Files
     "NetworkPlayer.h"
     "StateGameObject.h"
     "TutorialGame.h"
+    "CWGoatGame.h"
+    "CWLevelManager.h"
+    "CWGoatPlayer.h"
+    "CWFollowCamera.h"
+    "CWJumpPad.h"
+    "CWPropDestroy.h"
+    "CWDoorTrigger.h"
+    "CWSpringConstraint.h"
+    "CWPawn.h"
+    "CWDude.h"
+    "CWEvilGoose.h"
+    "CWGrapplePowerup.h"
+    "CWDoorKey.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
@@ -19,6 +32,19 @@ set(Source_Files
     "NetworkPlayer.cpp"
     "StateGameObject.cpp"
     "TutorialGame.cpp"
+    "CWGoatGame.cpp"
+    "CWLevelManager.cpp"
+    "CWGoatPlayer.cpp"
+    "CWFollowCamera.cpp"
+    "CWJumpPad.cpp"
+    "CWPropDestroy.cpp"
+    "CWDoorTrigger.cpp"
+    "CWSpringConstraint.cpp"
+    "CWPawn.cpp"
+    "CWDude.cpp"
+    "CWEvilGoose.cpp"
+    "CWGrapplePowerup.cpp"
+    "CWDoorKey.cpp"
 )
 
 if(USE_VULKAN)

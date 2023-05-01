@@ -10,6 +10,8 @@ namespace NCL {
 			NavigationPath() {}
 			~NavigationPath() {}
 
+			bool IsEmpty() const { return waypoints.empty(); }
+
 			void	Clear() {
 				waypoints.clear();
 			}

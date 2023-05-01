@@ -11,7 +11,7 @@ namespace NCL::CSC8503 {
 
 	class GameObject	{
 	public:
-		GameObject(std::string name = "");
+		GameObject(int layer = 1, std::string name = "");
 		~GameObject();
 
 		void SetBoundingVolume(CollisionVolume* vol) {
@@ -54,6 +54,12 @@ namespace NCL::CSC8503 {
 			return name;
 		}
 
+		const std::string& GetTag() const {
+			return tag;
+		}
+
+		void SetTag(const std::string& newTag) { tag = newTag; }
+
 		virtual void OnCollisionBegin(GameObject* otherObject) {
 			//std::cout << "OnCollisionBegin event occured!\n";
 		}
@@ -61,6 +67,9 @@ namespace NCL::CSC8503 {
 		virtual void OnCollisionEnd(GameObject* otherObject) {
 			//std::cout << "OnCollisionEnd event occured!\n";
 		}
+
+		virtual void OnTriggerBegin(GameObject* otherObject) {};
+		virtual void OnTriggerEnd(GameObject* otherObject) {};
 
 		bool GetBroadphaseAABB(Vector3&outsize) const;
 
@@ -74,6 +83,9 @@ namespace NCL::CSC8503 {
 			return worldID;
 		}
 
+		int GetLayer() const { return layer; }
+		void SetLayer(int layer) { this->layer = layer; }
+
 	protected:
 		Transform			transform;
 
@@ -85,6 +97,8 @@ namespace NCL::CSC8503 {
 		bool		isActive;
 		int			worldID;
 		std::string	name;
+		std::string	tag = "Default";
+		int layer = 1;		//1 - Default, 2 - Ignore, 3 - UI
 
 		Vector3 broadphaseAABB;
 	};

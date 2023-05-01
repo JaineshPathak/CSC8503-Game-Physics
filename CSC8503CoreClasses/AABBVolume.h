@@ -10,7 +10,13 @@ namespace NCL {
 		AABBVolume(const Vector3& halfDims) {
 			type		= VolumeType::AABB;
 			halfSizes	= halfDims;
+			center = Maths::Vector3((halfSizes.x + halfSizes.x) * 0.5f,
+				(halfSizes.y + halfSizes.y) * 0.5f,
+				(halfSizes.z + halfSizes.z) * 0.5f);
 		}
+
+		Maths::Vector3 GetCenter() const { return center; }
+
 		~AABBVolume() {
 
 		}
@@ -21,5 +27,6 @@ namespace NCL {
 
 	protected:
 		Vector3 halfSizes;
+		Vector3 center;
 	};
 }

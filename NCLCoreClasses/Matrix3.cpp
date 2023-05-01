@@ -271,4 +271,11 @@ Vector3 Matrix3::operator*(const Vector3 &v) const {
 	vec.z = v.x*array[0][2] + v.y*array[1][2] + v.z*array[2][2];
 
 	return vec;
-};
+}
+
+float* Matrix3::AsArray()
+{
+	static float* arr = new float[9];
+
+	return arr;
+}

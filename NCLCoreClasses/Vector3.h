@@ -172,5 +172,31 @@ namespace NCL::Maths {
 			o << "Vector3(" << v.x << "," << v.y << "," << v.z << ")" << std::endl;
 			return o;
 		}
+
+		static Vector3 SmoothDamp(Vector3 current, Vector3 target, Vector3& currentVelocity, float smoothTime, float maxSpeed, float deltaTime);
+
+		static Vector3 Lerp(const Vector3& a, const Vector3& b, float t)
+		{
+			Vector3 finalV = Lerp(a, b, t);
+			return finalV;
+		}
+
+		static Vector3 MoveTowards(Vector3 current, Vector3 target, float maxDistanceDelta)
+		{
+			// avoid vector ops because current scripting backends are terrible at inlining
+			float toVector_x = target.x - current.x;
+			float toVector_y = target.y - current.y;
+			float toVector_z = target.z - current.z;
+
+			float sqdist = toVector_x * toVector_x + toVector_y * toVector_y + toVector_z * toVector_z;
+
+			if (sqdist == 0 || (maxDistanceDelta >= 0 && sqdist <= maxDistanceDelta * maxDistanceDelta))
+				return target;
+			float dist = (float)sqrt(sqdist);
+
+			return Vector3(current.x + toVector_x / dist * maxDistanceDelta,
+				current.y + toVector_y / dist * maxDistanceDelta,
+				current.z + toVector_z / dist * maxDistanceDelta);
+		}
 	};
 }

@@ -39,13 +39,15 @@ namespace NCL::Maths {
 		Vector3 GetDiagonal() const;
 		void	SetDiagonal(const Vector3 &in);
 
+		float* AsArray();
+
 		Vector3 ToEuler() const;
 
 		inline Matrix3 Absolute() const {
 			Matrix3 m;
 
 			for (int i = 0; i < 3; ++i) {
-				for (int j = 0; j < 3; ++i) {
+				for (int j = 0; j < 3; ++j) {
 					m.array[i][j] = std::abs(array[i][j]);
 				}
 			}

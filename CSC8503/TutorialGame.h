@@ -8,8 +8,10 @@
 #include "StateGameObject.h"
 
 namespace NCL {
-	namespace CSC8503 {
-		class TutorialGame		{
+	namespace CSC8503 
+	{
+		class TutorialGame		
+		{
 		public:
 			TutorialGame();
 			~TutorialGame();
@@ -49,6 +51,10 @@ namespace NCL {
 			GameObject* AddPlayerToWorld(const Vector3& position);
 			GameObject* AddEnemyToWorld(const Vector3& position);
 			GameObject* AddBonusToWorld(const Vector3& position);
+			StateGameObject* AddStateObjectToWorld(const Vector3& position);
+			StateGameObject* testStateObject;
+
+			void BridgeConstraintTest();
 
 #ifdef USEVULKAN
 			GameTechVulkanRenderer*	renderer;
@@ -64,6 +70,7 @@ namespace NCL {
 			float		forceMagnitude;
 
 			GameObject* selectionObject = nullptr;
+			GameObject* cubeLooker = nullptr;
 
 			MeshGeometry*	capsuleMesh = nullptr;
 			MeshGeometry*	cubeMesh	= nullptr;
