@@ -404,7 +404,11 @@ hide or show the
 */
 int main() 
 {
-	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1920, 1080, false);
+#if _DEBUG
+	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 768, false);
+#elif NDEBUG
+	Window* w = Window::CreateGameWindow("CSC8503 Game technology!", 1600, 900, true);
+#endif
 
 	//TestPushdownAutomata(w);
 	TestNetworking();

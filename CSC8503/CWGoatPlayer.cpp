@@ -28,6 +28,12 @@ NCL::CSC8503::CWGoatPlayer::CWGoatPlayer(CWGoatGame& gGame, GameWorld& gWorld, G
 	renderObject = new RenderObject(&transform, goatMesh, whiteTex, basicShader);
 	renderObject->SetColour(Debug::WHITE);
 
+	std::vector<Vector4> vertexColours;
+	for (size_t i = 0; i < renderObject->GetMesh()->GetVertexCount(); i++)
+		vertexColours.emplace_back(Debug::RED);
+	renderObject->GetMesh()->SetVertexColours(vertexColours);
+	renderObject->GetMesh()->UploadToGPU();
+
 	physicsObject = new PhysicsObject(&transform, boundingVolume);
 	physicsObject->SetInverseMass(mass);
 	physicsObject->InitCubeInertia();
