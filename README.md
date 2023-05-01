@@ -6,6 +6,9 @@ I implemented the movement, AI both friendly and evil NPCs and fun part I enjoye
 # Source code to look at
 The main Source codes I have written is in "CSC8503" folder with files starting with CW* as prefix.
 
+# How to run game
+- Go to x64 folder > Release folder > CSC8503.exe
+
 # Screenshots
 [![CSC8503-Pic1.png](https://i.postimg.cc/ZR5HhG1z/CSC8503-Pic1.png)](https://postimg.cc/v1CfrNY0)
 [![CSC8503-Pic2.png](https://i.postimg.cc/nr6GBCMn/CSC8503-Pic2.png)](https://postimg.cc/YLzFw21P)
