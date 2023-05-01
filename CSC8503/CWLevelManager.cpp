@@ -11,6 +11,7 @@
 #include "CWEvilGoose.h"
 #include "CWGrapplePowerup.h"
 #include "CWDoorKey.h"
+#include <stb/stb_image.h>
 
 #include "PositionConstraint.h"
 
@@ -137,7 +138,10 @@ void NCL::CSC8503::CWLevelManager::InitAssets()
 	basicTex = renderer.LoadTexture("checkerboard.png");
 	whiteTex = renderer.LoadTexture("WhiteTex.png");
 	propTex = renderer.LoadTexture("PropTexture.png");
+
+	stbi_set_flip_vertically_on_load(true);
 	conceptTex = renderer.LoadTexture("ConceptTexture.jpg");
+	stbi_set_flip_vertically_on_load(false);
 
 	basicShader = renderer.LoadShader("scene.vert", "scene.frag");
 }

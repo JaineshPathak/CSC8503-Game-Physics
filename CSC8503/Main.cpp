@@ -404,7 +404,7 @@ hide or show the
 */
 int main() 
 {
-	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1920, 1080, true);
+	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1920, 1080, false);
 
 	//TestPushdownAutomata(w);
 	TestNetworking();
