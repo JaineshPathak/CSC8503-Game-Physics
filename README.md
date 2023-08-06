@@ -1,7 +1,7 @@
 # CSC8503 Goat Imitator
-This individual project is a part of CSC8503 Coursework, Newcastle University. The job was to make a prototype game similar to Goat Simulator. The focus of this project was to demonstrate game physics, raycasting, collision detection constraints, artificial intelligence using A* path finding and state machines.
+The job was to make a prototype game similar to Goat Simulator. The focus of this project was to demonstrate game physics, raycasting, collision detection constraints, artificial intelligence using A* path finding and state machines.
 
-I implemented the movement, AI both friendly and evil NPCs and fun part I enjoyed the most is making a custom Spring Constraint when the goat/player gets a Grapple powerup for sometime and can use it for rope physics.
+​I implemented the player movement, AI both friendly and evil NPCs and a Spring Constraint - when the goat/player gets a temporary Grapple powerup and can use it for rope physics.
 
 # Source code to look at
 The main Source codes I have written is in "CSC8503" folder with files starting with CW* as prefix.
