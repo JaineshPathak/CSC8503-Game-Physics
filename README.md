@@ -7,7 +7,8 @@ The job was to make a prototype game similar to Goat Simulator. The focus of thi
 The main Source codes I have written is in "CSC8503" folder with files starting with CW* as prefix.
 
 # How to run game
-- Go to x64 folder > Release folder > CSC8503.exe
+- Download the latest version from the Release section
+- Run "CSC8503.exe"
 
 # Screenshots
 [![CSC8503-Pic1.png](https://i.postimg.cc/ZR5HhG1z/CSC8503-Pic1.png)](https://postimg.cc/v1CfrNY0)
