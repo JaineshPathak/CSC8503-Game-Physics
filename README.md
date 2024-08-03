@@ -17,5 +17,3 @@ The main Source codes I have written is in "CSC8503" folder with files starting 
 
 # Video
 [![Game Physics Project](http://img.youtube.com/vi/NJlsSLDaxvk/0.jpg)](http://www.youtube.com/watch?v=NJlsSLDaxvk "CSC8503 - Game Physics")
-
-https://www.youtube.com/watch?v=NJlsSLDaxvk
